@@ -1,4 +1,4 @@
-import { Role, Evaluation, SavedWork, SectionImages, Member, Competency } from '../types';
+import { Role, Evaluation, SavedWork, SectionImages, Member, Competency, Question } from '../types';
 import { traditionalCompetencies } from './newCompetencies';
 import { defaultRoles, getMissingDefaultRoles } from './defaultRoles';
 import { defaultLibrary } from './defaultLibrary';
@@ -17,6 +17,95 @@ const STORAGE_KEYS = {
   COMPETENCIES_VERSION: 'obra-viva-competencies-version',
   LIBRARY_INITIALIZED: 'obra-viva-library-initialized',
 };
+
+// Chave canônica dos elementos SVG customizados. Exportada porque a tela de
+// upload também precisa gravar aqui — ela usava a chave legada 'custom-elements',
+// o que fazia backup/export/restore ignorarem silenciosamente esses elementos.
+export const CUSTOM_ELEMENTS_KEY = 'obra-viva-custom-elements';
+
+// Chave usada antes da unificação. Mantida só para a migração abaixo.
+const LEGACY_CUSTOM_ELEMENTS_KEY = 'custom-elements';
+
+// Move os elementos gravados sob a chave antiga para a canônica, uma única vez.
+// Sem isso, quem já tinha elementos enviados os veria "sumir" na unificação.
+const migrateCustomElementsKey = (): void => {
+  const legacy = localStorage.getItem(LEGACY_CUSTOM_ELEMENTS_KEY);
+  if (!legacy) return;
+
+  if (!localStorage.getItem(CUSTOM_ELEMENTS_KEY)) {
+    if (!safeSetItem(CUSTOM_ELEMENTS_KEY, legacy)) return;
+    log('✅ Elementos customizados migrados para a chave canônica');
+  }
+  localStorage.removeItem(LEGACY_CUSTOM_ELEMENTS_KEY);
+};
+
+// Logger só de desenvolvimento — evita poluir o console em produção.
+// Erros reais continuam usando console.error.
+const log = (...args: unknown[]): void => {
+  if (import.meta.env.DEV) console.log(...args);
+};
+
+// Normaliza `createdAt` para string ISO. O tipo de domínio aceita Date ou
+// string (o que vem do JSON/localStorage já é string), então converter às cegas
+// com toISOString() quebraria para os valores já serializados.
+const toIsoString = (value: Date | string): string =>
+  typeof value === 'string' ? value : value.toISOString();
+
+// Competência como ela realmente vive no localStorage: `createdAt` é uma string
+// ISO (JSON não tem Date), embora o tipo de domínio declare `Date`.
+type StoredCompetency = Omit<Competency, 'createdAt'> & { createdAt: string };
+
+// Escrita defensiva no localStorage. Base64 de imagens é armazenado aqui, então
+// QuotaExceededError é risco real: em vez de estourar uma exceção não tratada
+// (tela branca no meio de um salvamento), registramos o erro e devolvemos false
+// para quem quiser reagir.
+function safeSetItem(key: string, value: string): boolean {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    const isQuota =
+      error instanceof DOMException &&
+      (error.name === 'QuotaExceededError' ||
+        error.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+        error.code === 22);
+    if (isQuota) {
+      console.error(
+        `Espaço do navegador esgotado ao salvar "${key}" (${value.length} caracteres). ` +
+          'Os dados NÃO foram gravados — remova imagens ou avaliações antigas.',
+        error
+      );
+    } else {
+      console.error(`Erro ao gravar "${key}" no localStorage:`, error);
+    }
+    return false;
+  }
+}
+
+// Mantém apenas as perguntas "primárias": todas as afirmações (statements) e,
+// entre as dialógicas, só as principais (sem pai) ou as que terminam em -d1.
+// Descarta d2, d3, d4. Tolera `questions` ausente em dados corrompidos/importados.
+function keepPrimaryQuestions<Q extends Pick<Question, 'id' | 'type' | 'parentQuestionId'>>(
+  questions: Q[] | undefined | null
+): Q[] {
+  if (!Array.isArray(questions)) return [];
+  return questions.filter(q => {
+    // Mantém todas as afirmações (statements)
+    if (q.type === 'statement') return true;
+
+    // Mantém perguntas dialógicas principais (sem pai) ou que terminam em -d1
+    if (q.type === 'dialogic') {
+      return !q.parentQuestionId || q.id.endsWith('-d1');
+    }
+
+    return true;
+  });
+}
+
+// Aplica o filtro de perguntas a uma competência, preservando os demais campos.
+function filterCompetencyQuestions<C extends { questions?: Question[] }>(comp: C): C {
+  return { ...comp, questions: keepPrimaryQuestions(comp.questions) };
+}
 
 // Parses a localStorage value defensively — corrupted/truncated JSON (quota
 // eviction, manual edits, extension interference) falls back instead of
@@ -50,23 +139,23 @@ const initializeDefaultLibrary = () => {
     !localStorage.getItem(STORAGE_KEYS.EVALUATIONS);
 
   if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) {
-    localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(defaultLibrary.members));
+    safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(defaultLibrary.members));
   }
   if (!localStorage.getItem(STORAGE_KEYS.ROLES)) {
-    localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(defaultLibrary.roles));
-    localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
+    safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(defaultLibrary.roles));
+    safeSetItem(STORAGE_KEYS.INITIALIZED, 'true');
   }
   if (!localStorage.getItem(STORAGE_KEYS.COMPETENCIES)) {
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(defaultLibrary.competencies));
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES_INITIALIZED, 'true');
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES_VERSION, '1.4');
+    safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(defaultLibrary.competencies));
+    safeSetItem(STORAGE_KEYS.COMPETENCIES_INITIALIZED, 'true');
+    safeSetItem(STORAGE_KEYS.COMPETENCIES_VERSION, '1.4');
   }
   if (storeIsEmpty) {
-    localStorage.setItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(defaultLibrary.evaluations));
+    safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(defaultLibrary.evaluations));
   }
 
-  localStorage.setItem(STORAGE_KEYS.LIBRARY_INITIALIZED, 'true');
-  console.log('✅ Biblioteca padrão instalada:', {
+  safeSetItem(STORAGE_KEYS.LIBRARY_INITIALIZED, 'true');
+  log('✅ Biblioteca padrão instalada:', {
     members: defaultLibrary.members.length,
     roles: defaultLibrary.roles.length,
     competencies: defaultLibrary.competencies.length,
@@ -85,9 +174,9 @@ const initializeDefaultRoles = () => {
         roles.push(role);
       }
     });
-    localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
-    localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
-    console.log('✅ Cargos padrão inicializados:', defaultRoles.length);
+    safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
+    safeSetItem(STORAGE_KEYS.INITIALIZED, 'true');
+    log('✅ Cargos padrão inicializados:', defaultRoles.length);
   } else {
     // Se já foi inicializado, verifica se há novos cargos padrão para adicionar
     const roles = safeParse<Role[]>(STORAGE_KEYS.ROLES, []);
@@ -96,7 +185,7 @@ const initializeDefaultRoles = () => {
     const missingRoles = getMissingDefaultRoles(roles);
     if (missingRoles.length > 0) {
       missingRoles.forEach(role => roles.push(role));
-      console.log('✅ Novos cargos padrão adicionados:', missingRoles.length);
+      log('✅ Novos cargos padrão adicionados:', missingRoles.length);
     }
 
     // 2. Atualiza atividades de cargos existentes se estiverem vazias ou desatualizadas
@@ -117,8 +206,8 @@ const initializeDefaultRoles = () => {
     });
 
     if (missingRoles.length > 0 || updatedCount > 0) {
-      localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
-      if (updatedCount > 0) console.log('✅ Atividades atualizadas em cargos existentes:', updatedCount);
+      safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
+      if (updatedCount > 0) log('✅ Atividades atualizadas em cargos existentes:', updatedCount);
     }
   }
 };
@@ -126,27 +215,16 @@ const initializeDefaultRoles = () => {
 const initializeDefaultCompetencies = () => {
   const initialized = localStorage.getItem(STORAGE_KEYS.COMPETENCIES_INITIALIZED);
   if (!initialized) {
-    // Filtra e converte as datas para string antes de salvar
-    const competenciesToSave = traditionalCompetencies.map(comp => ({
-      ...comp,
-      createdAt: comp.createdAt.toISOString(),
-      // Filtra perguntas dialógicas d2, d3, d4 - mantém a principal ou d1
-      questions: comp.questions.filter(q => {
-        // Mantém todas as afirmações (statements)
-        if (q.type === 'statement') return true;
-        
-        // Mantém perguntas dialógicas principais (sem pai) ou que terminam em -d1
-        if (q.type === 'dialogic') {
-          return !q.parentQuestionId || q.id.endsWith('-d1');
-        }
-        
-        return true;
-      })
-    }));
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competenciesToSave));
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES_INITIALIZED, 'true');
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES_VERSION, '1.4');
-    console.log('✅ Competências inicializadas:', competenciesToSave.length);
+    // Filtra as perguntas e converte as datas para string antes de salvar
+    const competenciesToSave: StoredCompetency[] = traditionalCompetencies.map(comp =>
+      filterCompetencyQuestions({ ...comp, createdAt: toIsoString(comp.createdAt) })
+    );
+    // Só marca como inicializado se a gravação deu certo (ver safeSetItem).
+    if (safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competenciesToSave))) {
+      safeSetItem(STORAGE_KEYS.COMPETENCIES_INITIALIZED, 'true');
+      safeSetItem(STORAGE_KEYS.COMPETENCIES_VERSION, '1.4');
+      log('✅ Competências inicializadas:', competenciesToSave.length);
+    }
   }
 };
 
@@ -157,45 +235,20 @@ const migrateCompetencies = () => {
   
   // Se não tem versão ou se a versão é antiga (menor que 1.4), aplica a migração
   if (data && version !== '1.4') {
-    console.log('🔄 Migrando competências para versão 1.4 (atualização de textos Blocos 1, 2, 4-6)...');
+    log('🔄 Migrando competências para versão 1.4 (atualização de textos Blocos 1, 2, 4-6)...');
     
-    // Para garantir que as perguntas atualizadas sejam carregadas,
-    // vamos mesclar as customizações do usuário com os novos textos padrão
-    const currentStored: Competency[] = JSON.parse(data);
-    
-    const migratedCompetencies = traditionalCompetencies.map(defaultComp => {
-      const storedComp = currentStored.find(c => c.id === defaultComp.id);
-      
-      // Se a competência existia, preservamos apenas o que for customizado (se houver lógica para isso)
-      // No momento, vamos priorizar os novos textos padrão para garantir que as correções do usuário apareçam
-      if (storedComp) {
-        // Se quisermos manter algo do usuário, faríamos aqui. 
-        // Mas o pedido é "adicione as perguntas de novo", então vamos sobrescrever com o padrão novo.
-        return {
-          ...defaultComp,
-          createdAt: defaultComp.createdAt.toISOString(),
-          questions: defaultComp.questions.filter(q => {
-            if (q.type === 'statement') return true;
-            if (q.type === 'dialogic') return !q.parentQuestionId || q.id.endsWith('-d1');
-            return true;
-          })
-        };
-      }
-      
-      return {
-        ...defaultComp,
-        createdAt: defaultComp.createdAt.toISOString(),
-        questions: defaultComp.questions.filter(q => {
-          if (q.type === 'statement') return true;
-          if (q.type === 'dialogic') return !q.parentQuestionId || q.id.endsWith('-d1');
-          return true;
-        })
-      };
-    });
-    
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(migratedCompetencies));
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES_VERSION, '1.4');
-    console.log('✅ Migração concluída! Textos das competências atualizados para v1.4.');
+    // A migração sobrescreve o conteúdo armazenado com os textos padrão novos
+    // (não há customização de usuário a preservar hoje).
+    const migratedCompetencies: StoredCompetency[] = traditionalCompetencies.map(defaultComp =>
+      filterCompetencyQuestions({ ...defaultComp, createdAt: toIsoString(defaultComp.createdAt) })
+    );
+
+    // Só marca a versão como migrada se a gravação realmente aconteceu —
+    // senão o app acharia que migrou enquanto os dados antigos continuam lá.
+    if (safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(migratedCompetencies))) {
+      safeSetItem(STORAGE_KEYS.COMPETENCIES_VERSION, '1.4');
+      log('✅ Migração concluída! Textos das competências atualizados para v1.4.');
+    }
   }
 };
 
@@ -214,12 +267,12 @@ export const storage = {
     } else {
       roles.push(role);
     }
-    localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
+    safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
   },
   
   deleteRole(roleId: string): void {
     const roles = this.getRoles().filter(r => r.id !== roleId);
-    localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
+    safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
   },
   
   // Evaluations
@@ -235,12 +288,12 @@ export const storage = {
     } else {
       evaluations.push(evaluation);
     }
-    localStorage.setItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
+    safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
   },
   
   deleteEvaluation(evaluationId: string): void {
     const evaluations = this.getEvaluations().filter(e => e.id !== evaluationId);
-    localStorage.setItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
+    safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
   },
   
   // Current evaluation (in progress)
@@ -249,7 +302,7 @@ export const storage = {
   },
   
   saveCurrentEvaluation(evaluation: Evaluation): void {
-    localStorage.setItem(STORAGE_KEYS.CURRENT_EVALUATION, JSON.stringify(evaluation));
+    safeSetItem(STORAGE_KEYS.CURRENT_EVALUATION, JSON.stringify(evaluation));
   },
   
   clearCurrentEvaluation(): void {
@@ -262,7 +315,7 @@ export const storage = {
   },
   
   saveSectionImages(sectionImages: SectionImages): void {
-    localStorage.setItem(STORAGE_KEYS.SECTION_IMAGES, JSON.stringify(sectionImages));
+    safeSetItem(STORAGE_KEYS.SECTION_IMAGES, JSON.stringify(sectionImages));
   },
   
   // Members
@@ -278,22 +331,24 @@ export const storage = {
     } else {
       members.push(member);
     }
-    localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
+    safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
   },
   
   deleteMember(memberId: string): void {
     const members = this.getMembers().filter(m => m.id !== memberId);
-    localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
+    safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
   },
   
   // Visual Mode
   getVisualMode(): 'geometric' | 'architectural' | 'images' {
+    // Valida o valor lido: um cast cego devolveria lixo se a chave tivesse sido
+    // adulterada ou gravada por uma versão antiga.
     const data = localStorage.getItem(STORAGE_KEYS.VISUAL_MODE);
-    return data ? (data as 'geometric' | 'architectural' | 'images') : 'images';
+    return data === 'geometric' || data === 'architectural' || data === 'images' ? data : 'images';
   },
   
   saveVisualMode(mode: 'geometric' | 'architectural' | 'images'): void {
-    localStorage.setItem(STORAGE_KEYS.VISUAL_MODE, mode);
+    safeSetItem(STORAGE_KEYS.VISUAL_MODE, mode);
   },
   
   // Competencies
@@ -301,48 +356,22 @@ export const storage = {
     const competencies = safeParse<Competency[]>(STORAGE_KEYS.COMPETENCIES, []);
 
     // Filtra perguntas dialógicas d2, d3, d4 - mantém a principal ou d1
-    return competencies.map(comp => ({
-      ...comp,
-      questions: comp.questions.filter(q => {
-        // Mantém todas as afirmações (statements)
-        if (q.type === 'statement') return true;
-        
-        // Mantém perguntas dialógicas principais (sem pai) ou que terminam em -d1
-        if (q.type === 'dialogic') {
-          return !q.parentQuestionId || q.id.endsWith('-d1');
-        }
-        
-        return true;
-      })
-    }));
+    return competencies.map(filterCompetencyQuestions);
   },
-  
+
   saveCompetency(competency: Competency): void {
     const competencies = this.getCompetencies();
     const index = competencies.findIndex(c => c.id === competency.id);
-    
+
     // Aplica filtro antes de salvar
-    const filteredCompetency = {
-      ...competency,
-      questions: competency.questions.filter(q => {
-        // Mantém todas as afirmações (statements)
-        if (q.type === 'statement') return true;
-        
-        // Mantém perguntas dialógicas principais (sem pai) ou que terminam em -d1
-        if (q.type === 'dialogic') {
-          return !q.parentQuestionId || q.id.endsWith('-d1');
-        }
-        
-        return true;
-      })
-    };
-    
+    const filteredCompetency = filterCompetencyQuestions(competency);
+
     if (index >= 0) {
       competencies[index] = filteredCompetency;
     } else {
       competencies.push(filteredCompetency);
     }
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competencies));
+    safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competencies));
   },
 
   saveCompetencies(newCompetencies: Competency[]): void {
@@ -352,15 +381,8 @@ export const storage = {
     const updatedCompetencies = [...existingCompetencies];
     
     newCompetencies.forEach(newComp => {
-      const filteredComp = {
-        ...newComp,
-        questions: newComp.questions.filter(q => {
-          if (q.type === 'statement') return true;
-          if (q.type === 'dialogic') return !q.parentQuestionId || q.id.endsWith('-d1');
-          return true;
-        })
-      };
-      
+      const filteredComp = filterCompetencyQuestions(newComp);
+
       const index = updatedCompetencies.findIndex(c => c.id === filteredComp.id);
       if (index >= 0) {
         updatedCompetencies[index] = filteredComp;
@@ -369,18 +391,19 @@ export const storage = {
       }
     });
     
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(updatedCompetencies));
+    safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(updatedCompetencies));
   },
   
   deleteCompetency(competencyId: string): void {
     const competencies = this.getCompetencies().filter(c => c.id !== competencyId);
-    localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competencies));
+    safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competencies));
   },
   
   initializeCompetencies(): void {
     initializeDefaultLibrary();
     initializeDefaultCompetencies();
     migrateCompetencies();
+    migrateCustomElementsKey();
   },
   
   // Função para resetar as competências (útil para debug)
@@ -397,7 +420,7 @@ export const storage = {
       timestamp: new Date().toISOString(),
       competencies: this.getCompetencies(),
       roles: this.getRoles(),
-      customElements: localStorage.getItem('obra-viva-custom-elements') || null,
+      customElements: localStorage.getItem(CUSTOM_ELEMENTS_KEY) || null,
       visualMode: this.getVisualMode(),
     };
     return JSON.stringify(data, null, 2);
@@ -408,38 +431,31 @@ export const storage = {
       const data = JSON.parse(jsonString);
       
       // Validação básica
-      if (!data.version || !data.competencies) {
+      if (!data.version || !Array.isArray(data.competencies)) {
         throw new Error('Formato de arquivo inválido');
       }
 
       // Importa competências COM FILTRO
-      const filteredCompetencies = data.competencies.map((comp: Competency) => ({
-        ...comp,
-        questions: comp.questions.filter((q: any) => {
-          // Mantém todas as afirmações (statements)
-          if (q.type === 'statement') return true;
-          
-          // Mantém perguntas dialógicas principais (sem pai) ou que terminam em -d1
-          if (q.type === 'dialogic') {
-            return !q.parentQuestionId || q.id.endsWith('-d1');
-          }
-          
-          return true;
-        })
-      }));
-      
-      localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(filteredCompetencies));
-      localStorage.setItem(STORAGE_KEYS.COMPETENCIES_INITIALIZED, 'true');
+      const filteredCompetencies = data.competencies.map((comp: Competency) =>
+        filterCompetencyQuestions(comp)
+      );
+
+      // Se a gravação falhar (cota), não marca como inicializado nem segue
+      // importando o resto — o import inteiro é reportado como falha.
+      if (!safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(filteredCompetencies))) {
+        return false;
+      }
+      safeSetItem(STORAGE_KEYS.COMPETENCIES_INITIALIZED, 'true');
 
       // Importa cargos se existirem
       if (data.roles) {
-        localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(data.roles));
-        localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
+        safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(data.roles));
+        safeSetItem(STORAGE_KEYS.INITIALIZED, 'true');
       }
 
       // Importa elementos customizados se existirem
       if (data.customElements) {
-        localStorage.setItem('obra-viva-custom-elements', data.customElements);
+        safeSetItem(CUSTOM_ELEMENTS_KEY, data.customElements);
       }
 
       // Importa modo visual se existir
@@ -470,12 +486,12 @@ export const storage = {
       const data = JSON.parse(jsonString);
       
       // Validação básica
-      if (!data.version || !data.evaluations) {
+      if (!data.version || !Array.isArray(data.evaluations)) {
         throw new Error('Formato de arquivo inválido');
       }
 
       // Importa membros (se não existirem, cria novos)
-      if (data.members) {
+      if (Array.isArray(data.members)) {
         const existingMembers = this.getMembers();
         data.members.forEach((member: Member) => {
           if (!existingMembers.find(m => m.id === member.id)) {
@@ -506,10 +522,10 @@ export const storage = {
       evaluations: this.getEvaluations(),
       visualMode: this.getVisualMode(),
       sectionImages: this.getSectionImages(),
-      customElements: localStorage.getItem('obra-viva-custom-elements') || null,
+      customElements: localStorage.getItem(CUSTOM_ELEMENTS_KEY) || null,
     };
-    localStorage.setItem(STORAGE_KEYS.BACKUP, JSON.stringify(backupData));
-    console.log('✅ Backup criado:', new Date(backupData.timestamp).toLocaleString());
+    safeSetItem(STORAGE_KEYS.BACKUP, JSON.stringify(backupData));
+    log('✅ Backup criado:', new Date(backupData.timestamp).toLocaleString());
   },
 
   restoreBackup(): boolean {
@@ -521,28 +537,27 @@ export const storage = {
 
       const backup = JSON.parse(backupString);
 
-      // Filtra competências antes de restaurar
-      const filteredCompetencies = backup.competencies.map((comp: Competency) => ({
-        ...comp,
-        questions: comp.questions.filter((q: any) => {
-          // Mantém todas as afirmações (statements)
-          if (q.type === 'statement') return true;
-          
-          // Mantém perguntas dialógicas principais (sem pai) ou que terminam em -d1
-          if (q.type === 'dialogic') {
-            return !q.parentQuestionId || q.id.endsWith('-d1');
-          }
-          
-          return true;
-        })
-      }));
+      // Restaura apenas as coleções presentes no backup. Gravar uma coleção
+      // ausente escreveria a string "undefined" na chave e apagaria os dados
+      // atuais do usuário (perda de dados silenciosa).
+      if (Array.isArray(backup.members)) {
+        safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(backup.members));
+      }
+      if (Array.isArray(backup.roles)) {
+        safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(backup.roles));
+      }
+      if (Array.isArray(backup.competencies)) {
+        // Filtra competências antes de restaurar
+        const filteredCompetencies = backup.competencies.map((comp: Competency) =>
+          filterCompetencyQuestions(comp)
+        );
+        safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(filteredCompetencies));
+      }
+      if (Array.isArray(backup.evaluations)) {
+        safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(backup.evaluations));
+      }
 
-      // Restaura todos os dados do backup
-      localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(backup.members));
-      localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(backup.roles));
-      localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(filteredCompetencies));
-      localStorage.setItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(backup.evaluations));
-      
+
       if (backup.visualMode) {
         this.saveVisualMode(backup.visualMode);
       }
@@ -552,10 +567,10 @@ export const storage = {
       }
       
       if (backup.customElements) {
-        localStorage.setItem('obra-viva-custom-elements', backup.customElements);
+        safeSetItem(CUSTOM_ELEMENTS_KEY, backup.customElements);
       }
 
-      console.log('✅ Backup restaurado de:', new Date(backup.timestamp).toLocaleString());
+      log('✅ Backup restaurado de:', new Date(backup.timestamp).toLocaleString());
       return true;
     } catch (error) {
       console.error('Erro ao restaurar backup:', error);

@@ -3,6 +3,17 @@ import { storage } from '../lib/storage';
 import { newBlocks } from '../lib/newBlocks';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 
+// View-model desta tela. Não é um AssembledElement: quando a avaliação ainda
+// não foi montada, os elementos são derivados das respostas e carregam `level`
+// (a nota) em vez de shapeCode/color. Avaliações já salvas não têm `level` nem
+// `name`, por isso ambos são opcionais e a UI trata a ausência.
+type PreviewElement = Partial<AssembledElement> & {
+  elementId: string;
+  categoryId: string;
+  level?: number;
+  name?: string;
+};
+
 interface ConstructionPreviewProps {
   evaluation: SavedWork;
   onBack: () => void;
@@ -37,7 +48,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
   };
   
   // Ensure assembledElements exists or create from responses
-  const assembledElements: AssembledElement[] = evaluation.assembledElements && evaluation.assembledElements.length > 0
+  const assembledElements: PreviewElement[] = evaluation.assembledElements && evaluation.assembledElements.length > 0
     ? evaluation.assembledElements
     : evaluation.responses.map((response) => {
         // Find the question to get its categoryId
@@ -76,8 +87,11 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
   const totalQuadrants = newBlocks.length;
   
   // Calculate average level
-  const avgLevel = assembledElements.length > 0
-    ? assembledElements.reduce((sum, el) => sum + el.level, 0) / assembledElements.length
+  // Só entram na média os elementos que realmente têm nota. Avaliações salvas
+  // não guardam `level`, e somar undefined produzia NaN na tela.
+  const leveledElements = assembledElements.filter(el => typeof el.level === 'number');
+  const avgLevel = leveledElements.length > 0
+    ? leveledElements.reduce((sum, el) => sum + (el.level as number), 0) / leveledElements.length
     : 0;
 
   const getPerformanceLabel = (avg: number) => {
@@ -186,7 +200,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
                           
                           {/* Element Name */}
                           <p className="font-['Arial:Regular',sans-serif] text-[12px] text-[#45556c] text-center line-clamp-2">
-                            {element.name}
+                            {element.name || element.elementId}
                           </p>
                           
                           {/* Level Badge */}
@@ -195,7 +209,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
                             style={{ backgroundColor: category.color }}
                           >
                             <p className="font-['Arial:Regular',sans-serif] text-[12px] text-white">
-                              Nível {element.level}
+                              Nível {element.level ?? '—'}
                             </p>
                           </div>
                         </div>

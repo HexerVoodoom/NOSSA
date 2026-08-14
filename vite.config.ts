@@ -57,6 +57,48 @@
     build: {
       target: 'esnext',
       outDir: 'build',
+      rollupOptions: {
+        output: {
+          // Split by ownership/change-rate, not by micro-optimisation.
+          // react/radix/recharts change rarely -> long-lived cache entries.
+          // The pdf stack is only needed on export -> keep it off the critical path.
+          manualChunks(id: string) {
+            // O helper de preload do Vite acabava alojado no chunk do PDF.
+            // Como ele é importado estaticamente pela entry, isso arrastava
+            // ~1,5 MB de jspdf/html2canvas para o boot. Fixamos no chunk do
+            // React, que já é carregado de qualquer forma.
+            if (id.includes('vite/preload-helper')) return 'vendor-react';
+            if (!id.includes('node_modules')) return;
+            const parts = id.split('node_modules/');
+            const pkgPath = parts[parts.length - 1];
+            const pkg = pkgPath.startsWith('@')
+              ? pkgPath.split('/').slice(0, 2).join('/')
+              : pkgPath.split('/')[0];
+
+            if (pkg === 'jspdf' || pkg === 'html2canvas' || pkg === 'html2pdf.js') {
+              return 'vendor-pdf';
+            }
+            if (pkg.startsWith('@radix-ui')) return 'vendor-radix';
+            if (pkg === 'recharts' || pkg === 'victory-vendor' || pkg.startsWith('d3-')) {
+              return 'vendor-charts';
+            }
+            if (pkg === 'motion' || pkg === 'framer-motion' || pkg.startsWith('motion-')) {
+              return 'vendor-motion';
+            }
+            if (pkg === 'lucide-react') return 'vendor-icons';
+            if (
+              pkg === 'react' ||
+              pkg === 'react-dom' ||
+              pkg === 'scheduler' ||
+              pkg === 'react-is' ||
+              pkg === 'object-assign'
+            ) {
+              return 'vendor-react';
+            }
+            return 'vendor';
+          },
+        },
+      },
     },
     server: {
       port: 3000,

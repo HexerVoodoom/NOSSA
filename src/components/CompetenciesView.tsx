@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Competency } from '../types';
 import { newBlocks as categories } from '../lib/newBlocks';
 import { storage } from '../lib/storage';
 import { DS, Button, Card } from './DesignSystem';
@@ -70,13 +71,31 @@ export function CompetenciesView({ onBack }: CompetenciesViewProps) {
       return;
     }
 
-    const newComp = {
-      id: `comp-${Date.now()}`,
+    // As perguntas precisam herdar categoryId/competencyId e ter `order`:
+    // sem isso elas não são associadas ao bloco e ficam fora da ordenação.
+    const newCompId = `comp-${Date.now()}`;
+    const newComp: Competency = {
+      id: newCompId,
       name: newCompData.name,
       categoryId: newCompData.categoryId,
+      order: storage.getCompetencies().length,
       questions: [
-        { id: `q-diag-${Date.now()}`, text: 'Como você avalia sua performance nesta competência?', type: 'dialogic' as const },
-        { id: `q-stat-${Date.now()}`, text: 'Demonstra domínio técnico nos processos da área.', type: 'statement' as const }
+        {
+          id: `q-diag-${Date.now()}`,
+          text: 'Como você avalia sua performance nesta competência?',
+          type: 'dialogic' as const,
+          categoryId: newCompData.categoryId,
+          competencyId: newCompId,
+          order: 0,
+        },
+        {
+          id: `q-stat-${Date.now()}`,
+          text: 'Demonstra domínio técnico nos processos da área.',
+          type: 'statement' as const,
+          categoryId: newCompData.categoryId,
+          competencyId: newCompId,
+          order: 1,
+        }
       ],
       createdAt: new Date().toISOString()
     };
@@ -103,7 +122,10 @@ export function CompetenciesView({ onBack }: CompetenciesViewProps) {
         const newQuestion = {
           id: `q-${type}-${Date.now()}`,
           text: type === 'statement' ? 'Nova afirmação técnica...' : 'Nova pergunta dialógica...',
-          type: type
+          type: type,
+          categoryId: comp.categoryId,
+          competencyId: comp.id,
+          order: comp.questions.length,
         };
         return {
           ...comp,

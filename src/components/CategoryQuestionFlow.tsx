@@ -200,6 +200,7 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
                               kw[idx] = e.target.value;
                               updateQuestionData(question.id, 'keywords', kw);
                             }}
+                            aria-label={`Palavra-chave ${idx + 1}`}
                             placeholder={`Tópico ${idx + 1}...`}
                             className={DS.inputs.base}
                           />
@@ -209,7 +210,25 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
                   )}
                   
                   <div className="space-y-6">
-                    <div className="flex flex-wrap gap-4">
+                    <div
+                      role="radiogroup"
+                      aria-label={`Avaliação de 1 a 5 para: ${question.text}`}
+                      onKeyDown={(e) => {
+                        const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'];
+                        if (!keys.includes(e.key)) return;
+                        e.preventDefault();
+                        const radios = Array.from(
+                          e.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]')
+                        );
+                        const current = radios.indexOf(document.activeElement as HTMLButtonElement);
+                        const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
+                        const base = current >= 0 ? current : (qd.rating || 1) - 1;
+                        const next = (base + step + radios.length) % radios.length;
+                        radios[next]?.focus();
+                        updateQuestionData(question.id, 'rating', next + 1);
+                      }}
+                      className="flex flex-wrap gap-4"
+                    >
                       {(evaluation.evaluationType === 'tradicional' ? [
                         { val: 1, label: 'Nunca' },
                         { val: 2, label: 'Raramente' },
@@ -231,6 +250,11 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
                       ]).map((item) => (
                         <button
                           key={item.val}
+                          type="button"
+                          role="radio"
+                          aria-checked={qd.rating === item.val}
+                          aria-label={`${item.val} — ${item.label}`}
+                          tabIndex={qd.rating === item.val ? 0 : -1}
                           onClick={() => updateQuestionData(question.id, 'rating', item.val)}
                           className={`flex-1 min-w-[120px] p-4 rounded-2xl border border-slate-200 transition-all flex flex-col items-center gap-2 ${
                             qd.rating === item.val 
@@ -249,8 +273,9 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
             })}
           
           <div className="pt-8">
-            <label className={DS.inputs.label + " mb-4"}>Observações da Seção</label>
+            <label htmlFor="section-observations" className={DS.inputs.label + " mb-4"}>Observações da Seção</label>
             <textarea
+              id="section-observations"
               value={sectionObservations[currentCategory.id] || ''}
               onChange={(e) => setSectionObservations(prev => ({ ...prev, [currentCategory.id]: e.target.value }))}
               placeholder="Adicione comentários adicionais sobre este bloco de competências..."

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { SavedWork, AssembledElement } from '../types';
 import { DiamondMesh } from './DiamondMesh';
 import { Download, ZoomIn, ZoomOut, Lock, Unlock } from 'lucide-react';
-import html2canvas from 'html2canvas';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { storage } from '../lib/storage';
 import { newBlocks as categories } from '../lib/newBlocks';
@@ -39,8 +38,7 @@ const categoryColors: Record<string, string[]> = {
 
 export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('architectural');
-  const categories = newBlocks;
-  
+
   const handleSharePDF = async () => {
     try {
       // Dynamic imports for PDF generation libraries

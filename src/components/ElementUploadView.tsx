@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, X, Check, Download, Info, Save, CheckCircle2 } from 'lucide-react';
-import { processSVGForUpload } from '../lib/svgProcessor';
+import { processSVGForUpload, sanitizeSVG } from '../lib/svgProcessor';
 import { getCustomElementsStats } from '../lib/customElements';
+import { CUSTOM_ELEMENTS_KEY } from '../lib/storage';
 
 interface UploadedElement {
   id: string;
@@ -27,18 +28,19 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
   const [uploadedElements, setUploadedElements] = useState<Record<string, UploadedElement>>({});
   const [dragOver, setDragOver] = useState<string | null>(null);
 
-  // Carregar elementos salvos do localStorage ao montar
-  useState(() => {
-    const savedCustomElements = localStorage.getItem('custom-elements');
-    if (savedCustomElements) {
-      try {
-        const parsed = JSON.parse(savedCustomElements);
-        setUploadedElements(parsed);
-      } catch (e) {
-        console.error('Erro ao carregar elementos:', e);
-      }
+  // Carregar elementos salvos do localStorage ao montar.
+  // Era um useState(fn) usado como efeito: o inicializador disparava setState
+  // durante o próprio render. useEffect é o hook correto para isso.
+  useEffect(() => {
+    const savedCustomElements = localStorage.getItem(CUSTOM_ELEMENTS_KEY);
+    if (!savedCustomElements) return;
+    try {
+      const parsed = JSON.parse(savedCustomElements);
+      if (parsed && typeof parsed === 'object') setUploadedElements(parsed);
+    } catch (e) {
+      console.error('Erro ao carregar elementos:', e);
     }
-  });
+  }, []);
 
   const handleDrop = async (e: React.DragEvent, elementId: string) => {
     e.preventDefault();
@@ -58,7 +60,7 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
 
       const updated = { ...uploadedElements, [elementId]: newElement };
       setUploadedElements(updated);
-      localStorage.setItem('custom-elements', JSON.stringify(updated));
+      localStorage.setItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(updated));
     }
   };
 
@@ -84,7 +86,7 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
 
       const updated = { ...uploadedElements, [elementId]: newElement };
       setUploadedElements(updated);
-      localStorage.setItem('custom-elements', JSON.stringify(updated));
+      localStorage.setItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(updated));
     }
   };
 
@@ -92,7 +94,7 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
     const updated = { ...uploadedElements };
     delete updated[elementId];
     setUploadedElements(updated);
-    localStorage.setItem('custom-elements', JSON.stringify(updated));
+    localStorage.setItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(updated));
   };
 
   const handleExport = () => {
@@ -113,7 +115,7 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
       try {
         const imported = JSON.parse(text);
         setUploadedElements(imported);
-        localStorage.setItem('custom-elements', JSON.stringify(imported));
+        localStorage.setItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(imported));
       } catch (error) {
         alert('Erro ao importar arquivo JSON');
       }
@@ -258,8 +260,9 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
                       
                       {uploaded ? (
                         <div className="relative w-full h-full flex items-center justify-center p-4">
-                          <div 
-                            dangerouslySetInnerHTML={{ __html: uploaded.svg }}
+                          {/* Sanitiza de novo na renderização: o localStorage pode ter sido adulterado */}
+                          <div
+                            dangerouslySetInnerHTML={{ __html: sanitizeSVG(uploaded.svg) }}
                             className="w-full h-full flex items-center justify-center"
                           />
                           <div className="absolute top-2 right-2">

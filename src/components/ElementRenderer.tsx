@@ -1,4 +1,5 @@
 import { getCustomElement, hasCustomElement } from '../lib/customElements';
+import { sanitizeSVG } from '../lib/svgProcessor';
 
 interface ElementRendererProps {
   code: string;
@@ -77,8 +78,9 @@ export function ElementRenderer({ code, color, mode = 'architectural', className
   if (builtInElement) {
     return (
       <div className={`${className} flex items-center justify-center size-full`}>
-        <div 
-          dangerouslySetInnerHTML={{ __html: builtInElement.svg }}
+        {/* SVG sanitizado antes da injeção (bloqueia script/handlers) */}
+        <div
+          dangerouslySetInnerHTML={{ __html: sanitizeSVG(builtInElement.svg) }}
           className="w-full h-full flex items-center justify-center"
           style={{ color }}
         />

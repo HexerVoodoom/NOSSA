@@ -1,4 +1,3 @@
-import html2pdf from 'html2pdf.js';
 import { SavedWork, Member, Role } from '../types';
 import { storage } from './storage';
 import { newBlocks } from './newBlocks';
@@ -8,7 +7,27 @@ import { getAllQuestionsFromCompetencies } from './competencyHelpers';
 import imgLogoTortola from "figma:asset/0049d96aabf7ea4e2a663d5f83ebd360cb225dfd.png";
 import imgLogoNOSSA from "figma:asset/d08376795895de90a85e101961d369a69979dcc3.png";
 
-export function exportToPDF(work: SavedWork, collaborator: Member | null) {
+// Escapa qualquer valor livre antes de interpolar no HTML do PDF.
+// Evita injeção de markup/script via campos digitados pelo usuário (nomes,
+// observações, combinados, perguntas, palavras-chave, cargos).
+function escapeHtml(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// html2pdf.js arrasta jspdf + html2canvas (~450 kB gzip). Como só é preciso no
+// clique de exportar, é carregado sob demanda para sair do caminho crítico.
+async function loadHtml2Pdf() {
+  const mod = await import('html2pdf.js');
+  return mod.default;
+}
+
+export async function exportToPDF(work: SavedWork, collaborator: Member | null) {
   const roles = storage.getRoles();
   const role = roles.find(r => r.id === work.roleId);
   const allQuestions = getAllQuestionsFromCompetencies();
@@ -48,14 +67,14 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc;">
       <div>
         <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: bold;">Colaborador(a)</p>
-        <p style="margin: 2px 0 10px 0; font-size: 14px; font-weight: 600;">${work.collaboratorName || 'Não informado'}</p>
+        <p style="margin: 2px 0 10px 0; font-size: 14px; font-weight: 600;">${escapeHtml(work.collaboratorName) || 'Não informado'}</p>
         
         <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: bold;">Líder Responsável</p>
-        <p style="margin: 2px 0 0 0; font-size: 14px; font-weight: 600;">${work.leaderName || 'Não informado'}</p>
+        <p style="margin: 2px 0 0 0; font-size: 14px; font-weight: 600;">${escapeHtml(work.leaderName) || 'Não informado'}</p>
       </div>
       <div>
         <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: bold;">Cargo / Função</p>
-        <p style="margin: 2px 0 10px 0; font-size: 14px; font-weight: 600;">${role?.name || work.roleName}</p>
+        <p style="margin: 2px 0 10px 0; font-size: 14px; font-weight: 600;">${escapeHtml(role?.name || work.roleName)}</p>
         
         <p style="margin: 0; color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: bold;">Data da Avaliação</p>
         <p style="margin: 2px 0 0 0; font-size: 14px; font-weight: 600;">${new Date(work.createdAt).toLocaleDateString('pt-BR')}</p>
@@ -170,7 +189,9 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
   html += `<h2 style="font-size: 18px; margin-bottom: 20px; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">DETALHAMENTO POR BLOCO</h2>`;
   
   categoryStats.forEach((stat) => {
-    const catColor = stat.category.color || '#6155f5';
+    // Cor validada: só aceita hex, senão volta ao padrão (evita quebra de atributo style)
+    const rawCatColor = stat.category.color || '#6155f5';
+    const catColor = /^#[0-9a-fA-F]{3,8}$/.test(rawCatColor) ? rawCatColor : '#6155f5';
     
     // Obter labels corretos baseados no tipo de avaliação
     const getLabelsForEvalType = (evaluationType?: string) => {
@@ -191,7 +212,7 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
         <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid ${catColor}40; padding-bottom: 8px;">
           <div style="display: flex; align-items: center; gap: 8px;">
             <div style="width: 8px; height: 8px; border-radius: 2px; background-color: ${catColor};"></div>
-            <h3 style="margin: 0; color: ${catColor}; font-size: 14px; text-transform: uppercase; font-weight: 800;">${stat.category.name}</h3>
+            <h3 style="margin: 0; color: ${catColor}; font-size: 14px; text-transform: uppercase; font-weight: 800;">${escapeHtml(stat.category.name)}</h3>
           </div>
           <div style="text-align: right;">
             <div style="font-size: 24px; font-weight: 900; color: ${catColor}; line-height: 1;">${stat.averageRating.toFixed(1)}</div>
@@ -212,7 +233,7 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
       
       html += `
         <div class="no-split" style="border: 1.5px solid ${catColor}; border-radius: 8px; padding: 15px; margin-bottom: 12px; background-color: transparent;">
-          <p style="margin: 0 0 10px 0; font-weight: 500; font-size: 13px;">${idx + 1}. ${questionText}</p>
+          <p style="margin: 0 0 10px 0; font-weight: 500; font-size: 13px;">${idx + 1}. ${escapeHtml(questionText)}</p>
           
           <div style="display: flex; align-items: center; gap: 10px;">
             <div style="font-size: 20px; font-weight: 900; color: ${catColor}; line-height: 1;">
@@ -227,7 +248,7 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
             <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; align-items: center;">
               ${response.keywords.filter(k => k).map(k => `
                 <span style="border: 1px solid ${catColor}60; background-color: ${catColor}08; color: ${catColor}; padding: 3px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;">
-                  ${k}
+                  ${escapeHtml(k)}
                 </span>
               `).join('')}
             </div>
@@ -241,7 +262,7 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
       html += `
         <div style="margin-top: 10px; padding: 12px; border: 1px dashed ${catColor}; border-radius: 8px; background-color: #f8fafc;">
           <p style="margin: 0 0 5px 0; font-size: 10px; font-weight: bold; color: ${catColor}; text-transform: uppercase;">Observações da Seção:</p>
-          <p style="margin: 0; font-size: 12px; color: #475569; font-style: italic;">"${work.sectionObservations[stat.category.id]}"</p>
+          <p style="margin: 0; font-size: 12px; color: #475569; font-style: italic;">"${escapeHtml(work.sectionObservations[stat.category.id])}"</p>
         </div>
       `;
     }
@@ -257,7 +278,7 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
           <p style="margin: 0 0 8px 0; font-size: 10px; font-weight: bold; color: ${catColor}; text-transform: uppercase;">COMBINADOS E PLANO DE AÇÃO:</p>
           <p style="margin: 0 0 10px 0; font-size: 12px; font-weight: bold; color: #1e293b; line-height: 1.4;">${label}</p>
           <div style="min-height: 40px; margin-bottom: 20px; font-size: 12px; color: #334155; padding: 10px; background: white; border-radius: 4px; border: 1px solid #e2e8f0;">
-            ${work.categoryCommitments[stat.category.id]}
+            ${escapeHtml(work.categoryCommitments[stat.category.id])}
           </div>
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 15px;">
@@ -284,12 +305,12 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px;">
         <div style="text-align: center;">
           <div style="border-top: 1.5px solid #0f172a; width: 100%; margin-bottom: 8px;"></div>
-          <p style="margin: 0; font-size: 11px; font-weight: bold; color: #0f172a;">${work.collaboratorName}</p>
+          <p style="margin: 0; font-size: 11px; font-weight: bold; color: #0f172a;">${escapeHtml(work.collaboratorName)}</p>
           <p style="margin: 0; font-size: 9px; color: #64748b;">Associado(a)</p>
         </div>
         <div style="text-align: center;">
           <div style="border-top: 1.5px solid #0f172a; width: 100%; margin-bottom: 8px;"></div>
-          <p style="margin: 0; font-size: 11px; font-weight: bold; color: #0f172a;">${work.leaderName}</p>
+          <p style="margin: 0; font-size: 11px; font-weight: bold; color: #0f172a;">${escapeHtml(work.leaderName)}</p>
           <p style="margin: 0; font-size: 9px; color: #64748b;">Líder Avaliador</p>
         </div>
       </div>
@@ -308,9 +329,9 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
 
   // Configurações do PDF
   const opt = {
-    margin: [15, 12, 15, 12],
+    margin: [15, 12, 15, 12] as [number, number, number, number],
     filename: `avaliacao-${work.collaboratorName?.replace(/\s+/g, '-').toLowerCase() || 'obra-viva'}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
+    image: { type: 'jpeg' as const, quality: 0.98 },
     html2canvas: { 
       scale: 2,
       backgroundColor: '#ffffff',
@@ -320,12 +341,13 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
     jsPDF: { 
       unit: 'mm', 
       format: 'a4', 
-      orientation: 'portrait' 
+      orientation: 'portrait' as const 
     },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'], avoid: '.no-split' }
   };
 
   // Gerar PDF
+  const html2pdf = await loadHtml2Pdf();
   html2pdf().set(opt).from(container).save().catch((error: Error) => {
     console.error('Erro ao gerar PDF:', error);
     alert('Erro ao gerar PDF: ' + error.message);
@@ -333,7 +355,7 @@ export function exportToPDF(work: SavedWork, collaborator: Member | null) {
 }
 
 // Export Role to PDF (Também atualizando para consistência)
-export function exportRoleToPDF(role: Role, selectedQuestionIds?: string[]) {
+export async function exportRoleToPDF(role: Role, selectedQuestionIds?: string[]) {
   const competencies = storage.getCompetencies();
   const allQuestions = [...(competencies?.flatMap(c => c.questions) || []), ...(role.customQuestions || [])];
   const roleQuestions = selectedQuestionIds 
@@ -346,7 +368,7 @@ export function exportRoleToPDF(role: Role, selectedQuestionIds?: string[]) {
 
   let html = `
     <div style="background-color: #0f172a; padding: 25px; border-radius: 12px; color: white; margin-bottom: 30px;">
-      <h1 style="margin: 0; font-size: 22px;">ESTRUTURA DE CARGO: ${role.name.toUpperCase()}</h1>
+      <h1 style="margin: 0; font-size: 22px;">ESTRUTURA DE CARGO: ${escapeHtml(role.name.toUpperCase())}</h1>
       <p style="margin: 5px 0 0 0; opacity: 0.8;">Modelo de Competências e Critérios de Avaliação</p>
     </div>
   `;
@@ -423,9 +445,12 @@ export function exportRoleToPDF(role: Role, selectedQuestionIds?: string[]) {
     const categoryQuestions = roleQuestions.filter(q => q.categoryId === category.id);
     if (categoryQuestions.length === 0) return;
 
+    // Cor validada: só aceita hex, senão volta ao padrão
+    const catColor = /^#[0-9a-fA-F]{3,8}$/.test(category.color || '') ? category.color : '#6155f5';
+
     html += `
-      <div style="margin-bottom: 30px; border: 1.5px solid ${category.color}; border-radius: 12px; padding: 20px; page-break-inside: avoid;">
-        <h3 style="margin: 0 0 15px 0; color: ${category.color}; font-size: 14px; text-transform: uppercase;">${category.name}</h3>
+      <div style="margin-bottom: 30px; border: 1.5px solid ${catColor}; border-radius: 12px; padding: 20px; page-break-inside: avoid;">
+        <h3 style="margin: 0 0 15px 0; color: ${catColor}; font-size: 14px; text-transform: uppercase;">${escapeHtml(category.name)}</h3>
     `;
 
     // Renderizar escala no cabeçalho da categoria
@@ -437,7 +462,7 @@ export function exportRoleToPDF(role: Role, selectedQuestionIds?: string[]) {
           ${categoryQuestions.map((q, i) => `
             <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; background-color: white;">
               <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">
-                <p style="margin: 0; font-size: 12px; color: #334155; font-weight: 500; flex: 1;"><strong>${i + 1}.</strong> ${q.text}</p>
+                <p style="margin: 0; font-size: 12px; color: #334155; font-weight: 500; flex: 1;"><strong>${i + 1}.</strong> ${escapeHtml(q.text)}</p>
                 <div style="display: flex; gap: 8px; flex-shrink: 0;">
                   ${[1, 2, 3, 4, 5].map(num => renderCheckbox(num)).join('')}
                 </div>
@@ -464,7 +489,7 @@ export function exportRoleToPDF(role: Role, selectedQuestionIds?: string[]) {
           ${role.activities.map((activity, i) => `
             <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; background-color: white;">
               <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">
-                <p style="margin: 0; font-size: 12px; color: #334155; font-weight: 500; flex: 1;"><strong>${i + 1}.</strong> ${activity.text}</p>
+                <p style="margin: 0; font-size: 12px; color: #334155; font-weight: 500; flex: 1;"><strong>${i + 1}.</strong> ${escapeHtml(activity.text)}</p>
                 <div style="display: flex; gap: 8px; flex-shrink: 0;">
                   ${[1, 2, 3, 4, 5].map(num => renderCheckbox(num)).join('')}
                 </div>
@@ -481,12 +506,13 @@ export function exportRoleToPDF(role: Role, selectedQuestionIds?: string[]) {
   const opt = {
     margin: 10,
     filename: `estrutura-cargo-${role.name.replace(/\s+/g, '-').toLowerCase()}.pdf`,
-    image: { type: 'jpeg', quality: 0.95 },
+    image: { type: 'jpeg' as const, quality: 0.95 },
     html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
 
+  const html2pdf = await loadHtml2Pdf();
   html2pdf().set(opt).from(container).save().catch((error: Error) => {
     console.error('Erro ao gerar PDF:', error);
     alert('Erro ao gerar PDF. Por favor, tente novamente.');

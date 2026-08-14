@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Toaster } from './components/ui/sonner';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { HomePage } from './components/HomePage';
 import { TeamGallery } from './components/TeamGallery';
 import { MembersView } from './components/MembersView';
@@ -115,6 +116,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen">
       <Toaster position="top-center" />
+      <ErrorBoundary>
       {view.type === 'home' && (
         <HomePage
           onStartEvaluation={handleStartEvaluation}
@@ -267,6 +269,7 @@ export default function App() {
           onBack={handleBackToHome}
         />
       )}
+      </ErrorBoundary>
     </div>
   );
 }

@@ -245,14 +245,6 @@ export function ElementsLibrary({ onBack }: ElementsLibraryProps) {
                 
                 return (
                   <div key={i} className="relative group">
-                    {element.isBonus && (
-                      <div className="absolute -top-2 -right-2 z-10">
-                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-lg">
-                          <Sparkles className="w-3 h-3" />
-                          BÔNUS
-                        </div>
-                      </div>
-                    )}
                     <div className="border-2 border-slate-200 rounded-lg p-4 hover:border-[#6155f5] transition-all group-hover:shadow-lg">
                       <div className={`bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-3 mb-3 w-full ${aspectClass} flex items-center justify-center overflow-hidden`}>
                         <ElementRenderer
