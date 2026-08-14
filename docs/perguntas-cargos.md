@@ -2,20 +2,28 @@
 
 Documento por **cargo** (`Role`), mostrando: a tag do cargo (`associado` ou `liderança`), as **competências filtradas** para esse cargo (com suas afirmações técnicas e pergunta dialógica — extraídas da Biblioteca de Competências) e as **atividades específicas do cargo** usadas no fluxo de Avaliação de Atividades.
 
-> No sistema, `Role.type` é a tag que classifica o cargo como `leadership` (liderança) ou `collaborator` (associado). A lista `Role.questionIds` é resolvida a partir dos nomes de competências abaixo (`getQuestionIdsByCompetencyNames`), e é ela que filtra, em tempo de avaliação, quais afirmações e perguntas dialógicas aparecem para o cargo.
+> **Fonte:** dados exportados do aplicativo em `2026-08-13T21:03:51.846Z` (`obravivaequipecargoscompetenciasavaliacoes20260813_4.json`). Reflete os cargos realmente cadastrados no app (padrão + criados pelo usuário), incluindo renomeações e cargos novos.
+
+> No sistema, `Role.type` é a tag que classifica o cargo como `leadership` (liderança) ou `collaborator` (associado). A lista `Role.questionIds` é que filtra, em tempo de avaliação, quais afirmações e perguntas dialógicas aparecem para o cargo.
 
 ## Sumário de cargos
 
 | Cargo | Tag | Competências | Atividades |
 |---|---|---|---|
 | 3D Manager | `liderança` | 9 | 19 |
-| Administrador | `associado` | 9 | 13 |
-| Desenvolvedor de Projetos Executivos | `associado` | 11 | 28 |
+| Administrativo | `associado` | 9 | 13 |
+| Desenvolvedor(a) de Projetos | `associado` | 11 | 28 |
 | Financeiro | `associado` | 12 | 9 |
 | Gestor de Obra | `liderança` | 9 | 16 |
 | Gerente Comercial | `liderança` | 10 | 15 |
-| Coordenadora de Projetos | `liderança` | 12 | 25 |
+| Coordenador(a) de Projetos | `liderança` | 20 | 25 |
 | Auxiliar de Serviços Gerais | `associado` | 8 | 15 |
+| Analista de Projetos | `associado` | 11 | 9 |
+| Administrativo/ Financeiro / Gestão de Obras | `associado` | 16 | 32 |
+| Digitalização | `associado` | 11 | 13 |
+| Auxiliar Administrativo Financeiro / Gestão de Obras | `associado` | 13 | 14 |
+| Estagiário(a) Desenvolvimento de Projetos | `associado` | 21 | 11 |
+| Estagiário(a) - Gestão de Projetos | `associado` | 16 | 18 |
 
 ---
 
@@ -128,12 +136,12 @@ Base de diálogo:
 *Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
 
 Afirmações técnicas:
-- `q-b4-ri-1` Mantém bons relacionamentos com colegas e liderança.
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
 - `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
 - `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
 
 Base de diálogo:
-- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas de diferentes perfis e como avalia o impacto disso no ambiente?
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
 
 ### Atividades do cargo (Avaliação de Atividades)
 
@@ -159,7 +167,7 @@ Base de diálogo:
 
 ---
 
-## Administrador
+## Administrativo
 
 **ID:** `default-role-administrador` &nbsp;·&nbsp; **Tag de cargo:** `associado`
 
@@ -206,11 +214,11 @@ Base de diálogo:
 *Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
 
 Afirmações técnicas:
-- `q-b5-comp-1` Assume as responsabilidades do seu cargo.
-- `q-b5-comp-2` Cumpre combinados e prazos acordados.
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
 
 Base de diálogo:
-- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você lidou com responsabilidades, prazos e combinados assumidos, e como avalia o resultado disso?
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
 
 #### Organização · `associado`
 
@@ -243,12 +251,12 @@ Base de diálogo:
 *Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
 
 Afirmações técnicas:
-- `q-b4-ri-1` Mantém bons relacionamentos com colegas e liderança.
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
 - `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
 - `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
 
 Base de diálogo:
-- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas de diferentes perfis e como avalia o impacto disso no ambiente?
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
 
 #### Resolução de Problemas · `associado`
 
@@ -291,7 +299,7 @@ Base de diálogo:
 
 ---
 
-## Desenvolvedor de Projetos Executivos
+## Desenvolvedor(a) de Projetos
 
 **ID:** `default-role-desenvolvedor-projetos` &nbsp;·&nbsp; **Tag de cargo:** `associado`
 
@@ -486,7 +494,7 @@ Base de diálogo:
 
 Afirmações técnicas:
 - `q-b5-ce-1` Age de acordo com princípios éticos e valores morais.
-- `q-b5-ce-2` Toma decisões baseadas em princípios éticos sólidos.
+- `q-b5-ce-2` Adota postura de discrição em relação aos assuntos da empresa.
 
 Base de diálogo:
 - `q-b5-ce-dial` Pensando nas decisões e situações recentes do trabalho, como você considerou aspectos éticos no dia a dia e como avalia os efeitos dessas escolhas?
@@ -519,11 +527,11 @@ Base de diálogo:
 *Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
 
 Afirmações técnicas:
-- `q-b5-comp-1` Assume as responsabilidades do seu cargo.
-- `q-b5-comp-2` Cumpre combinados e prazos acordados.
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
 
 Base de diálogo:
-- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você lidou com responsabilidades, prazos e combinados assumidos, e como avalia o resultado disso?
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
 
 #### Negociação / Persuasão · `associado`
 
@@ -567,12 +575,12 @@ Base de diálogo:
 *Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
 
 Afirmações técnicas:
-- `q-b4-ri-1` Mantém bons relacionamentos com colegas e liderança.
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
 - `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
 - `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
 
 Base de diálogo:
-- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas de diferentes perfis e como avalia o impacto disso no ambiente?
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
 
 #### Resolução de Problemas · `associado`
 
@@ -692,12 +700,12 @@ Base de diálogo:
 *Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
 
 Afirmações técnicas:
-- `q-b4-ri-1` Mantém bons relacionamentos com colegas e liderança.
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
 - `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
 - `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
 
 Base de diálogo:
-- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas de diferentes perfis e como avalia o impacto disso no ambiente?
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
 
 #### Resolução de Problemas · `liderança`
 
@@ -798,11 +806,11 @@ Base de diálogo:
 *Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
 
 Afirmações técnicas:
-- `q-b5-comp-1` Assume as responsabilidades do seu cargo.
-- `q-b5-comp-2` Cumpre combinados e prazos acordados.
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
 
 Base de diálogo:
-- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você lidou com responsabilidades, prazos e combinados assumidos, e como avalia o resultado disso?
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
 
 #### Organização · `liderança`
 
@@ -835,12 +843,12 @@ Base de diálogo:
 *Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
 
 Afirmações técnicas:
-- `q-b4-ri-1` Mantém bons relacionamentos com colegas e liderança.
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
 - `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
 - `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
 
 Base de diálogo:
-- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas de diferentes perfis e como avalia o impacto disso no ambiente?
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
 
 #### Responsabilidade · `liderança`
 
@@ -896,23 +904,11 @@ Base de diálogo:
 
 ---
 
-## Coordenadora de Projetos
+## Coordenador(a) de Projetos
 
 **ID:** `default-role-coordenadora-projetos` &nbsp;·&nbsp; **Tag de cargo:** `liderança`
 
 ### Competências filtradas para este cargo
-
-#### Atenção Concentrada · `liderança`
-
-*Competência:* `comp-b1-atencao-concentrada` &nbsp;·&nbsp; *Categoria:* `bloco1`
-
-Afirmações técnicas:
-- `q-b1-atenc-1` Mantém atenção em uma tarefa mesmo em ambientes com interferências.
-- `q-b1-atenc-2` Demonstra preocupação constante em executar o trabalho sem erros.
-- `q-b1-atenc-3` Identifica erros ou inconsistências no fluxo de atividades.
-
-Base de diálogo:
-- `q-b1-atenc-dial` Ao longo dos últimos projetos, como foi sua experiência em manter o foco durante a execução das atividades e quais efeitos isso teve no trabalho?
 
 #### Autodesenvolvimento · `liderança`
 
@@ -924,18 +920,6 @@ Afirmações técnicas:
 
 Base de diálogo:
 - `q-b6-ad-dial` Considerando seu trabalho recente, como você refletiu sobre seu próprio desempenho e como isso ajudou a orientar melhorias?
-
-#### Capacidade de Execução · `liderança`
-
-*Competência:* `comp-b1-capacidade-execucao` &nbsp;·&nbsp; *Categoria:* `bloco1`
-
-Afirmações técnicas:
-- `q-b1-exec-1` Consegue transformar planos em ações concretas.
-- `q-b1-exec-2` Utiliza adequadamente os recursos disponíveis para atingir seus objetivos.
-- `q-b1-exec-3` Atua de forma sistemática para concluir o que foi planejado.
-
-Base de diálogo:
-- `q-b1-exec-dial` Considerando os últimos projetos, como aconteceu a passagem do planejamento para a execução e que efeito isso teve no trabalho realizado?
 
 #### Capacidade Investigativa · `liderança`
 
@@ -959,18 +943,6 @@ Afirmações técnicas:
 
 Base de diálogo:
 - `q-b1-detal-dial` Considerando as entregas dos últimos projetos, como você lidou com os detalhes e revisões e como isso se refletiu no resultado final?
-
-#### Empatia · `liderança`
-
-*Competência:* `comp-b4-empatia` &nbsp;·&nbsp; *Categoria:* `bloco4`
-
-Afirmações técnicas:
-- `q-b4-emp-1` Ajusta sua comunicação ao contexto emocional da outra pessoa.
-- `q-b4-emp-2` Demonstra sensibilidade diante das necessidades e dificuldades dos colegas.
-- `q-b4-emp-3` Ouve o outro com atenção genuína.
-
-Base de diálogo:
-- `q-b4-emp-dial` Nos projetos e interações mais recentes, como você lidou com as necessidades dos colegas e como isso influenciou as relações?
 
 #### Foco no Cliente · `liderança`
 
@@ -996,31 +968,6 @@ Afirmações técnicas:
 Base de diálogo:
 - `q-b1-org-dial` Nos projetos recentes, como você estruturou e organizou seu trabalho para dar andamento às atividades e como isso impactou o processo?
 
-#### Planejamento · `liderança`
-
-*Competência:* `comp-b1-planejamento` &nbsp;·&nbsp; *Categoria:* `bloco1`
-
-Afirmações técnicas:
-- `q-b1-plan-1` Estabelece objetivos e metas antes de iniciar suas atividades.
-- `q-b1-plan-2` Planeja considerando prioridades e recursos disponíveis.
-- `q-b1-plan-3` Ajusta o planejamento quando surgem mudanças.
-- `q-b1-plan-4` Antecipa recursos necessários para executar suas demandas.
-
-Base de diálogo:
-- `q-b1-plan-dial` Ao lembrar dos últimos projetos, como você se organizou antes de iniciar as atividades e em que medida isso contribuiu para o desenvolvimento do trabalho?
-
-#### Relacionamento Interpessoal · `liderança`
-
-*Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
-
-Afirmações técnicas:
-- `q-b4-ri-1` Mantém bons relacionamentos com colegas e liderança.
-- `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
-- `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
-
-Base de diálogo:
-- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas de diferentes perfis e como avalia o impacto disso no ambiente?
-
 #### Resolução de Problemas · `liderança`
 
 *Competência:* `comp-b2-resolucao-problemas` &nbsp;·&nbsp; *Categoria:* `bloco2`
@@ -1043,6 +990,159 @@ Afirmações técnicas:
 
 Base de diálogo:
 - `q-b2-td-dial` Nos projetos recentes, como você tomou as decisões mais importantes e de que forma elas contribuíram para o avanço das demandas?
+
+#### Agilidade · `liderança`
+
+*Competência:* `comp-b1-agilidade` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-agilidade-1` Realiza suas tarefas de forma rápida sem prejudicar a qualidade do trabalho.
+- `q-b1-agilidade-2` Identifica problemas com rapidez.
+- `q-b1-agilidade-3` Encontra soluções de forma eficaz e ágil.
+- `q-b1-agilidade-4` Utiliza o tempo necessário para executar suas atividades, sem excessos.
+
+Base de diálogo:
+- `q-b1-agilidade-dial` Pensando nos projetos mais recentes, de que forma você conduziu as entregas para cumprir os prazos e como avalia o resultado disso?
+
+#### Orientação para Resultado · `liderança`
+
+*Competência:* `comp-b1-orientacao-resultado` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-result-1` Estabelece metas claras e mensuráveis.
+- `q-b1-result-2` Busca maximizar produtividade e eficiência.
+- `q-b1-result-3` Monitora o progresso das atividades.
+- `q-b1-result-4` Corrige desvios que possam comprometer os resultados.
+- `q-b1-result-5` Mantém foco nas atividades prioritárias e nos prazos.
+
+Base de diálogo:
+- `q-b1-result-dial` Pensando nos projetos recentes, de que forma você acompanhou se o trabalho estava caminhando para os resultados esperados e como isso funcionou na prática?
+
+#### Raciocínio Lógico · `liderança`
+
+*Competência:* `comp-b2-raciocinio-logico` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-rl-1` Analisa informações de forma objetiva e lógica.
+- `q-b2-rl-2` Resolve problemas de maneira sistemática.
+- `q-b2-rl-3` Baseia decisões em evidências.
+
+Base de diálogo:
+- `q-b2-rl-dial` Pensando nos últimos projetos, como você analisou as informações e chegou às decisões necessárias, e como avalia os resultados disso?
+
+#### Senso Crítico · `liderança`
+
+*Competência:* `comp-b2-senso-critico` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-sc-1` Questiona suposições e processos estabelecidos.
+- `q-b2-sc-2` Analisa informações antes de aceitar conclusões.
+
+Base de diálogo:
+- `q-b2-sc-dial` Pensando nos projetos recentes, como você questionou práticas, informações ou conclusões prontas ao longo do trabalho, e como isso impactou os resultados?
+
+#### Atenção ao Cliente · `liderança`
+
+*Competência:* `comp-b3-atencao-cliente` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-ac-1` Demonstra cuidado e dedicação no atendimento às demandas dos clientes.
+- `q-b3-ac-2` Responde com clareza e agilidade às solicitações dos clientes.
+
+Base de diálogo:
+- `q-b3-ac-dial` Pensando nas interações recentes, como você conduziu a comunicação e o suporte ao cliente e como avalia a percepção dele sobre o seu trabalho?
+
+#### Negociação / Persuasão · `liderança`
+
+*Competência:* `comp-b3-negociacao` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-np-1` Apresenta argumentos convincentes para defender ideias e soluções.
+- `q-b3-np-2` Busca o equilíbrio entre os interesses da empresa e do cliente.
+
+Base de diálogo:
+- `q-b3-np-dial` Nos projetos recentes, em quais situações você precisou negociar prazos ou soluções e como você conduziu esse processo para chegar a um acordo?
+
+#### Comunicação · `liderança`
+
+*Competência:* `comp-b4-comunicacao` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-com-1` Expressa suas ideias de forma clara, objetiva e estruturada.
+- `q-b4-com-2` Ouve ativamente e demonstra compreensão sobre o que foi comunicado.
+- `q-b4-com-3` Utiliza canais adequados para cada tipo de mensagem.
+
+Base de diálogo:
+- `q-b4-com-dial` Considerando as interações recentes, como você avalia sua clareza ao passar informações e como garante que o que foi dito foi realmente compreendido?
+
+#### Trabalho em Equipe · `liderança`
+
+*Competência:* `comp-b4-trabalho-equipe` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-te-1` Colabora ativamente com os membros da equipe para atingir objetivos comuns.
+- `q-b4-te-2` Adapta-se às diferentes necessidades e estilos de trabalho dos membros da equipe.
+- `q-b4-te-3` Oferece ajuda aos colegas quando percebe a oportunidade.
+- `q-b4-te-4` Recebe feedbacks com abertura e positividade.
+
+Base de diálogo:
+- `q-b4-te-dial` Pensando nos projetos mais recentes, como foi sua atuação em conjunto com o time e como isso funcionou no andamento do trabalho?
+
+#### Relacionamento Interpessoal · `liderança`
+
+*Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
+- `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
+- `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
+
+Base de diálogo:
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
+
+#### Disponibilidade (Interna) · `liderança`
+
+*Competência:* `comp-b4-disponibilidade-interna` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-di-1` Demonstra prontidão para ajudar e oferecer suporte quando necessário.
+- `q-b4-di-2` Responde prontamente às solicitações e pedidos de apoio da equipe.
+
+Base de diálogo:
+- `q-b4-di-dial` Considerando as demandas internas mais recentes, como você se mostrou disponível para apoiar a equipe?
+
+#### Comportamento Ético · `liderança`
+
+*Competência:* `comp-b5-comportamento-etico` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-ce-1` Age de acordo com princípios éticos e valores morais.
+- `q-b5-ce-2` Adota postura de discrição em relação aos assuntos da empresa.
+
+Base de diálogo:
+- `q-b5-ce-dial` Pensando nas decisões e situações recentes do trabalho, como você considerou aspectos éticos no dia a dia e como avalia os efeitos dessas escolhas?
+
+#### Comprometimento · `liderança`
+
+*Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
+
+Base de diálogo:
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
+
+#### Aprendizado Contínuo · `liderança`
+
+*Competência:* `comp-b6-aprendizado-continuo` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-ac-1` Busca aprendizado contínuo para aprimorar sua atuação.
+- `q-b6-ac-2` Demonstra interesse em desenvolver novas habilidades.
+
+Base de diálogo:
+- `q-b6-ac-dial` Pensando nas experiências de trabalho mais recentes, como você buscou aprender coisas novas e como avalia os efeitos disso?
 
 ### Atividades do cargo (Avaliação de Atividades)
 
@@ -1098,23 +1198,23 @@ Base de diálogo:
 *Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
 
 Afirmações técnicas:
-- `q-b5-comp-1` Assume as responsabilidades do seu cargo.
-- `q-b5-comp-2` Cumpre combinados e prazos acordados.
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
 
 Base de diálogo:
-- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você lidou com responsabilidades, prazos e combinados assumidos, e como avalia o resultado disso?
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
 
 #### Relacionamento Interpessoal · `associado`
 
 *Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
 
 Afirmações técnicas:
-- `q-b4-ri-1` Mantém bons relacionamentos com colegas e liderança.
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
 - `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
 - `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
 
 Base de diálogo:
-- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas de diferentes perfis e como avalia o impacto disso no ambiente?
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
 
 #### Responsabilidade · `associado`
 
@@ -1133,7 +1233,7 @@ Base de diálogo:
 
 Afirmações técnicas:
 - `q-b5-ce-1` Age de acordo com princípios éticos e valores morais.
-- `q-b5-ce-2` Toma decisões baseadas em princípios éticos sólidos.
+- `q-b5-ce-2` Adota postura de discrição em relação aos assuntos da empresa.
 
 Base de diálogo:
 - `q-b5-ce-dial` Pensando nas decisões e situações recentes do trabalho, como você considerou aspectos éticos no dia a dia e como avalia os efeitos dessas escolhas?
@@ -1194,4 +1294,1186 @@ Base de diálogo:
 
 ---
 
-**Totais:** 8 cargos · 80 vínculos cargo–competência · 140 atividades.
+## Analista de Projetos
+
+**ID:** `role-1786309695980` &nbsp;·&nbsp; **Tag de cargo:** `associado`
+
+### Competências filtradas para este cargo
+
+#### Agilidade · `associado`
+
+*Competência:* `comp-b1-agilidade` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-agilidade-1` Realiza suas tarefas de forma rápida sem prejudicar a qualidade do trabalho.
+- `q-b1-agilidade-2` Identifica problemas com rapidez.
+- `q-b1-agilidade-3` Encontra soluções de forma eficaz e ágil.
+- `q-b1-agilidade-4` Utiliza o tempo necessário para executar suas atividades, sem excessos.
+
+Base de diálogo:
+- `q-b1-agilidade-dial` Pensando nos projetos mais recentes, de que forma você conduziu as entregas para cumprir os prazos e como avalia o resultado disso?
+
+#### Organização · `associado`
+
+*Competência:* `comp-b1-organizacao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-org-1` Organiza previamente seu material e suas atividades de trabalho.
+- `q-b1-org-2` Administra bem o tempo para realizar suas tarefas.
+- `q-b1-org-3` Planeja as atividades antes de executá-las.
+- `q-b1-org-4` Define metas claras alinhadas aos objetivos estabelecidos.
+
+Base de diálogo:
+- `q-b1-org-dial` Nos projetos recentes, como você estruturou e organizou seu trabalho para dar andamento às atividades e como isso impactou o processo?
+
+#### Detalhista · `associado`
+
+*Competência:* `comp-b1-detalhista` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-detal-1` Garante precisão e qualidade em cada etapa do trabalho.
+- `q-b1-detal-2` Dedica tempo necessário para revisar e corrigir detalhes.
+
+Base de diálogo:
+- `q-b1-detal-dial` Considerando as entregas dos últimos projetos, como você lidou com os detalhes e revisões e como isso se refletiu no resultado final?
+
+#### Resolução de Problemas · `associado`
+
+*Competência:* `comp-b2-resolucao-problemas` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-rp-1` Identifica as causas reais dos problemas.
+- `q-b2-rp-2` Propõe soluções práticas e eficazes.
+- `q-b2-rp-3` Direciona esforços para resolver problemas de forma objetiva.
+
+Base de diálogo:
+- `q-b2-rp-dial` Nos últimos projetos, quando surgiram problemas, como você lidou com eles desde a identificação até a solução e como avalia o efeito disso no trabalho?
+
+#### Tomada de Decisão · `associado`
+
+*Competência:* `comp-b2-tomada-decisao` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-td-1` Analisa riscos e benefícios antes de agir.
+- `q-b2-td-2` Decide com base no alinhamento estratégico da empresa.
+
+Base de diálogo:
+- `q-b2-td-dial` Nos projetos recentes, como você tomou as decisões mais importantes e de que forma elas contribuíram para o avanço das demandas?
+
+#### Comunicação · `associado`
+
+*Competência:* `comp-b4-comunicacao` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-com-1` Expressa suas ideias de forma clara, objetiva e estruturada.
+- `q-b4-com-2` Ouve ativamente e demonstra compreensão sobre o que foi comunicado.
+- `q-b4-com-3` Utiliza canais adequados para cada tipo de mensagem.
+
+Base de diálogo:
+- `q-b4-com-dial` Considerando as interações recentes, como você avalia sua clareza ao passar informações e como garante que o que foi dito foi realmente compreendido?
+
+#### Trabalho em Equipe · `associado`
+
+*Competência:* `comp-b4-trabalho-equipe` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-te-1` Colabora ativamente com os membros da equipe para atingir objetivos comuns.
+- `q-b4-te-2` Adapta-se às diferentes necessidades e estilos de trabalho dos membros da equipe.
+- `q-b4-te-3` Oferece ajuda aos colegas quando percebe a oportunidade.
+- `q-b4-te-4` Recebe feedbacks com abertura e positividade.
+
+Base de diálogo:
+- `q-b4-te-dial` Pensando nos projetos mais recentes, como foi sua atuação em conjunto com o time e como isso funcionou no andamento do trabalho?
+
+#### Relacionamento Interpessoal · `associado`
+
+*Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
+- `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
+- `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
+
+Base de diálogo:
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
+
+#### Cordialidade · `associado`
+
+*Competência:* `comp-b4-cordialidade` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-cor-1` Estabelece relacionamento gentil e cuidadoso com todas as pessoas.
+- `q-b4-cor-2` Pratica tolerância ao lidar com diferenças de opinião.
+
+Base de diálogo:
+- `q-b4-cor-dial` Pensando nas situações recentes do trabalho, como foi sua postura no trato diário com as pessoas e como isso funcionou na prática?
+
+#### Comprometimento · `associado`
+
+*Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
+
+Base de diálogo:
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
+
+#### Proatividade no Desenvolvimento · `associado`
+
+*Competência:* `comp-b6-proatividade-desenvolvimento` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-pd-1` Busca oportunidades de crescimento dentro da organização.
+- `q-b6-pd-2` Age de forma ativa para evoluir profissionalmente.
+
+Base de diálogo:
+- `q-b6-pd-dial` Considerando as oportunidades recentes no trabalho, como você tomou iniciativas para se desenvolver profissionalmente?
+
+### Atividades do cargo (Avaliação de Atividades)
+
+1. Realizar a análise técnica dos projetos desenvolvidos, com base nos critérios, padrões e diretrizes definidos para cada entrega
+2. Aplicar check-list técnico de conferência, em formato on-line e/ou físico, para verificar a conformidade dos projetos antes da liberação
+3. Identificar inconsistências, não conformidades e necessidades de ajuste nos projetos analisados
+4. Encaminhar solicitações de correção e adequação aos responsáveis pelos projetos, com base nos apontamentos identificados durante a análise
+5. Contribuir para o alinhamento técnico entre projetistas, gestão de projetos e demais envolvidos, sempre que necessário ao andamento das análises
+6. Manter atualizadas no Click Up as informações relacionadas ao andamento das análises, revisões e liberações para desenvolvedor e coordenador de projetos
+7. Participar, quando houver convite ou necessidade vinculada às demandas em andamento, de reuniões de alinhamento ou treinamento com a equipe
+8. Acompanhar e estudar os guides, padrões e materiais de referência das franquias, com o objetivo de manter a qualidade técnica das análises e a atualização dos critérios aplicáveis
+9. Fornecer feedbacks técnicos e comportamentais periódicos aos integrantes envolvidos nos projetos
+
+---
+
+## Administrativo/ Financeiro / Gestão de Obras
+
+**ID:** `role-1786310458988` &nbsp;·&nbsp; **Tag de cargo:** `associado`
+
+### Competências filtradas para este cargo
+
+#### Agilidade · `associado`
+
+*Competência:* `comp-b1-agilidade` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-agilidade-1` Realiza suas tarefas de forma rápida sem prejudicar a qualidade do trabalho.
+- `q-b1-agilidade-2` Identifica problemas com rapidez.
+- `q-b1-agilidade-3` Encontra soluções de forma eficaz e ágil.
+- `q-b1-agilidade-4` Utiliza o tempo necessário para executar suas atividades, sem excessos.
+
+Base de diálogo:
+- `q-b1-agilidade-dial` Pensando nos projetos mais recentes, de que forma você conduziu as entregas para cumprir os prazos e como avalia o resultado disso?
+
+#### Organização · `associado`
+
+*Competência:* `comp-b1-organizacao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-org-1` Organiza previamente seu material e suas atividades de trabalho.
+- `q-b1-org-2` Administra bem o tempo para realizar suas tarefas.
+- `q-b1-org-3` Planeja as atividades antes de executá-las.
+- `q-b1-org-4` Define metas claras alinhadas aos objetivos estabelecidos.
+
+Base de diálogo:
+- `q-b1-org-dial` Nos projetos recentes, como você estruturou e organizou seu trabalho para dar andamento às atividades e como isso impactou o processo?
+
+#### Priorização · `associado`
+
+*Competência:* `comp-b1-priorizacao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-prior-1` Prioriza tarefas de forma eficiente.
+- `q-b1-prior-2` Identifica corretamente o que é mais importante e urgente.
+
+Base de diálogo:
+- `q-b1-prior-dial` Nos projetos mais recentes, como você definiu o que precisava ser feito primeiro e como avalia os resultados dessa escolha?
+
+#### Detalhista · `associado`
+
+*Competência:* `comp-b1-detalhista` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-detal-1` Garante precisão e qualidade em cada etapa do trabalho.
+- `q-b1-detal-2` Dedica tempo necessário para revisar e corrigir detalhes.
+
+Base de diálogo:
+- `q-b1-detal-dial` Considerando as entregas dos últimos projetos, como você lidou com os detalhes e revisões e como isso se refletiu no resultado final?
+
+#### Resolução de Problemas · `associado`
+
+*Competência:* `comp-b2-resolucao-problemas` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-rp-1` Identifica as causas reais dos problemas.
+- `q-b2-rp-2` Propõe soluções práticas e eficazes.
+- `q-b2-rp-3` Direciona esforços para resolver problemas de forma objetiva.
+
+Base de diálogo:
+- `q-b2-rp-dial` Nos últimos projetos, quando surgiram problemas, como você lidou com eles desde a identificação até a solução e como avalia o efeito disso no trabalho?
+
+#### Tomada de Decisão · `associado`
+
+*Competência:* `comp-b2-tomada-decisao` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-td-1` Analisa riscos e benefícios antes de agir.
+- `q-b2-td-2` Decide com base no alinhamento estratégico da empresa.
+
+Base de diálogo:
+- `q-b2-td-dial` Nos projetos recentes, como você tomou as decisões mais importantes e de que forma elas contribuíram para o avanço das demandas?
+
+#### Foco no Cliente · `associado`
+
+*Competência:* `comp-b3-foco-cliente` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-fc-1` Prioriza as necessidades e a satisfação do cliente em suas ações.
+- `q-b3-fc-2` Antecipa-se aos problemas que podem afetar a experiência do cliente.
+
+Base de diálogo:
+- `q-b3-fc-dial` Considerando os projetos recentes, como você buscou entender e atender às expectativas do cliente e qual foi o impacto disso no resultado?
+
+#### Negociação / Persuasão · `associado`
+
+*Competência:* `comp-b3-negociacao` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-np-1` Apresenta argumentos convincentes para defender ideias e soluções.
+- `q-b3-np-2` Busca o equilíbrio entre os interesses da empresa e do cliente.
+
+Base de diálogo:
+- `q-b3-np-dial` Nos projetos recentes, em quais situações você precisou negociar prazos ou soluções e como você conduziu esse processo para chegar a um acordo?
+
+#### Comunicação · `associado`
+
+*Competência:* `comp-b4-comunicacao` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-com-1` Expressa suas ideias de forma clara, objetiva e estruturada.
+- `q-b4-com-2` Ouve ativamente e demonstra compreensão sobre o que foi comunicado.
+- `q-b4-com-3` Utiliza canais adequados para cada tipo de mensagem.
+
+Base de diálogo:
+- `q-b4-com-dial` Considerando as interações recentes, como você avalia sua clareza ao passar informações e como garante que o que foi dito foi realmente compreendido?
+
+#### Trabalho em Equipe · `associado`
+
+*Competência:* `comp-b4-trabalho-equipe` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-te-1` Colabora ativamente com os membros da equipe para atingir objetivos comuns.
+- `q-b4-te-2` Adapta-se às diferentes necessidades e estilos de trabalho dos membros da equipe.
+- `q-b4-te-3` Oferece ajuda aos colegas quando percebe a oportunidade.
+- `q-b4-te-4` Recebe feedbacks com abertura e positividade.
+
+Base de diálogo:
+- `q-b4-te-dial` Pensando nos projetos mais recentes, como foi sua atuação em conjunto com o time e como isso funcionou no andamento do trabalho?
+
+#### Relacionamento Interpessoal · `associado`
+
+*Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
+- `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
+- `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
+
+Base de diálogo:
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
+
+#### Comprometimento · `associado`
+
+*Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
+
+Base de diálogo:
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
+
+#### Comportamento Ético · `associado`
+
+*Competência:* `comp-b5-comportamento-etico` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-ce-1` Age de acordo com princípios éticos e valores morais.
+- `q-b5-ce-2` Adota postura de discrição em relação aos assuntos da empresa.
+
+Base de diálogo:
+- `q-b5-ce-dial` Pensando nas decisões e situações recentes do trabalho, como você considerou aspectos éticos no dia a dia e como avalia os efeitos dessas escolhas?
+
+#### Confiabilidade · `associado`
+
+*Competência:* `comp-b5-confiabilidade` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-conf-1` Cumpre o que promete.
+- `q-b5-conf-2` Demonstra coerência entre discurso e prática.
+
+Base de diálogo:
+- `q-b5-conf-dial` Nos projetos mais recentes, como foi a relação entre o que você combinou ou prometeu e o que de fato entregou, e como isso funcionou para o trabalho?
+
+#### Abertura ao Feedback · `associado`
+
+*Competência:* `comp-b6-abertura-feedback` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-af-1` Utiliza feedbacks como oportunidade de desenvolvimento.
+- `q-b6-af-2` Solicita feedbacks para aprimorar sua atuação.
+
+Base de diálogo:
+- `q-b6-af-dial` Pensando em situações recentes, como você lidou com feedbacks recebidos e como isso contribuiu para seu desenvolvimento?
+
+#### Proatividade no Desenvolvimento · `associado`
+
+*Competência:* `comp-b6-proatividade-desenvolvimento` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-pd-1` Busca oportunidades de crescimento dentro da organização.
+- `q-b6-pd-2` Age de forma ativa para evoluir profissionalmente.
+
+Base de diálogo:
+- `q-b6-pd-dial` Considerando as oportunidades recentes no trabalho, como você tomou iniciativas para se desenvolver profissionalmente?
+
+### Atividades do cargo (Avaliação de Atividades)
+
+1. Gerenciar o ambiente organizacional de trabalho, assegurando a manutenção da limpeza, conservação da fachada e funcionamento adequado da infraestrutura física do escritório.
+2. Administrar os processos administrativos gerais, incluindo a segurança patrimonial e a organização dos recursos operacionais.
+3. Gerir a manutenção corretiva do escritório, acionando fornecedores e prestadores de serviço quando necessário.
+4. Gerir a manutenção preventiva do escritório, acionando fornecedores e prestadores de serviço quando necessário.
+5. Organizar a agenda de eventos e atividades internas, como almoços, festas comemorativas, uso da sala de reunião e envio de informes à equipe.
+6. Administrar os contratos dos colaboradores CLT, monitorando prazos, cláusulas e obrigações legais.
+7. Promover eventos de integração da equipe.
+8. Realizar os processos de admissão de funcionários, conforme as diretrizes internas e a legislação trabalhista vigente.
+9. Conduzir os processos de desligamento de funcionários e parceiros, conforme as diretrizes internas e a legislação trabalhista vigente.
+10. Elaborar contratos de trabalho e prestação de serviços.
+11. Coordenar o fluxo das atividades prestadas no apoio administrativo, financeiro e operacional, acompanhando a qualidade das entregas, a atualização das informações e o andamento das demandas relacionadas aos serviços contratados
+12. Realizar a gestão dos recebíveis junto aos clientes, acompanhando os valores a receber e o andamento das cobranças
+13. Administrar as despesas fixas do condomínio e do escritório, observando prioridades, vencimentos e necessidades de pagamento
+14. Executar os pagamentos de fornecedores e parceiros conforme os acordos estabelecidos e os prazos aplicáveis
+15. Identificar situações de inadimplência de clientes e parceiros, adotando as medidas cabíveis para regularização e acompanhamento financeiro
+16. Acompanhar o cumprimento das obrigações fiscais e tributárias aplicáveis, em alinhamento com as exigências legais e com os prestadores responsáveis
+17. Conduzir o relacionamento com entidades externas, como bancos, contabilidade, prefeitura, assessorias e demais parceiros relacionados às demandas financeiras e administrativas
+18. Inserir os dados contratuais e registros das etapas dos projetos na plataforma click-up
+19. Coordenar o fluxo das atividades prestadas no apoio financeiro e operacional, acompanhando a qualidade das entregas, a atualização das informações e o andamento das demandas relacionadas aos serviços contratados
+20. Manter-se atualizado em relação aos manuais e diretrizes das franquias atendidas, aplicando corretamente suas exigências
+21. Analisar os projetos antes do início do acompanhamento da obra, verificando suas diretrizes e particularidades
+22. Participar de reuniões de kickoff e de alinhamento para adaptações de projeto ao longo da execução da obra
+23. Intermediar ajustes e conflitos relacionados ao escopo do projeto, buscando soluções técnicas e viáveis
+24. Fornecer feedback técnico ao projetista para melhorias em detalhes de projeto, quando identificar falhas ou informações insuficientes
+25. Conferir as cotações de orçamentos e quantitativos em relação aos projetos, garantindo precisão nas contratações
+26. Solicitar ajustes de incompatibilidades entre o projeto e as condições reais do espaço físico, quando necessário
+27. Avaliar a necessidade de revisões ou aprovações com os projetistas ao longo do processo de execução
+28. Responder dúvidas técnicas da equipe de obra relacionadas aos projetos e à execução da obra
+29. Registrar feedbacks no PNR e acompanhar o andamento das obras via WhatsApp, garantindo alinhamento com os projetos desenvolvidos
+30. Gerir o relacionamento com fornecedores e franqueados
+31. Atuar como ponto de contato entre a equipe interna, o franqueado e os fornecedores durante todas as etapas do projeto
+32. Preencher o checklist de conformidades conforme a execução do projeto
+
+---
+
+## Digitalização
+
+**ID:** `role-1786310793425` &nbsp;·&nbsp; **Tag de cargo:** `associado`
+
+### Competências filtradas para este cargo
+
+#### Capacidade de Execução · `associado`
+
+*Competência:* `comp-b1-capacidade-execucao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-exec-1` Consegue transformar planos em ações concretas.
+- `q-b1-exec-2` Utiliza adequadamente os recursos disponíveis para atingir seus objetivos.
+- `q-b1-exec-3` Atua de forma sistemática para concluir o que foi planejado.
+
+Base de diálogo:
+- `q-b1-exec-dial` Considerando os últimos projetos, como aconteceu a passagem do planejamento para a execução e que efeito isso teve no trabalho realizado?
+
+#### Organização · `associado`
+
+*Competência:* `comp-b1-organizacao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-org-1` Organiza previamente seu material e suas atividades de trabalho.
+- `q-b1-org-2` Administra bem o tempo para realizar suas tarefas.
+- `q-b1-org-3` Planeja as atividades antes de executá-las.
+- `q-b1-org-4` Define metas claras alinhadas aos objetivos estabelecidos.
+
+Base de diálogo:
+- `q-b1-org-dial` Nos projetos recentes, como você estruturou e organizou seu trabalho para dar andamento às atividades e como isso impactou o processo?
+
+#### Detalhista · `associado`
+
+*Competência:* `comp-b1-detalhista` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-detal-1` Garante precisão e qualidade em cada etapa do trabalho.
+- `q-b1-detal-2` Dedica tempo necessário para revisar e corrigir detalhes.
+
+Base de diálogo:
+- `q-b1-detal-dial` Considerando as entregas dos últimos projetos, como você lidou com os detalhes e revisões e como isso se refletiu no resultado final?
+
+#### Raciocínio Abstrato · `associado`
+
+*Competência:* `comp-b2-raciocinio-abstrato` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-ra-1` Conecta ideias complexas e identifica padrões não evidentes.
+- `q-b2-ra-2` Visualiza conceitos futuros e relações sistêmicas.
+
+Base de diálogo:
+- `q-b2-ra-dial` Ao olhar para os projetos mais recentes, como você conectou ideias e pensou em cenários possíveis para o trabalho, e quanto isso ajudou no resultado final?
+
+#### Senso Crítico · `associado`
+
+*Competência:* `comp-b2-senso-critico` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-sc-1` Questiona suposições e processos estabelecidos.
+- `q-b2-sc-2` Analisa informações antes de aceitar conclusões.
+
+Base de diálogo:
+- `q-b2-sc-dial` Pensando nos projetos recentes, como você questionou práticas, informações ou conclusões prontas ao longo do trabalho, e como isso impactou os resultados?
+
+#### Foco no Cliente · `associado`
+
+*Competência:* `comp-b3-foco-cliente` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-fc-1` Prioriza as necessidades e a satisfação do cliente em suas ações.
+- `q-b3-fc-2` Antecipa-se aos problemas que podem afetar a experiência do cliente.
+
+Base de diálogo:
+- `q-b3-fc-dial` Considerando os projetos recentes, como você buscou entender e atender às expectativas do cliente e qual foi o impacto disso no resultado?
+
+#### Comunicação · `associado`
+
+*Competência:* `comp-b4-comunicacao` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-com-1` Expressa suas ideias de forma clara, objetiva e estruturada.
+- `q-b4-com-2` Ouve ativamente e demonstra compreensão sobre o que foi comunicado.
+- `q-b4-com-3` Utiliza canais adequados para cada tipo de mensagem.
+
+Base de diálogo:
+- `q-b4-com-dial` Considerando as interações recentes, como você avalia sua clareza ao passar informações e como garante que o que foi dito foi realmente compreendido?
+
+#### Relacionamento Interpessoal · `associado`
+
+*Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
+- `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
+- `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
+
+Base de diálogo:
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
+
+#### Comprometimento · `associado`
+
+*Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
+
+Base de diálogo:
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
+
+#### Tomada de Decisão · `associado`
+
+*Competência:* `comp-b2-tomada-decisao` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-td-1` Analisa riscos e benefícios antes de agir.
+- `q-b2-td-2` Decide com base no alinhamento estratégico da empresa.
+
+Base de diálogo:
+- `q-b2-td-dial` Nos projetos recentes, como você tomou as decisões mais importantes e de que forma elas contribuíram para o avanço das demandas?
+
+#### Negociação / Persuasão · `associado`
+
+*Competência:* `comp-b3-negociacao` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-np-1` Apresenta argumentos convincentes para defender ideias e soluções.
+- `q-b3-np-2` Busca o equilíbrio entre os interesses da empresa e do cliente.
+
+Base de diálogo:
+- `q-b3-np-dial` Nos projetos recentes, em quais situações você precisou negociar prazos ou soluções e como você conduziu esse processo para chegar a um acordo?
+
+### Atividades do cargo (Avaliação de Atividades)
+
+1. Receber e analisar as informações iniciais da unidade franqueada incluindo dados da loja, padrão atual de decoração, plantas existentes, fotos, documentos técnicos e demais materiais disponíveis.
+2. Comparar o projeto existente com as diretrizes atualizadas da franqueadora.
+3. Mapear os ajustes necessários para enquadramento no plano de remodelação.
+4. Organizar as informações do projeto em software técnico adequado.
+5. Propor soluções de adequação compatíveis com o padrão da marca e a realidade da loja.
+6. Preparar materiais para apresentação em reunião de comitê.
+7. Apresentar a proposta de adequação para análise e aprovação.
+8. Revisar e ajustar o projeto conforme apontamentos recebidos.
+9. Colaborar com as equipes de trabalho e diferentes departamentos, promovendo integração e fluidez na execução das atividades compartilhadas
+10. Participar de reuniões on-line e presenciais com o objetivo de integração, feedback e alinhamento
+11. Salvar periodicamente os arquivos criados ou modificados na nuvem de arquivos do escritório, garantindo segurança da informação e organização do material
+12. Atualizar-se constantemente em inovações tecnológicas, com participação em feiras, eventos e workshops da área
+13. Gerir o relacionamento com franqueados, respondendo dúvidas e se colocando à disposição.
+
+---
+
+## Auxiliar Administrativo Financeiro / Gestão de Obras
+
+**ID:** `role-1786312019898` &nbsp;·&nbsp; **Tag de cargo:** `associado`
+
+### Competências filtradas para este cargo
+
+#### Agilidade · `associado`
+
+*Competência:* `comp-b1-agilidade` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-agilidade-1` Realiza suas tarefas de forma rápida sem prejudicar a qualidade do trabalho.
+- `q-b1-agilidade-2` Identifica problemas com rapidez.
+- `q-b1-agilidade-3` Encontra soluções de forma eficaz e ágil.
+- `q-b1-agilidade-4` Utiliza o tempo necessário para executar suas atividades, sem excessos.
+
+Base de diálogo:
+- `q-b1-agilidade-dial` Pensando nos projetos mais recentes, de que forma você conduziu as entregas para cumprir os prazos e como avalia o resultado disso?
+
+#### Organização · `associado`
+
+*Competência:* `comp-b1-organizacao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-org-1` Organiza previamente seu material e suas atividades de trabalho.
+- `q-b1-org-2` Administra bem o tempo para realizar suas tarefas.
+- `q-b1-org-3` Planeja as atividades antes de executá-las.
+- `q-b1-org-4` Define metas claras alinhadas aos objetivos estabelecidos.
+
+Base de diálogo:
+- `q-b1-org-dial` Nos projetos recentes, como você estruturou e organizou seu trabalho para dar andamento às atividades e como isso impactou o processo?
+
+#### Detalhista · `associado`
+
+*Competência:* `comp-b1-detalhista` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-detal-1` Garante precisão e qualidade em cada etapa do trabalho.
+- `q-b1-detal-2` Dedica tempo necessário para revisar e corrigir detalhes.
+
+Base de diálogo:
+- `q-b1-detal-dial` Considerando as entregas dos últimos projetos, como você lidou com os detalhes e revisões e como isso se refletiu no resultado final?
+
+#### Foco no Cliente · `associado`
+
+*Competência:* `comp-b3-foco-cliente` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-fc-1` Prioriza as necessidades e a satisfação do cliente em suas ações.
+- `q-b3-fc-2` Antecipa-se aos problemas que podem afetar a experiência do cliente.
+
+Base de diálogo:
+- `q-b3-fc-dial` Considerando os projetos recentes, como você buscou entender e atender às expectativas do cliente e qual foi o impacto disso no resultado?
+
+#### Negociação / Persuasão · `associado`
+
+*Competência:* `comp-b3-negociacao` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-np-1` Apresenta argumentos convincentes para defender ideias e soluções.
+- `q-b3-np-2` Busca o equilíbrio entre os interesses da empresa e do cliente.
+
+Base de diálogo:
+- `q-b3-np-dial` Nos projetos recentes, em quais situações você precisou negociar prazos ou soluções e como você conduziu esse processo para chegar a um acordo?
+
+#### Comunicação · `associado`
+
+*Competência:* `comp-b4-comunicacao` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-com-1` Expressa suas ideias de forma clara, objetiva e estruturada.
+- `q-b4-com-2` Ouve ativamente e demonstra compreensão sobre o que foi comunicado.
+- `q-b4-com-3` Utiliza canais adequados para cada tipo de mensagem.
+
+Base de diálogo:
+- `q-b4-com-dial` Considerando as interações recentes, como você avalia sua clareza ao passar informações e como garante que o que foi dito foi realmente compreendido?
+
+#### Trabalho em Equipe · `associado`
+
+*Competência:* `comp-b4-trabalho-equipe` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-te-1` Colabora ativamente com os membros da equipe para atingir objetivos comuns.
+- `q-b4-te-2` Adapta-se às diferentes necessidades e estilos de trabalho dos membros da equipe.
+- `q-b4-te-3` Oferece ajuda aos colegas quando percebe a oportunidade.
+- `q-b4-te-4` Recebe feedbacks com abertura e positividade.
+
+Base de diálogo:
+- `q-b4-te-dial` Pensando nos projetos mais recentes, como foi sua atuação em conjunto com o time e como isso funcionou no andamento do trabalho?
+
+#### Relacionamento Interpessoal · `associado`
+
+*Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
+- `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
+- `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
+
+Base de diálogo:
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
+
+#### Comprometimento · `associado`
+
+*Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
+
+Base de diálogo:
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
+
+#### Comportamento Ético · `associado`
+
+*Competência:* `comp-b5-comportamento-etico` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-ce-1` Age de acordo com princípios éticos e valores morais.
+- `q-b5-ce-2` Adota postura de discrição em relação aos assuntos da empresa.
+
+Base de diálogo:
+- `q-b5-ce-dial` Pensando nas decisões e situações recentes do trabalho, como você considerou aspectos éticos no dia a dia e como avalia os efeitos dessas escolhas?
+
+#### Proatividade no Desenvolvimento · `associado`
+
+*Competência:* `comp-b6-proatividade-desenvolvimento` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-pd-1` Busca oportunidades de crescimento dentro da organização.
+- `q-b6-pd-2` Age de forma ativa para evoluir profissionalmente.
+
+Base de diálogo:
+- `q-b6-pd-dial` Considerando as oportunidades recentes no trabalho, como você tomou iniciativas para se desenvolver profissionalmente?
+
+#### Disponibilidade (Interna) · `associado`
+
+*Competência:* `comp-b4-disponibilidade-interna` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-di-1` Demonstra prontidão para ajudar e oferecer suporte quando necessário.
+- `q-b4-di-2` Responde prontamente às solicitações e pedidos de apoio da equipe.
+
+Base de diálogo:
+- `q-b4-di-dial` Considerando as demandas internas mais recentes, como você se mostrou disponível para apoiar a equipe?
+
+#### Aprendizado Contínuo · `associado`
+
+*Competência:* `comp-b6-aprendizado-continuo` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-ac-1` Busca aprendizado contínuo para aprimorar sua atuação.
+- `q-b6-ac-2` Demonstra interesse em desenvolver novas habilidades.
+
+Base de diálogo:
+- `q-b6-ac-dial` Pensando nas experiências de trabalho mais recentes, como você buscou aprender coisas novas e como avalia os efeitos disso?
+
+### Atividades do cargo (Avaliação de Atividades)
+
+1. Prestar apoio às demandas administrativas, financeiras e de organização de informações relacionadas às atividades do escritório
+2. Organizar documentos físicos e digitais vinculados a processos administrativos, financeiros, contratuais e de apoio à operação
+3. Atualizar planilhas, sistemas e plataformas de gestão com informações administrativas, financeiras e operacionais
+4. Acompanhar prazos, pendências e vencimentos relacionados às demandas sob sua atuação, comunicando necessidades de andamento aos pontos de contato definidos
+5. Solicitar documentos, comprovantes e informações complementares a colaboradores, fornecedores, parceiros, prestadores e demais envolvidos, sempre que necessário ao andamento das atividades
+6. Contribuir para o controle de pagamentos, recebimentos e despesas por meio da organização das informações e da conferência dos dados lançados
+7. Atualizar dados contratuais, operacionais e de andamento dos projetos nas plataformas de gestão utilizadas pelo escritório
+8. Prestar apoio à organização de entrevistas, reuniões, comunicações e demais ações relacionadas à dinâmica interna e à gestão de pessoas
+9. Realizar atendimento a franqueados, prestando informações, encaminhando solicitações e direcionando dúvidas relacionadas ao ciclo dos projetos
+10. Realizar contatos, repasses de informações e acompanhamentos com fornecedores, conforme a necessidade das demandas em andamento
+11. Encaminhar dúvidas técnicas da equipe de obras aos responsáveis pelos projetos, acompanhando o retorno necessário para continuidade do fluxo
+12. Realizar cotações de orçamentos e levantamentos quantitativos relacionados aos projetos, conforme a demanda de cada etapa
+13. Organizar e enviar aos franqueados cotações, orçamentos e informações sobre fornecedores de materiais, conforme os alinhamentos definidos para cada projeto
+14. Prestar apoio à organização de eventos, confraternizações e ações internas promovidas pelo escritório
+
+---
+
+## Estagiário(a) Desenvolvimento de Projetos
+
+**ID:** `role-1786312372107` &nbsp;·&nbsp; **Tag de cargo:** `associado`
+
+### Competências filtradas para este cargo
+
+#### Agilidade · `associado`
+
+*Competência:* `comp-b1-agilidade` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-agilidade-1` Realiza suas tarefas de forma rápida sem prejudicar a qualidade do trabalho.
+- `q-b1-agilidade-2` Identifica problemas com rapidez.
+- `q-b1-agilidade-3` Encontra soluções de forma eficaz e ágil.
+- `q-b1-agilidade-4` Utiliza o tempo necessário para executar suas atividades, sem excessos.
+
+Base de diálogo:
+- `q-b1-agilidade-dial` Pensando nos projetos mais recentes, de que forma você conduziu as entregas para cumprir os prazos e como avalia o resultado disso?
+
+#### Capacidade de Execução · `associado`
+
+*Competência:* `comp-b1-capacidade-execucao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-exec-1` Consegue transformar planos em ações concretas.
+- `q-b1-exec-2` Utiliza adequadamente os recursos disponíveis para atingir seus objetivos.
+- `q-b1-exec-3` Atua de forma sistemática para concluir o que foi planejado.
+
+Base de diálogo:
+- `q-b1-exec-dial` Considerando os últimos projetos, como aconteceu a passagem do planejamento para a execução e que efeito isso teve no trabalho realizado?
+
+#### Organização · `associado`
+
+*Competência:* `comp-b1-organizacao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-org-1` Organiza previamente seu material e suas atividades de trabalho.
+- `q-b1-org-2` Administra bem o tempo para realizar suas tarefas.
+- `q-b1-org-3` Planeja as atividades antes de executá-las.
+- `q-b1-org-4` Define metas claras alinhadas aos objetivos estabelecidos.
+
+Base de diálogo:
+- `q-b1-org-dial` Nos projetos recentes, como você estruturou e organizou seu trabalho para dar andamento às atividades e como isso impactou o processo?
+
+#### Detalhista · `associado`
+
+*Competência:* `comp-b1-detalhista` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-detal-1` Garante precisão e qualidade em cada etapa do trabalho.
+- `q-b1-detal-2` Dedica tempo necessário para revisar e corrigir detalhes.
+
+Base de diálogo:
+- `q-b1-detal-dial` Considerando as entregas dos últimos projetos, como você lidou com os detalhes e revisões e como isso se refletiu no resultado final?
+
+#### Raciocínio Lógico · `associado`
+
+*Competência:* `comp-b2-raciocinio-logico` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-rl-1` Analisa informações de forma objetiva e lógica.
+- `q-b2-rl-2` Resolve problemas de maneira sistemática.
+- `q-b2-rl-3` Baseia decisões em evidências.
+
+Base de diálogo:
+- `q-b2-rl-dial` Pensando nos últimos projetos, como você analisou as informações e chegou às decisões necessárias, e como avalia os resultados disso?
+
+#### Raciocínio Abstrato · `associado`
+
+*Competência:* `comp-b2-raciocinio-abstrato` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-ra-1` Conecta ideias complexas e identifica padrões não evidentes.
+- `q-b2-ra-2` Visualiza conceitos futuros e relações sistêmicas.
+
+Base de diálogo:
+- `q-b2-ra-dial` Ao olhar para os projetos mais recentes, como você conectou ideias e pensou em cenários possíveis para o trabalho, e quanto isso ajudou no resultado final?
+
+#### Senso Crítico · `associado`
+
+*Competência:* `comp-b2-senso-critico` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-sc-1` Questiona suposições e processos estabelecidos.
+- `q-b2-sc-2` Analisa informações antes de aceitar conclusões.
+
+Base de diálogo:
+- `q-b2-sc-dial` Pensando nos projetos recentes, como você questionou práticas, informações ou conclusões prontas ao longo do trabalho, e como isso impactou os resultados?
+
+#### Resolução de Problemas · `associado`
+
+*Competência:* `comp-b2-resolucao-problemas` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-rp-1` Identifica as causas reais dos problemas.
+- `q-b2-rp-2` Propõe soluções práticas e eficazes.
+- `q-b2-rp-3` Direciona esforços para resolver problemas de forma objetiva.
+
+Base de diálogo:
+- `q-b2-rp-dial` Nos últimos projetos, quando surgiram problemas, como você lidou com eles desde a identificação até a solução e como avalia o efeito disso no trabalho?
+
+#### Foco no Cliente · `associado`
+
+*Competência:* `comp-b3-foco-cliente` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-fc-1` Prioriza as necessidades e a satisfação do cliente em suas ações.
+- `q-b3-fc-2` Antecipa-se aos problemas que podem afetar a experiência do cliente.
+
+Base de diálogo:
+- `q-b3-fc-dial` Considerando os projetos recentes, como você buscou entender e atender às expectativas do cliente e qual foi o impacto disso no resultado?
+
+#### Comunicação · `associado`
+
+*Competência:* `comp-b4-comunicacao` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-com-1` Expressa suas ideias de forma clara, objetiva e estruturada.
+- `q-b4-com-2` Ouve ativamente e demonstra compreensão sobre o que foi comunicado.
+- `q-b4-com-3` Utiliza canais adequados para cada tipo de mensagem.
+
+Base de diálogo:
+- `q-b4-com-dial` Considerando as interações recentes, como você avalia sua clareza ao passar informações e como garante que o que foi dito foi realmente compreendido?
+
+#### Trabalho em Equipe · `associado`
+
+*Competência:* `comp-b4-trabalho-equipe` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-te-1` Colabora ativamente com os membros da equipe para atingir objetivos comuns.
+- `q-b4-te-2` Adapta-se às diferentes necessidades e estilos de trabalho dos membros da equipe.
+- `q-b4-te-3` Oferece ajuda aos colegas quando percebe a oportunidade.
+- `q-b4-te-4` Recebe feedbacks com abertura e positividade.
+
+Base de diálogo:
+- `q-b4-te-dial` Pensando nos projetos mais recentes, como foi sua atuação em conjunto com o time e como isso funcionou no andamento do trabalho?
+
+#### Relacionamento Interpessoal · `associado`
+
+*Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
+- `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
+- `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
+
+Base de diálogo:
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
+
+#### Responsabilidade · `associado`
+
+*Competência:* `comp-b5-responsabilidade` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-resp-1` Demonstra segurança ao exercer suas funções.
+- `q-b5-resp-2` Assume erros e falhas com transparência.
+
+Base de diálogo:
+- `q-b5-resp-dial` Considerando situações recentes de trabalho, como você lidou com erros, imprevistos ou falhas quando eles aconteceram, e como isso funcionou na prática?
+
+#### Confiabilidade · `associado`
+
+*Competência:* `comp-b5-confiabilidade` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-conf-1` Cumpre o que promete.
+- `q-b5-conf-2` Demonstra coerência entre discurso e prática.
+
+Base de diálogo:
+- `q-b5-conf-dial` Nos projetos mais recentes, como foi a relação entre o que você combinou ou prometeu e o que de fato entregou, e como isso funcionou para o trabalho?
+
+#### Transparência · `associado`
+
+*Competência:* `comp-b5-transparencia` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-trans-1` Compartilha informações relevantes de forma clara e no tempo adequado.
+- `q-b5-trans-2` Expõe suas intenções, limites e dificuldades com honestidade.
+
+Base de diálogo:
+- `q-b5-trans-dial` Pensando nas situações recentes do trabalho, como você compartilhou informações, limites ou dificuldades com as pessoas envolvidas, e como isso impactou o andamento das atividades?
+
+#### Aprendizado Contínuo · `associado`
+
+*Competência:* `comp-b6-aprendizado-continuo` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-ac-1` Busca aprendizado contínuo para aprimorar sua atuação.
+- `q-b6-ac-2` Demonstra interesse em desenvolver novas habilidades.
+
+Base de diálogo:
+- `q-b6-ac-dial` Pensando nas experiências de trabalho mais recentes, como você buscou aprender coisas novas e como avalia os efeitos disso?
+
+#### Abertura ao Feedback · `associado`
+
+*Competência:* `comp-b6-abertura-feedback` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-af-1` Utiliza feedbacks como oportunidade de desenvolvimento.
+- `q-b6-af-2` Solicita feedbacks para aprimorar sua atuação.
+
+Base de diálogo:
+- `q-b6-af-dial` Pensando em situações recentes, como você lidou com feedbacks recebidos e como isso contribuiu para seu desenvolvimento?
+
+#### Autodesenvolvimento · `associado`
+
+*Competência:* `comp-b6-autodesenvolvimento` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-ad-1` Reflete sobre sua própria atuação.
+- `q-b6-ad-2` Busca evolução pessoal e profissional.
+
+Base de diálogo:
+- `q-b6-ad-dial` Considerando seu trabalho recente, como você refletiu sobre seu próprio desempenho e como isso ajudou a orientar melhorias?
+
+#### Visão de Futuro · `associado`
+
+*Competência:* `comp-b6-visao-futuro` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-vf-1` Planeja seu desenvolvimento profissional a médio e longo prazo.
+- `q-b6-vf-2` Alinha expectativas pessoais aos objetivos da organização.
+
+Base de diálogo:
+- `q-b6-vf-dial` Pensando no momento atual da sua carreira, como você tem refletido sobre seus próximos passos profissionais?
+
+#### Proatividade no Desenvolvimento · `associado`
+
+*Competência:* `comp-b6-proatividade-desenvolvimento` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-pd-1` Busca oportunidades de crescimento dentro da organização.
+- `q-b6-pd-2` Age de forma ativa para evoluir profissionalmente.
+
+Base de diálogo:
+- `q-b6-pd-dial` Considerando as oportunidades recentes no trabalho, como você tomou iniciativas para se desenvolver profissionalmente?
+
+#### Disponibilidade (Interna) · `associado`
+
+*Competência:* `comp-b4-disponibilidade-interna` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-di-1` Demonstra prontidão para ajudar e oferecer suporte quando necessário.
+- `q-b4-di-2` Responde prontamente às solicitações e pedidos de apoio da equipe.
+
+Base de diálogo:
+- `q-b4-di-dial` Considerando as demandas internas mais recentes, como você se mostrou disponível para apoiar a equipe?
+
+### Atividades do cargo (Avaliação de Atividades)
+
+1. Aplicar as diretrizes da franquia nos projetos, assegurando coerência técnica e estética com os padrões exigidos pela marca.
+2. Criar imagens realistas (renders) das fachadas e ambientes internos dos projetos utilizando softwares específicos como SketchUp, IA e similares.
+3. Pesquisar e se atualizar constantemente sobre arquitetura para varejo, franquias e outras áreas correlatas, visando a inovação e o aprimoramento técnico.
+4. Aplicar as exigências técnicas de cada franquia nos projetos desenvolvidos.
+5. Desenvolver projetos que possuam padrões repetitivos de detalhes construtivos e acabamentos, apresentando-os ao supervisor para validação.
+6. Executar os projetos com boa diagramação e conforme os padrões gráficos definidos pelo escritório.                                
+7. Salvar periodicamente os arquivos criados ou modificados na rede do escritório, assegurando backup.
+8. Responder comunicação via WhatsApp e plataforma interna.
+9. Manter atualizadas as informações nas plataformas de gerenciamento de projetos.
+10. Participar de reuniões internas de planejamento e avaliação quando necessário.
+11. Contribuir com informações técnicas sempre que necessário.
+
+---
+
+## Estagiário(a) - Gestão de Projetos
+
+**ID:** `role-1786478528791` &nbsp;·&nbsp; **Tag de cargo:** `associado`
+
+### Competências filtradas para este cargo
+
+#### Agilidade · `associado`
+
+*Competência:* `comp-b1-agilidade` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-agilidade-1` Realiza suas tarefas de forma rápida sem prejudicar a qualidade do trabalho.
+- `q-b1-agilidade-2` Identifica problemas com rapidez.
+- `q-b1-agilidade-3` Encontra soluções de forma eficaz e ágil.
+- `q-b1-agilidade-4` Utiliza o tempo necessário para executar suas atividades, sem excessos.
+
+Base de diálogo:
+- `q-b1-agilidade-dial` Pensando nos projetos mais recentes, de que forma você conduziu as entregas para cumprir os prazos e como avalia o resultado disso?
+
+#### Organização · `associado`
+
+*Competência:* `comp-b1-organizacao` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-org-1` Organiza previamente seu material e suas atividades de trabalho.
+- `q-b1-org-2` Administra bem o tempo para realizar suas tarefas.
+- `q-b1-org-3` Planeja as atividades antes de executá-las.
+- `q-b1-org-4` Define metas claras alinhadas aos objetivos estabelecidos.
+
+Base de diálogo:
+- `q-b1-org-dial` Nos projetos recentes, como você estruturou e organizou seu trabalho para dar andamento às atividades e como isso impactou o processo?
+
+#### Detalhista · `associado`
+
+*Competência:* `comp-b1-detalhista` &nbsp;·&nbsp; *Categoria:* `bloco1`
+
+Afirmações técnicas:
+- `q-b1-detal-1` Garante precisão e qualidade em cada etapa do trabalho.
+- `q-b1-detal-2` Dedica tempo necessário para revisar e corrigir detalhes.
+
+Base de diálogo:
+- `q-b1-detal-dial` Considerando as entregas dos últimos projetos, como você lidou com os detalhes e revisões e como isso se refletiu no resultado final?
+
+#### Capacidade Investigativa · `associado`
+
+*Competência:* `comp-b2-capacidade-investigativa` &nbsp;·&nbsp; *Categoria:* `bloco2`
+
+Afirmações técnicas:
+- `q-b2-ci-1` Busca ativamente informações para compreender problemas.
+- `q-b2-ci-2` Utiliza fontes variadas para aprofundar o entendimento.
+- `q-b2-ci-3` Não se contenta com respostas superficiais.
+
+Base de diálogo:
+- `q-b2-ci-dial` Nos últimos projetos, quando surgiram dúvidas ou problemas, como você buscou informações para entender melhor a situação e como isso funcionou na prática?
+
+#### Foco no Cliente · `associado`
+
+*Competência:* `comp-b3-foco-cliente` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-fc-1` Prioriza as necessidades e a satisfação do cliente em suas ações.
+- `q-b3-fc-2` Antecipa-se aos problemas que podem afetar a experiência do cliente.
+
+Base de diálogo:
+- `q-b3-fc-dial` Considerando os projetos recentes, como você buscou entender e atender às expectativas do cliente e qual foi o impacto disso no resultado?
+
+#### Atenção ao Cliente · `associado`
+
+*Competência:* `comp-b3-atencao-cliente` &nbsp;·&nbsp; *Categoria:* `bloco3`
+
+Afirmações técnicas:
+- `q-b3-ac-1` Demonstra cuidado e dedicação no atendimento às demandas dos clientes.
+- `q-b3-ac-2` Responde com clareza e agilidade às solicitações dos clientes.
+
+Base de diálogo:
+- `q-b3-ac-dial` Pensando nas interações recentes, como você conduziu a comunicação e o suporte ao cliente e como avalia a percepção dele sobre o seu trabalho?
+
+#### Comunicação · `associado`
+
+*Competência:* `comp-b4-comunicacao` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-com-1` Expressa suas ideias de forma clara, objetiva e estruturada.
+- `q-b4-com-2` Ouve ativamente e demonstra compreensão sobre o que foi comunicado.
+- `q-b4-com-3` Utiliza canais adequados para cada tipo de mensagem.
+
+Base de diálogo:
+- `q-b4-com-dial` Considerando as interações recentes, como você avalia sua clareza ao passar informações e como garante que o que foi dito foi realmente compreendido?
+
+#### Trabalho em Equipe · `associado`
+
+*Competência:* `comp-b4-trabalho-equipe` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-te-1` Colabora ativamente com os membros da equipe para atingir objetivos comuns.
+- `q-b4-te-2` Adapta-se às diferentes necessidades e estilos de trabalho dos membros da equipe.
+- `q-b4-te-3` Oferece ajuda aos colegas quando percebe a oportunidade.
+- `q-b4-te-4` Recebe feedbacks com abertura e positividade.
+
+Base de diálogo:
+- `q-b4-te-dial` Pensando nos projetos mais recentes, como foi sua atuação em conjunto com o time e como isso funcionou no andamento do trabalho?
+
+#### Relacionamento Interpessoal · `associado`
+
+*Competência:* `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
+- `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
+- `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
+
+Base de diálogo:
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
+
+#### Cordialidade · `associado`
+
+*Competência:* `comp-b4-cordialidade` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-cor-1` Estabelece relacionamento gentil e cuidadoso com todas as pessoas.
+- `q-b4-cor-2` Pratica tolerância ao lidar com diferenças de opinião.
+
+Base de diálogo:
+- `q-b4-cor-dial` Pensando nas situações recentes do trabalho, como foi sua postura no trato diário com as pessoas e como isso funcionou na prática?
+
+#### Disponibilidade (Interna) · `associado`
+
+*Competência:* `comp-b4-disponibilidade-interna` &nbsp;·&nbsp; *Categoria:* `bloco4`
+
+Afirmações técnicas:
+- `q-b4-di-1` Demonstra prontidão para ajudar e oferecer suporte quando necessário.
+- `q-b4-di-2` Responde prontamente às solicitações e pedidos de apoio da equipe.
+
+Base de diálogo:
+- `q-b4-di-dial` Considerando as demandas internas mais recentes, como você se mostrou disponível para apoiar a equipe?
+
+#### Comprometimento · `associado`
+
+*Competência:* `comp-b5-comprometimento` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
+
+Base de diálogo:
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
+
+#### Comportamento Ético · `associado`
+
+*Competência:* `comp-b5-comportamento-etico` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-ce-1` Age de acordo com princípios éticos e valores morais.
+- `q-b5-ce-2` Adota postura de discrição em relação aos assuntos da empresa.
+
+Base de diálogo:
+- `q-b5-ce-dial` Pensando nas decisões e situações recentes do trabalho, como você considerou aspectos éticos no dia a dia e como avalia os efeitos dessas escolhas?
+
+#### Sigilo · `associado`
+
+*Competência:* `comp-b5-sigilo` &nbsp;·&nbsp; *Categoria:* `bloco5`
+
+Afirmações técnicas:
+- `q-b5-sig-1` Mantém informações confidenciais em absoluto sigilo.
+- `q-b5-sig-2` Age com discrição em assuntos sensíveis.
+
+Base de diálogo:
+- `q-b5-sig-dial` Considerando situações recentes que envolveram informações sensíveis ou assuntos delicados, como você lidou com essas informações e como avalia os resultados dessa postura?
+
+#### Aprendizado Contínuo · `associado`
+
+*Competência:* `comp-b6-aprendizado-continuo` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-ac-1` Busca aprendizado contínuo para aprimorar sua atuação.
+- `q-b6-ac-2` Demonstra interesse em desenvolver novas habilidades.
+
+Base de diálogo:
+- `q-b6-ac-dial` Pensando nas experiências de trabalho mais recentes, como você buscou aprender coisas novas e como avalia os efeitos disso?
+
+#### Proatividade no Desenvolvimento · `associado`
+
+*Competência:* `comp-b6-proatividade-desenvolvimento` &nbsp;·&nbsp; *Categoria:* `bloco6`
+
+Afirmações técnicas:
+- `q-b6-pd-1` Busca oportunidades de crescimento dentro da organização.
+- `q-b6-pd-2` Age de forma ativa para evoluir profissionalmente.
+
+Base de diálogo:
+- `q-b6-pd-dial` Considerando as oportunidades recentes no trabalho, como você tomou iniciativas para se desenvolver profissionalmente?
+
+### Atividades do cargo (Avaliação de Atividades)
+
+1. Receber as demandas iniciais de projetos já contratados e organizar as informações recebidas para início do fluxo interno.
+2. Realizar contatos iniciais com clientes, conforme orientação da PMO, para solicitar, confirmar e registrar informações, documentos e materiais necessários ao início do projeto.
+3. Conferir se a documentação, os dados e os materiais de entrada do projeto estão completos para continuidade do processo.
+4. Identificar e solicitar pendências de informações, documentos ou definições necessárias para abertura e andamento do projeto.
+5. Apoiar na atualização do status dos projetos no ClickUp, garantindo visibilidade sobre etapa, responsável e pendências.
+6. Alocar os documentos e materiais dos projetos nos locais corretos, garantindo organização e fácil rastreabilidade.
+7. Cumprir os padrões internos de organização, nomenclatura, registro e controle de projetos adotados pelo escritório.
+8. Compatibilizar imagens com levantamento recebidos;
+9. Estudar os cadernos técnicos da franquia e dos fornecedores, a fim de realizar análises de levantamento conforme os padrões da marca.
+10. Analisar e aprovar os checklists de levantamento das lojas no PNR.
+11. Baixar os arquivos necessários no PNR para executar a análise do material enviado, comparando desenhos com fotos e vídeos para verificar a coerência do levantamento com a realidade da loja.
+12. Realizar contato com o cliente via WhatsApp, quando houver reprovação do levantamento, para esclarecer dúvidas, orientar o franqueado e solicitar o reenvio correto das informações, conforme o fluxo definido.
+13. Responder às dúvidas da equipe sobre o status dos projetos, quando solicitado, por meio do ClickUp.
+14. Criar e organizar as pastas das lojas na rede.
+15. Solicitar, acompanhar, baixar do Drive e salvar os arquivos Fullset nas pastas correspondentes de cada loja na rede.
+16. Gerar arquivos em PDF dos materiais Fullset e armazená-los nas pastas das lojas.
+17. Responder às dúvidas dos franqueados por e-mail e WhatsApp.
+18. Acompanhar os pedidos de correção de levantamento e cobrar os retornos necessários, quando aplicável.
+
+---
+
+**Totais:** 14 cargos · 176 vínculos cargo–competência · 237 atividades.

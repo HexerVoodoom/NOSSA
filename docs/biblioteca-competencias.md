@@ -2,7 +2,9 @@
 
 Biblioteca completa das competências avaliadas na Arquitetura de Carreira, organizada por categoria (bloco). Cada competência reúne suas **afirmações técnicas** (avaliação tradicional) e sua **base de diálogo** (pergunta dialógica), além das tags de cargo (`associado` e/ou `liderança`) que determinam para quais cargos ela é filtrada e exibida nos fluxos de avaliação.
 
-> As tags refletem os cargos padrão cadastrados em `src/lib/defaultRoles.ts`. Uma competência marcada `associado` e `liderança` é usada por cargos dos dois tipos; uma competência sem cargo padrão vinculado está disponível na biblioteca mas ainda não é usada por nenhum cargo padrão — pode ser atribuída livremente a novos cargos.
+> **Fonte:** dados exportados do aplicativo em `2026-08-13T21:03:51.846Z` (`obravivaequipecargoscompetenciasavaliacoes20260813_4.json`). Este arquivo é atualizado sempre que houver novos itens no export.
+
+> As tags refletem os cargos atualmente cadastrados no app (padrão + criados pelo usuário). Uma competência marcada `associado` e `liderança` é usada por cargos dos dois tipos; uma competência sem cargo vinculado está disponível na biblioteca mas não é usada por nenhum cargo no momento.
 
 ## Sumário
 
@@ -23,8 +25,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Agilidade
 
-**ID:** `comp-b1-agilidade` &nbsp;·&nbsp; **Tags de cargo:** `associado`
-**Cargos padrão que utilizam esta competência:** Auxiliar de Serviços Gerais
+**ID:** `comp-b1-agilidade` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Auxiliar Administrativo Financeiro / Gestão de Obras, Auxiliar de Serviços Gerais, Coordenador(a) de Projetos, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -40,7 +42,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Capacidade de Execução
 
 **ID:** `comp-b1-capacidade-execucao` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager, Administrador, Coordenadora de Projetos, Desenvolvedor de Projetos Executivos, Gestor de Obra
+**Cargos que utilizam esta competência:** 3D Manager, Administrativo, Desenvolvedor(a) de Projetos, Digitalização, Estagiário(a) Desenvolvimento de Projetos, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -55,7 +57,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Organização
 
 **ID:** `comp-b1-organizacao` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager, Administrador, Auxiliar de Serviços Gerais, Coordenadora de Projetos, Desenvolvedor de Projetos Executivos, Financeiro, Gerente Comercial, Gestor de Obra
+**Cargos que utilizam esta competência:** 3D Manager, Administrativo, Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Auxiliar Administrativo Financeiro / Gestão de Obras, Auxiliar de Serviços Gerais, Coordenador(a) de Projetos, Desenvolvedor(a) de Projetos, Digitalização, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos, Financeiro, Gerente Comercial, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -71,7 +73,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Planejamento
 
 **ID:** `comp-b1-planejamento` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager, Administrador, Coordenadora de Projetos, Desenvolvedor de Projetos Executivos, Financeiro, Gerente Comercial
+**Cargos que utilizam esta competência:** 3D Manager, Administrativo, Desenvolvedor(a) de Projetos, Financeiro, Gerente Comercial
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -86,7 +88,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Priorização
 
-**ID:** `comp-b1-priorizacao` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b1-priorizacao` &nbsp;·&nbsp; **Tags de cargo:** `associado`
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -100,7 +103,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Orientação para Resultado
 
 **ID:** `comp-b1-orientacao-resultado` &nbsp;·&nbsp; **Tags de cargo:** `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager
+**Cargos que utilizam esta competência:** 3D Manager, Coordenador(a) de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -117,7 +120,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Atenção Concentrada
 
 **ID:** `comp-b1-atencao-concentrada` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** Administrador, Coordenadora de Projetos, Desenvolvedor de Projetos Executivos, Financeiro, Gestor de Obra
+**Cargos que utilizam esta competência:** Administrativo, Desenvolvedor(a) de Projetos, Financeiro, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -132,7 +135,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Detalhista
 
 **ID:** `comp-b1-detalhista` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager, Auxiliar de Serviços Gerais, Coordenadora de Projetos
+**Cargos que utilizam esta competência:** 3D Manager, Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Auxiliar Administrativo Financeiro / Gestão de Obras, Auxiliar de Serviços Gerais, Coordenador(a) de Projetos, Digitalização, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -153,8 +156,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Raciocínio Lógico
 
-**ID:** `comp-b2-raciocinio-logico` &nbsp;·&nbsp; **Tags de cargo:** `associado`
-**Cargos padrão que utilizam esta competência:** Desenvolvedor de Projetos Executivos
+**ID:** `comp-b2-raciocinio-logico` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Coordenador(a) de Projetos, Desenvolvedor(a) de Projetos, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -169,7 +172,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Raciocínio Abstrato
 
 **ID:** `comp-b2-raciocinio-abstrato` &nbsp;·&nbsp; **Tags de cargo:** `associado`
-**Cargos padrão que utilizam esta competência:** Desenvolvedor de Projetos Executivos
+**Cargos que utilizam esta competência:** Desenvolvedor(a) de Projetos, Digitalização, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -182,8 +185,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Capacidade Investigativa
 
-**ID:** `comp-b2-capacidade-investigativa` &nbsp;·&nbsp; **Tags de cargo:** `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager, Coordenadora de Projetos
+**ID:** `comp-b2-capacidade-investigativa` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** 3D Manager, Coordenador(a) de Projetos, Estagiário(a) - Gestão de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -197,8 +200,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Senso Crítico
 
-**ID:** `comp-b2-senso-critico` &nbsp;·&nbsp; **Tags de cargo:** `liderança`
-**Cargos padrão que utilizam esta competência:** Gestor de Obra
+**ID:** `comp-b2-senso-critico` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Coordenador(a) de Projetos, Digitalização, Estagiário(a) Desenvolvimento de Projetos, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -212,7 +215,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Resolução de Problemas
 
 **ID:** `comp-b2-resolucao-problemas` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** Administrador, Coordenadora de Projetos, Desenvolvedor de Projetos Executivos, Financeiro, Gerente Comercial, Gestor de Obra
+**Cargos que utilizam esta competência:** Administrativo, Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Coordenador(a) de Projetos, Desenvolvedor(a) de Projetos, Estagiário(a) Desenvolvimento de Projetos, Financeiro, Gerente Comercial, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -227,7 +230,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Tomada de Decisão
 
 **ID:** `comp-b2-tomada-decisao` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** Administrador, Coordenadora de Projetos, Desenvolvedor de Projetos Executivos, Financeiro, Gerente Comercial, Gestor de Obra
+**Cargos que utilizam esta competência:** Administrativo, Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Coordenador(a) de Projetos, Desenvolvedor(a) de Projetos, Digitalização, Financeiro, Gerente Comercial, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -248,8 +251,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Foco no Cliente
 
-**ID:** `comp-b3-foco-cliente` &nbsp;·&nbsp; **Tags de cargo:** `liderança`
-**Cargos padrão que utilizam esta competência:** Coordenadora de Projetos
+**ID:** `comp-b3-foco-cliente` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras, Auxiliar Administrativo Financeiro / Gestão de Obras, Coordenador(a) de Projetos, Digitalização, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -262,8 +265,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Atenção ao Cliente
 
-**ID:** `comp-b3-atencao-cliente` &nbsp;·&nbsp; **Tags de cargo:** `liderança`
-**Cargos padrão que utilizam esta competência:** Gerente Comercial
+**ID:** `comp-b3-atencao-cliente` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Coordenador(a) de Projetos, Estagiário(a) - Gestão de Projetos, Gerente Comercial
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -277,7 +280,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Negociação / Persuasão
 
 **ID:** `comp-b3-negociacao` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** Financeiro, Gestor de Obra
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras, Auxiliar Administrativo Financeiro / Gestão de Obras, Coordenador(a) de Projetos, Digitalização, Financeiro, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -299,7 +302,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Comunicação
 
 **ID:** `comp-b4-comunicacao` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager, Administrador, Auxiliar de Serviços Gerais, Desenvolvedor de Projetos Executivos, Financeiro
+**Cargos que utilizam esta competência:** 3D Manager, Administrativo, Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Auxiliar Administrativo Financeiro / Gestão de Obras, Auxiliar de Serviços Gerais, Coordenador(a) de Projetos, Desenvolvedor(a) de Projetos, Digitalização, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos, Financeiro
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -313,8 +316,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Trabalho em Equipe
 
-**ID:** `comp-b4-trabalho-equipe` &nbsp;·&nbsp; **Tags de cargo:** `associado`
-**Cargos padrão que utilizam esta competência:** Desenvolvedor de Projetos Executivos
+**ID:** `comp-b4-trabalho-equipe` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Auxiliar Administrativo Financeiro / Gestão de Obras, Coordenador(a) de Projetos, Desenvolvedor(a) de Projetos, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -330,22 +333,22 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Relacionamento Interpessoal
 
 **ID:** `comp-b4-relacionamento-interpessoal` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager, Administrador, Auxiliar de Serviços Gerais, Coordenadora de Projetos, Financeiro, Gerente Comercial, Gestor de Obra
+**Cargos que utilizam esta competência:** 3D Manager, Administrativo, Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Auxiliar Administrativo Financeiro / Gestão de Obras, Auxiliar de Serviços Gerais, Coordenador(a) de Projetos, Digitalização, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos, Financeiro, Gerente Comercial, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
-- `q-b4-ri-1` Mantém bons relacionamentos com colegas e liderança.
+- `q-b4-ri-1` Estabelece e mantém relações cordiais com colegas, líderes e clientes.
 - `q-b4-ri-2` Demonstra aceitação e respeito pelas diferenças.
 - `q-b4-ri-3` Contribui para a construção de um clima organizacional favorável.
 
 **Base de diálogo (pergunta dialógica):**
 
-- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas de diferentes perfis e como avalia o impacto disso no ambiente?
+- `q-b4-ri-dial` Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?
 
 ### Cordialidade
 
-**ID:** `comp-b4-cordialidade` &nbsp;·&nbsp; **Tags de cargo:** `liderança`
-**Cargos padrão que utilizam esta competência:** Gerente Comercial
+**ID:** `comp-b4-cordialidade` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Analista de Projetos, Estagiário(a) - Gestão de Projetos, Gerente Comercial
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -358,8 +361,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Empatia
 
-**ID:** `comp-b4-empatia` &nbsp;·&nbsp; **Tags de cargo:** `liderança`
-**Cargos padrão que utilizam esta competência:** Coordenadora de Projetos
+**ID:** `comp-b4-empatia` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo vinculado`
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -373,7 +375,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Resolução de Conflitos
 
-**ID:** `comp-b4-resolucao-conflitos` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b4-resolucao-conflitos` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo vinculado`
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -386,7 +388,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Disponibilidade (Interna)
 
-**ID:** `comp-b4-disponibilidade-interna` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b4-disponibilidade-interna` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Auxiliar Administrativo Financeiro / Gestão de Obras, Coordenador(a) de Projetos, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -408,21 +411,21 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Comprometimento
 
 **ID:** `comp-b5-comprometimento` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** Administrador, Auxiliar de Serviços Gerais, Financeiro, Gerente Comercial
+**Cargos que utilizam esta competência:** Administrativo, Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Auxiliar Administrativo Financeiro / Gestão de Obras, Auxiliar de Serviços Gerais, Coordenador(a) de Projetos, Digitalização, Estagiário(a) - Gestão de Projetos, Financeiro, Gerente Comercial
 
 **Afirmações técnicas (avaliação tradicional):**
 
-- `q-b5-comp-1` Assume as responsabilidades do seu cargo.
-- `q-b5-comp-2` Cumpre combinados e prazos acordados.
+- `q-b5-comp-1` Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.
+- `q-b5-comp-2` Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.
 
 **Base de diálogo (pergunta dialógica):**
 
-- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você lidou com responsabilidades, prazos e combinados assumidos, e como avalia o resultado disso?
+- `q-b5-comp-dial` Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?
 
 ### Responsabilidade
 
 **ID:** `comp-b5-responsabilidade` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** Auxiliar de Serviços Gerais, Gerente Comercial
+**Cargos que utilizam esta competência:** Auxiliar de Serviços Gerais, Estagiário(a) Desenvolvimento de Projetos, Gerente Comercial
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -435,13 +438,13 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Comportamento Ético
 
-**ID:** `comp-b5-comportamento-etico` &nbsp;·&nbsp; **Tags de cargo:** `associado`
-**Cargos padrão que utilizam esta competência:** Auxiliar de Serviços Gerais, Financeiro
+**ID:** `comp-b5-comportamento-etico` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras, Auxiliar Administrativo Financeiro / Gestão de Obras, Auxiliar de Serviços Gerais, Coordenador(a) de Projetos, Estagiário(a) - Gestão de Projetos, Financeiro
 
 **Afirmações técnicas (avaliação tradicional):**
 
 - `q-b5-ce-1` Age de acordo com princípios éticos e valores morais.
-- `q-b5-ce-2` Toma decisões baseadas em princípios éticos sólidos.
+- `q-b5-ce-2` Adota postura de discrição em relação aos assuntos da empresa.
 
 **Base de diálogo (pergunta dialógica):**
 
@@ -450,7 +453,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Confiabilidade
 
 **ID:** `comp-b5-confiabilidade` &nbsp;·&nbsp; **Tags de cargo:** `associado`
-**Cargos padrão que utilizam esta competência:** Financeiro
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras, Estagiário(a) Desenvolvimento de Projetos, Financeiro
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -463,7 +466,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Transparência
 
-**ID:** `comp-b5-transparencia` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b5-transparencia` &nbsp;·&nbsp; **Tags de cargo:** `associado`
+**Cargos que utilizam esta competência:** Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -477,7 +481,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Sigilo
 
 **ID:** `comp-b5-sigilo` &nbsp;·&nbsp; **Tags de cargo:** `associado`
-**Cargos padrão que utilizam esta competência:** Financeiro
+**Cargos que utilizam esta competência:** Estagiário(a) - Gestão de Projetos, Financeiro
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -498,7 +502,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Aprendizado Contínuo
 
-**ID:** `comp-b6-aprendizado-continuo` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b6-aprendizado-continuo` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
+**Cargos que utilizam esta competência:** Auxiliar Administrativo Financeiro / Gestão de Obras, Coordenador(a) de Projetos, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -511,7 +516,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Adaptação às Mudanças
 
-**ID:** `comp-b6-adaptacao-mudancas` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b6-adaptacao-mudancas` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo vinculado`
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -524,7 +529,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Abertura ao Feedback
 
-**ID:** `comp-b6-abertura-feedback` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b6-abertura-feedback` &nbsp;·&nbsp; **Tags de cargo:** `associado`
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -538,7 +544,7 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 ### Autodesenvolvimento
 
 **ID:** `comp-b6-autodesenvolvimento` &nbsp;·&nbsp; **Tags de cargo:** `associado` `liderança`
-**Cargos padrão que utilizam esta competência:** 3D Manager, Coordenadora de Projetos, Desenvolvedor de Projetos Executivos, Gerente Comercial, Gestor de Obra
+**Cargos que utilizam esta competência:** 3D Manager, Coordenador(a) de Projetos, Desenvolvedor(a) de Projetos, Estagiário(a) Desenvolvimento de Projetos, Gerente Comercial, Gestor de Obra
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -551,7 +557,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Visão de Futuro
 
-**ID:** `comp-b6-visao-futuro` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b6-visao-futuro` &nbsp;·&nbsp; **Tags de cargo:** `associado`
+**Cargos que utilizam esta competência:** Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
@@ -564,7 +571,8 @@ Biblioteca completa das competências avaliadas na Arquitetura de Carreira, orga
 
 ### Proatividade no Desenvolvimento
 
-**ID:** `comp-b6-proatividade-desenvolvimento` &nbsp;·&nbsp; **Tags de cargo:** `sem cargo padrão vinculado`
+**ID:** `comp-b6-proatividade-desenvolvimento` &nbsp;·&nbsp; **Tags de cargo:** `associado`
+**Cargos que utilizam esta competência:** Administrativo/ Financeiro / Gestão de Obras, Analista de Projetos, Auxiliar Administrativo Financeiro / Gestão de Obras, Estagiário(a) - Gestão de Projetos, Estagiário(a) Desenvolvimento de Projetos
 
 **Afirmações técnicas (avaliação tradicional):**
 
