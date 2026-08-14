@@ -20,6 +20,7 @@ import { TutorialView } from './components/TutorialView';
 import { Role, Member, Evaluation, SavedWork, EvaluationType } from './types';
 import { ElementUploadView } from './components/ElementUploadView';
 import { storage } from './lib/storage';
+import { toast } from 'sonner';
 
 type AppView = 
   | { type: 'home' }
@@ -57,18 +58,25 @@ export default function App() {
     const leader = members.find(m => m.id === leaderId);
     const collaborator = members.find(m => m.id === collaboratorId);
     
+    // Nome completo tolerante a sobrenome ausente (lastName é opcional e o
+    // import de JSON não valida nada): sem isso o nome vira "Ana undefined".
+    const fullName = (m: Member | undefined) =>
+      m ? `${m.firstName || ''} ${m.lastName || ''}`.trim() : '';
+
     const evaluation: Evaluation = {
-      id: `eval-${Date.now()}`,
+      // Date.now() sozinho colide em dois cliques no mesmo milissegundo
+      id: `eval-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       roleId: role.id,
       roleName: role.name,
       leaderId,
       collaboratorId,
-      leaderName: leader ? `${leader.firstName} ${leader.lastName}` : '',
-      collaboratorName: collaborator ? `${collaborator.firstName} ${collaborator.lastName}` : '',
+      leaderName: fullName(leader),
+      collaboratorName: fullName(collaborator),
       responses: [],
       createdAt: new Date(),
       completed: false,
-      questionIds: role.questionIds,
+      // Cargos vindos do localStorage podem não ter questionIds
+      questionIds: Array.isArray(role.questionIds) ? role.questionIds : [],
       evaluationType,
     };
     
@@ -91,7 +99,14 @@ export default function App() {
     // Cria backup automático antes de salvar nova avaliação
     storage.createBackup();
     
-    storage.saveEvaluation(completedWork);
+    // storage.saveEvaluation retorna false quando o localStorage falha (cota
+    // cheia, modo privado). Sem checar, a tela navegava para a galeria e o
+    // trabalho era perdido em silêncio.
+    if (!storage.saveEvaluation(completedWork)) {
+      toast.error('Não foi possível salvar a avaliação. Libere espaço e tente novamente.');
+      return;
+    }
+
     storage.clearCurrentEvaluation();
     setView({ type: 'team-gallery' });
   };

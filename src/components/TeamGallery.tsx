@@ -4,7 +4,7 @@ import { storage } from '../lib/storage';
 import { DS, Card } from './DesignSystem';
 import { ArrowLeft, FileText, Filter, Trash2, Calendar, User, Download } from 'lucide-react';
 import { exportToPDF } from '../lib/pdfExport';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
 
 interface TeamGalleryProps {

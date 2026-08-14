@@ -38,7 +38,10 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
       const parsed = JSON.parse(savedCustomElements);
       if (parsed && typeof parsed === 'object') setUploadedElements(parsed);
     } catch (e) {
+      // Silenciar aqui fazia a biblioteca aparecer vazia e o usuário concluir
+      // que os envios sumiram, sem qualquer pista do que houve.
       console.error('Erro ao carregar elementos:', e);
+      alert('Não foi possível carregar os elementos salvos: o conteúdo armazenado está corrompido.');
     }
   }, []);
 

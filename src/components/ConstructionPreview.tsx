@@ -2,6 +2,7 @@ import { SavedWork, AssembledElement } from '../types';
 import { storage } from '../lib/storage';
 import { newBlocks } from '../lib/newBlocks';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
+import { getShapeForIndex } from '../lib/categoryShapes';
 
 // View-model desta tela. Não é um AssembledElement: quando a avaliação ainda
 // não foi montada, os elementos são derivados das respostas e carregam `level`
@@ -20,16 +21,6 @@ interface ConstructionPreviewProps {
   onCreateBuilding: () => void;
 }
 
-// Competency shapes mapping for each category (same as CategoryQuestionFlow)
-// As categorias reais são 'bloco1'..'bloco6' (lib/newBlocks); 'cat1'..'cat6' são legado
-const categoryShapes: Record<string, string[]> = {
-  'bloco1': ['foundation-1', 'foundation-2', 'foundation-3', 'foundation-4', 'foundation-5', 'foundation-6', 'foundation-7', 'foundation-8', 'foundation-9', 'foundation-10'],
-  'bloco2': ['structure-1', 'structure-2', 'structure-3', 'structure-4', 'structure-5', 'structure-6', 'structure-7', 'structure-8', 'structure-9', 'structure-10'],
-  'bloco3': ['wall-1', 'wall-2', 'wall-3', 'wall-4', 'wall-5', 'wall-6', 'wall-7', 'wall-8', 'wall-9', 'wall-10'],
-  'bloco4': ['window-1', 'window-2', 'window-3', 'window-4', 'window-5', 'window-6', 'window-7', 'window-8', 'window-9', 'window-10'],
-  'bloco5': ['detail-1', 'detail-2', 'detail-3', 'detail-4', 'detail-5', 'detail-6', 'detail-7', 'detail-8', 'detail-9', 'detail-10'],
-  'bloco6': ['roof-1', 'roof-2', 'roof-3', 'roof-4', 'roof-5', 'roof-6', 'roof-7', 'roof-8', 'roof-9', 'roof-10'],
-};
 
 export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: ConstructionPreviewProps) {
   const roles = storage.getRoles();
@@ -37,15 +28,12 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
   const allQuestions = getAllQuestionsFromCompetencies();
   
   // Helper to calculate elementId from imageIndex (fallback for old data)
+  // `selectedImageIndex` é índice direto (0..9), não coordenada de grade: o
+  // Math.floor(idx / 5) daqui devolvia sempre o primeiro elemento, anulando a
+  // nota escolhida.
   const getElementIdFromImageIndex = (categoryId: string, imageIndex: number | null | undefined, fallbackElementId: string): string => {
-    // If we already have an elementId and it's not empty, use it
     if (fallbackElementId && fallbackElementId !== '') return fallbackElementId;
-    
-    // Otherwise, try to calculate from imageIndex
-    if (imageIndex === null || imageIndex === undefined) return '';
-    const rowIndex = Math.floor(imageIndex / 5);
-    const shapes = categoryShapes[categoryId] || [];
-    return shapes[rowIndex] || '';
+    return getShapeForIndex(categoryId, imageIndex);
   };
   
   // Ensure assembledElements exists or create from responses

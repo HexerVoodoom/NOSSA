@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { AssembledElement } from '../types';
 import { ElementRenderer } from './ElementRenderer';
+import { normalizeCategoryId } from '../lib/categoryShapes';
 
 interface SelectedElement {
   elementId: string;
@@ -29,13 +30,6 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
   const containerRef = useRef<HTMLDivElement>(null);
   
   const BASE_SIZE = 80;
-
-  // Ids atuais das categorias são 'bloco1'..'bloco6'; 'cat1'..'cat6' são legado.
-  const normalizeCategoryId = (categoryId?: string): string => {
-    if (!categoryId) return 'bloco1';
-    const legacy = /^cat(\d+)$/.exec(categoryId);
-    return legacy ? `bloco${legacy[1]}` : categoryId;
-  };
 
   // Função para obter o z-index baseado na categoria
   // Ordem de sobreposição (de baixo para cima): Piso < Paredes < Colunas < Portas/Janelas < Telhado
@@ -207,7 +201,7 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
             elementId: element.elementId,
             shapeCode: element.shapeCode,
             color: element.color,
-            categoryId: element.categoryId || 'cat1',
+            categoryId: normalizeCategoryId(element.categoryId),
             position: { x, y, z: 0 },
             rotation: 0,
             scale: 1,

@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { FileText, Save, FolderOpen, RotateCcw, X, Check, Download, Upload, AlertTriangle } from 'lucide-react';
 import { storage } from '../lib/storage';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 interface FileManagerProps {
   onReload?: () => void;

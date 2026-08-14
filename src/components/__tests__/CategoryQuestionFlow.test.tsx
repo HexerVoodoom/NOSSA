@@ -115,6 +115,31 @@ describe('CategoryQuestionFlow — fluxo de avaliação', () => {
     expect(screen.getByText('Resolve problemas?')).toBeInTheDocument();
   });
 
+  // Regressão do caminho de RETOMADA, que o teste de avaliação nova não cobria.
+  // Todo registro histórico guarda `selectedImageIndex: 0` mesmo com nota 4, e
+  // `??` não trata 0 como ausente: ao retomar e apenas avançar, a resposta era
+  // regravada com o elemento da nota 1. O índice agora deriva sempre da nota.
+  it('retomar avaliação com índice antigo regrava o elemento correto da nota', () => {
+    const emAndamento = baseEvaluation({
+      responses: [
+        { questionId: 'q1', keywords: ['', '', ''], rating: 4, selectedElementId: 'foundation-1', selectedImageIndex: 0 },
+      ],
+    });
+
+    render(
+      <CategoryQuestionFlow evaluation={emAndamento} onComplete={vi.fn()} onBack={vi.fn()} />
+    );
+
+    // Avança SEM tocar na nota — exatamente o que o usuário faz ao retomar.
+    fireEvent.click(screen.getByRole('button', { name: /próxima seção/i }));
+
+    const salvo = storage.getCurrentEvaluation();
+    const q1 = salvo!.responses.find(r => r.questionId === 'q1')!;
+    expect(q1.rating).toBe(4);
+    expect(q1.selectedImageIndex).toBe(3);
+    expect(q1.selectedElementId).toBe('foundation-4');
+  });
+
   it('acumula respostas das duas seções e chama onComplete ao finalizar', () => {
     const onComplete = vi.fn();
     render(

@@ -21,7 +21,7 @@ import {
   Award,
   Check
 } from 'lucide-react';
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from 'motion/react';
 import svgPaths from "../imports/svg-dp9vj8g4zf";
 import imgHeaderBg from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";

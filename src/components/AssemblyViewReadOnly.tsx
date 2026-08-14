@@ -5,6 +5,7 @@ import { Download } from 'lucide-react';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { storage } from '../lib/storage';
 import { newBlocks as categories } from '../lib/newBlocks';
+import { categoryShapes, normalizeCategoryId } from '../lib/categoryShapes';
 
 // Logos
 import imgLogoTortola from "figma:asset/0049d96aabf7ea4e2a663d5f83ebd360cb225dfd.png";
@@ -17,17 +18,6 @@ interface AssemblyViewReadOnlyProps {
   onBack: () => void;
 }
 
-// Definições de elementos e cores por categoria (mesmas do CategoryQuestionFlow).
-// ATENÇÃO: as categorias reais são 'bloco1'..'bloco6' (ver lib/newBlocks). Chaves
-// 'cat1'..'cat6' são legado e continuam aceitas via normalizeCategoryId().
-const categoryShapes: Record<string, string[]> = {
-  'bloco1': ['foundation-1', 'foundation-2', 'foundation-3', 'foundation-4', 'foundation-5', 'foundation-6', 'foundation-7', 'foundation-8', 'foundation-9', 'foundation-10'],  // Piso
-  'bloco2': ['structure-1', 'structure-2', 'structure-3', 'structure-4', 'structure-5', 'structure-6', 'structure-7', 'structure-8', 'structure-9', 'structure-10'], // Coluna
-  'bloco3': ['wall-1', 'wall-2', 'wall-3', 'wall-4', 'wall-5', 'wall-6', 'wall-7', 'wall-8', 'wall-9', 'wall-10'], // Parede
-  'bloco4': ['door-1', 'door-2', 'door-3', 'door-4', 'door-5', 'door-6', 'door-7', 'door-8', 'door-9', 'door-10'], // Porta
-  'bloco5': ['window-1', 'window-2', 'window-3', 'window-4', 'window-5', 'window-6', 'window-7', 'window-8', 'window-9', 'window-10'], // Janela
-  'bloco6': ['roof-1', 'roof-2', 'roof-3', 'roof-4', 'roof-5', 'roof-6', 'roof-7', 'roof-8', 'roof-9', 'roof-10'], // Telhado
-};
 
 const categoryColors: Record<string, string[]> = {
   'bloco1': ['#3e4e5c', '#516b7a', '#7e9ba8', '#cdbea7', '#e07a5f'],
@@ -38,7 +28,6 @@ const categoryColors: Record<string, string[]> = {
   'bloco6': ['#1a1a2e', '#0f3460', '#16213e', '#e94560', '#f39c12'],
 };
 
-const DEFAULT_CATEGORY_ID = 'bloco1';
 
 // Datas inválidas (registros importados) virariam "Invalid Date" na tela e no PDF
 export function formatDate(value?: string | Date | null): string {
@@ -47,13 +36,7 @@ export function formatDate(value?: string | Date | null): string {
   return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('pt-BR');
 }
 
-// Aceita ids atuais ('bloco3'), legados ('cat3') e ausentes.
-export function normalizeCategoryId(categoryId?: string | null): string {
-  if (!categoryId) return DEFAULT_CATEGORY_ID;
-  const legacy = /^cat(\d+)$/.exec(categoryId);
-  const normalized = legacy ? `bloco${legacy[1]}` : categoryId;
-  return categoryShapes[normalized] ? normalized : DEFAULT_CATEGORY_ID;
-}
+
 
 // Converte cor hex (#rgb ou #rrggbb) em canais 0-255. Qualquer valor inválido
 // cairia como NaN em setDrawColor/setTextColor e corromperia o PDF.

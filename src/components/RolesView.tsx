@@ -3,7 +3,7 @@ import { Role } from '../types';
 import { storage } from '../lib/storage';
 import { Trash2, Edit, Edit2, UserCheck, Users, User, ArrowLeft, FileText, Building2, Plus, Filter, ListChecks, FileDown } from 'lucide-react';
 import { exportRoleToPDF } from '../lib/pdfExport';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { DS, Card } from './DesignSystem';
 import svgPaths from "../imports/svg-dp9vj8g4zf";

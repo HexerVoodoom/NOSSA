@@ -116,8 +116,25 @@ function safeParse<T>(key: string, fallback: T): T {
   try {
     return JSON.parse(raw) as T;
   } catch (error) {
+    // Devolver o fallback faz a tela dizer "você não tem nada salvo", e a
+    // próxima gravação sobrescreve o conteúdo corrompido de vez. Guardamos uma
+    // cópia crua antes, para que o dado continue recuperável à mão.
+    preserveCorrupted(key, raw);
     console.error(`Erro ao ler "${key}" do localStorage, usando valor padrão:`, error);
     return fallback;
+  }
+}
+
+// Copia o valor ilegível para uma chave paralela, uma vez por chave corrompida.
+function preserveCorrupted(key: string, raw: string): void {
+  const backupKey = `${key}-corrompido`;
+  try {
+    if (localStorage.getItem(backupKey)) return;
+    localStorage.setItem(backupKey, raw);
+    console.error(`Conteúdo ilegível de "${key}" preservado em "${backupKey}".`);
+  } catch {
+    // Sem espaço para o backup: seguimos com o fallback, sem mascarar o erro
+    // original já registrado por quem chamou.
   }
 }
 
@@ -270,9 +287,9 @@ export const storage = {
     return safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
   },
   
-  deleteRole(roleId: string): void {
+  deleteRole(roleId: string): boolean {
     const roles = this.getRoles().filter(r => r.id !== roleId);
-    safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
+    return safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
   },
   
   // Evaluations
@@ -291,9 +308,9 @@ export const storage = {
     return safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
   },
   
-  deleteEvaluation(evaluationId: string): void {
+  deleteEvaluation(evaluationId: string): boolean {
     const evaluations = this.getEvaluations().filter(e => e.id !== evaluationId);
-    safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
+    return safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
   },
   
   // Current evaluation (in progress)
@@ -301,8 +318,8 @@ export const storage = {
     return safeParse<Evaluation | null>(STORAGE_KEYS.CURRENT_EVALUATION, null);
   },
   
-  saveCurrentEvaluation(evaluation: Evaluation): void {
-    safeSetItem(STORAGE_KEYS.CURRENT_EVALUATION, JSON.stringify(evaluation));
+  saveCurrentEvaluation(evaluation: Evaluation): boolean {
+    return safeSetItem(STORAGE_KEYS.CURRENT_EVALUATION, JSON.stringify(evaluation));
   },
   
   clearCurrentEvaluation(): void {
@@ -314,8 +331,8 @@ export const storage = {
     return safeParse<SectionImages>(STORAGE_KEYS.SECTION_IMAGES, {});
   },
   
-  saveSectionImages(sectionImages: SectionImages): void {
-    safeSetItem(STORAGE_KEYS.SECTION_IMAGES, JSON.stringify(sectionImages));
+  saveSectionImages(sectionImages: SectionImages): boolean {
+    return safeSetItem(STORAGE_KEYS.SECTION_IMAGES, JSON.stringify(sectionImages));
   },
   
   // Members
@@ -334,9 +351,9 @@ export const storage = {
     return safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
   },
   
-  deleteMember(memberId: string): void {
+  deleteMember(memberId: string): boolean {
     const members = this.getMembers().filter(m => m.id !== memberId);
-    safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
+    return safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
   },
   
   // Visual Mode
@@ -347,8 +364,8 @@ export const storage = {
     return data === 'geometric' || data === 'architectural' || data === 'images' ? data : 'images';
   },
   
-  saveVisualMode(mode: 'geometric' | 'architectural' | 'images'): void {
-    safeSetItem(STORAGE_KEYS.VISUAL_MODE, mode);
+  saveVisualMode(mode: 'geometric' | 'architectural' | 'images'): boolean {
+    return safeSetItem(STORAGE_KEYS.VISUAL_MODE, mode);
   },
   
   // Competencies

@@ -3,7 +3,7 @@ import { Member, Role } from '../types';
 import { storage } from '../lib/storage';
 import { DS, Button, Card } from './DesignSystem';
 import { ArrowLeft, ChevronDown, UserCircle } from 'lucide-react';
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 
 interface MemberFormProps {
   member: Member | null;
@@ -24,9 +24,15 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
   const birthDateId = useId();
   const startDateId = useId();
 
+  // `member` pode chegar como um esqueleto vazio (id '') vindo do botão
+  // "Novo membro": nesse caso é criação, não edição.
+  const isEditing = !!member?.id;
+
   const formatDateForInput = (date: Date | string | undefined): string => {
     if (!date) return '';
     const d = new Date(date);
+    // Data inválida gerava "NaN-NaN-NaN" no input type="date"
+    if (Number.isNaN(d.getTime())) return '';
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
@@ -128,13 +134,19 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
     e.preventDefault();
     if (!validate()) return;
     
-    const createDateWithoutTimezone = (dateString: string): Date => {
+    // Constrói a data no fuso local: `new Date('YYYY-MM-DD')` é interpretado
+    // como UTC e volta um dia atrás em fusos negativos.
+    const createDateWithoutTimezone = (dateString: string): Date | undefined => {
       const [year, month, day] = dateString.split('-').map(Number);
-      return new Date(year, month - 1, day);
+      if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return undefined;
+      const d = new Date(year, month - 1, day);
+      return Number.isNaN(d.getTime()) ? undefined : d;
     };
-    
+
     const newMember: Member = {
-      id: member?.id || `member-${Date.now()}`,
+      // Date.now() sozinho colide em dois cadastros no mesmo milissegundo
+      // (ids duplicados, key do React repetida e edição no membro errado)
+      id: member?.id || `member-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim() || undefined,
       birthDate: formData.birthDate ? createDateWithoutTimezone(formData.birthDate) : undefined,
@@ -142,9 +154,15 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
       position: formData.position.trim(),
       createdAt: member?.createdAt || new Date(),
     };
-    
-    storage.saveMember(newMember);
-    toast.success(member ? 'Membro atualizado' : 'Membro adicionado');
+
+    // storage.saveMember retorna false quando a escrita falha: antes o toast de
+    // sucesso aparecia mesmo sem nada ter sido salvo.
+    if (!storage.saveMember(newMember)) {
+      toast.error('Não foi possível salvar o membro. Libere espaço e tente novamente.');
+      return;
+    }
+
+    toast.success(isEditing ? 'Membro atualizado' : 'Membro adicionado');
     onSave();
   };
   
@@ -156,10 +174,10 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
             <button type="button" onClick={onBack} aria-label="Voltar" className={DS.buttons.ghost}>
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className={DS.typography.cardTitle}>{member ? 'Editar Perfil' : 'Novo Membro'}</h1>
+            <h1 className={DS.typography.cardTitle}>{isEditing ? 'Editar Perfil' : 'Novo Membro'}</h1>
           </div>
           <Button onClick={handleSubmit}>
-            {member ? 'Salvar Alterações' : 'Adicionar Membro'}
+            {isEditing ? 'Salvar Alterações' : 'Adicionar Membro'}
           </Button>
         </div>
       </nav>
@@ -187,7 +205,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                   aria-invalid={!!errors.firstName}
                   aria-describedby={errors.firstName ? `${firstNameId}-error` : undefined}
                   value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                   className={DS.inputs.base + (errors.firstName ? ' border-red-200 bg-red-50' : '')}
                   placeholder="Ex: João"
                 />
@@ -200,7 +218,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                   id={lastNameId}
                   type="text"
                   value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                   className={DS.inputs.base}
                   placeholder="Ex: Silva"
                 />
@@ -214,7 +232,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                   id={birthDateId}
                   type="date"
                   value={formData.birthDate}
-                  onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, birthDate: e.target.value }))}
                   className={DS.inputs.base}
                 />
               </div>
@@ -224,7 +242,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                   id={startDateId}
                   type="date"
                   value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
                   className={DS.inputs.base}
                 />
               </div>

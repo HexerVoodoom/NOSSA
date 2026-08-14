@@ -152,11 +152,94 @@ e campos opcionais de `Member`/`Role`).
 
 ## Fora de escopo desta rodada (registrado, não tratado)
 
-- `src/imports/*` (≈30 arquivos `svg-*.ts` + `Frame43.tsx`) também aparecem como
-  inalcançáveis pelo grafo. **Não foram deletados** — precisam de uma verificação
-  própria, já que assets de SVG do Figma podem ser referenciados por caminhos
-  não estáticos. Tratar em rodada separada.
+- ~~`src/imports/*`~~ — **resolvido na rodada seguinte, ver seção "Rodada 2" abaixo.**
 - `src/components/figma/ImageWithFallback.tsx` também está inalcançável hoje; mantido
   pelo mesmo motivo (é o fallback padrão do export, provavelmente útil no item 2).
+  **Continua não tratado** — não é de propriedade desta rodada.
 - Chunk `vendor-pdf` de 1,54 MB (`jspdf` + `html2canvas`). Já é carregado via
   `import()` dinâmico, então não bloqueia a primeira renderização — custo aceitável hoje.
+
+---
+
+# Rodada 2 — verificação de `src/imports/` e poda de dependências
+
+Método: grafo de alcançabilidade reconstruído a partir de `src/main.tsx`, resolvendo
+extensões implícitas (`.ts`, `.tsx`, `/index.ts`) e o alias `@/` do `vite.config.ts`,
+somado a um grep textual por `svg-` e `Frame43` em todo `src/` (incluindo
+`src/**/__tests__/`, que o grafo a partir da entry não cobre). As duas buscas
+convergiram no mesmo resultado — é isso que dá confiança para deletar.
+
+## `src/imports/` — feito
+
+Apenas **2** dos 33 arquivos são alcançáveis:
+
+| Arquivo | Importado por |
+|---|---|
+| `svg-1j9eir7tjm.ts` | `components/CompetenciesView.tsx` |
+| `svg-dp9vj8g4zf.ts` | `components/RolesView.tsx`, `RoleEditor.tsx`, `MembersView.tsx` |
+
+Os outros **31** (30 `svg-*.ts` + `Frame43.tsx`) foram deletados: **67.150 bytes**.
+Nenhum deles era alvo de import dinâmico, template string ou `import.meta.glob`
+— não há nenhum caminho de resolução não estático neste repo, o que era exatamente
+a dúvida que travou a rodada 1.
+
+## Dependências — feito
+
+Os 37 candidatos da rodada 1 foram **re-verificados um a um** contra o código atual,
+buscando o nome nu do pacote (não o especificador com sufixo `@versão`, que quebra
+o grep ingênuo). **Zero referências para os 37** → todos removidos:
+os 26 `@radix-ui/*`, `class-variance-authority`, `clsx`, `cmdk`,
+`embla-carousel-react`, `input-otp`, `react-day-picker`, `react-hook-form`,
+`react-resizable-panels`, `recharts`, `tailwind-merge`, `vaul`.
+
+Mantidos, com a razão:
+
+| Pacote | Razão da manutenção |
+|---|---|
+| `sonner`, `next-themes` | usados por `components/ui/sonner.tsx` (alcançável via `App.tsx`) |
+| `lucide-react` | ícones, 19 referências |
+| `motion` | animações, 8 referências |
+| `dompurify` | `lib/svgProcessor.ts` — sanitização de SVG, fronteira de segurança |
+| `html2pdf.js` | `import()` dinâmico em `lib/pdfExport.ts` |
+| `html2canvas`, `jspdf` | dependências transitivas de `html2pdf.js`; declaradas direto e nomeadas no `manualChunks` do `vite.config.ts`. Sem referência de import própria, mas removê-las passaria a depender de hoisting do npm para a resolução do chunk `vendor-pdf`. Ganho zero, risco não-zero → ficam. |
+| `tw-animate-css` | `@import` em `src/index.css` |
+
+**Nota de acoplamento:** o `vite.config.ts` ainda tem ~35 entradas de `alias` mapeando
+especificadores versionados (`vaul@1.1.2` → `vaul`) para pacotes que não existem mais.
+São chaves inertes — o Vite só as consulta se alguém importar aquele especificador —
+mas são ruído e uma armadilha (um alias apontando para um pacote ausente falha só em
+tempo de build). Limpá-las é seguro e barato; não foi feito aqui por escopo
+(`vite.config.ts` é de outro dono nesta rodada).
+
+Gates após a mudança: `vitest run` 152/152, `tsc --noEmit` 0 erros, `vite build` OK.
+
+## Observações (não tratadas) — CSS e markdown solto
+
+### `src/index.css` vs `src/styles/globals.css` — complementares, não conflitantes
+
+Não há sobreposição. `index.css` é a **entry** (7 linhas): puxa o Tailwind, o
+`tw-animate-css`, faz `@import './styles/globals.css'` e define um único `@layer base`
+com o reset de altura. `globals.css` (189 linhas) é só **conteúdo**: tokens de tema em
+`:root`/`.dark` e camadas base. Ou seja, `globals.css` nunca é carregado sozinho — só
+através de `index.css`, que é o único CSS importado por `main.tsx`.
+
+Nada a corrigir. O único desconforto é de nomenclatura: "globals" sugere ser a entry,
+quando na verdade a entry é `index.css`. Se for mexer um dia, o rename honesto seria
+`styles/tokens.css`. Baixíssima prioridade — é cosmético.
+
+### Markdown solto em `src/`
+
+`src/` deve conter apenas o que o bundler consome. Nenhum destes é importado por
+nada; são documentos.
+
+| Arquivo | Destino recomendado |
+|---|---|
+| `src/PROMPT_MESTRE_RECONSTRUCAO.md` | `docs/` — artefato de processo/prompt, não código |
+| `src/PLANTA_BAIXA.md` | `docs/` — documento de arquitetura, é onde um novo dev procuraria |
+| `src/VERIFICATION_REPORT.md` | `docs/` — relatório datado; candidato a `docs/archive/` |
+| `src/Attributions.md` | **fica** onde está *ou* vai para a raiz. É atribuição de licença de assets; convenção é raiz do repo (`ATTRIBUTIONS.md`), perto de `LICENSE`, não enterrado em `docs/`. |
+| `src/guidelines/Guidelines.md` | arquivo **vazio** (0 bytes), resíduo do template Figma. Deletar; se as guidelines forem escritas de fato, o lugar é `docs/`. |
+
+Ressalva antes de mover: `PLANTA_BAIXA.md` e `PROMPT_MESTRE_RECONSTRUCAO.md` podem ser
+referenciados por caminho em prompts/automação fora do repo. Mover é trivial de
+reverter (one-way door? não), mas vale um grep no histórico antes.

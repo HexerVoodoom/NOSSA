@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Evaluation, Question, QuestionResponse } from '../types';
 import { storage } from '../lib/storage';
 import { newBlocks as categories } from '../lib/newBlocks';
+import { getShapeForIndex } from '../lib/categoryShapes';
 import { DS, Button, Card } from './DesignSystem';
 import { ArrowLeft, ArrowRight, Check, MessageSquare, ClipboardList, ListChecks } from 'lucide-react';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
@@ -12,14 +13,6 @@ interface CategoryQuestionFlowProps {
   onBack: () => void;
 }
 
-const categoryShapes: Record<string, string[]> = {
-  'bloco1': ['foundation-1', 'foundation-2', 'foundation-3', 'foundation-4', 'foundation-5', 'foundation-6', 'foundation-7', 'foundation-8', 'foundation-9', 'foundation-10'],
-  'bloco2': ['structure-1', 'structure-2', 'structure-3', 'structure-4', 'structure-5', 'structure-6', 'structure-7', 'structure-8', 'structure-9', 'structure-10'],
-  'bloco3': ['wall-1', 'wall-2', 'wall-3', 'wall-4', 'wall-5', 'wall-6', 'wall-7', 'wall-8', 'wall-9', 'wall-10'],
-  'bloco4': ['door-1', 'door-2', 'door-3', 'door-4', 'door-5', 'door-6', 'door-7', 'door-8', 'door-9', 'door-10'],
-  'bloco5': ['window-1', 'window-2', 'window-3', 'window-4', 'window-5', 'window-6', 'window-7', 'window-8', 'window-9', 'window-10'],
-  'bloco6': ['roof-1', 'roof-2', 'roof-3', 'roof-4', 'roof-5', 'roof-6', 'roof-7', 'roof-8', 'roof-9', 'roof-10'],
-};
 
 export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: CategoryQuestionFlowProps) {
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
@@ -89,7 +82,10 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
       data[q.id] = {
         keywords: existingResponse?.keywords || ['', '', ''],
         rating: existingResponse?.rating || 1,
-        selectedImageIndex: existingResponse?.selectedImageIndex ?? (existingResponse?.rating ? existingResponse.rating - 1 : 0),
+        // Derivado da nota, NÃO lido do armazenamento: todo registro antigo
+        // guarda `selectedImageIndex: 0` mesmo com nota 4, e `??` não trata 0
+        // como ausente — retomar uma avaliação regravava o elemento errado.
+        selectedImageIndex: Math.max(0, (existingResponse?.rating || 1) - 1),
       };
     });
     setQuestionData(data);
@@ -119,14 +115,15 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
     categoryQuestions.forEach(q => {
       const qd = questionData[q.id];
       const rating = qd?.rating || 1;
-      const shapes = categoryShapes[currentCategory.id] || [];
-      const imageIdx = qd?.selectedImageIndex ?? (rating - 1);
-      
+      // O índice acompanha a nota sempre: era aqui que o `??` sobre um 0
+      // armazenado regravava o elemento da nota 1 para qualquer nota.
+      const imageIdx = Math.max(0, rating - 1);
+
       newResponses.push({
         questionId: q.id,
         keywords: qd?.keywords || ['', '', ''],
         rating: rating,
-        selectedElementId: shapes[imageIdx] || '',
+        selectedElementId: getShapeForIndex(currentCategory.id, imageIdx),
         selectedImageIndex: imageIdx,
       });
     });

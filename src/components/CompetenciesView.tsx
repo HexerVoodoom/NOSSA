@@ -17,7 +17,7 @@ import {
   ChevronUp,
   ChevronRight
 } from 'lucide-react';
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import svgPaths from "../imports/svg-1j9eir7tjm";
 import imgHeaderBg from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
 import { motion, AnimatePresence } from 'motion/react';
@@ -180,7 +180,10 @@ export function CompetenciesView({ onBack }: CompetenciesViewProps) {
 
     // `storage.saveCompetencies` faz merge (upsert) e nunca remove: salvar a
     // lista já filtrada NÃO excluía nada — a competência voltava ao recarregar.
-    storage.deleteCompetency(id);
+    // A poda dos cargos só pode acontecer depois de a exclusão ter sido
+    // realmente gravada: caso contrário os cargos perdiam as referências
+    // enquanto a competência continuava lá, e o toast dizia que deu certo.
+    if (!persisted(storage.deleteCompetency(id))) return;
     const affectedRoles = removeQuestionIdsFromRoles(questionIds);
     setAllCompetencies(storage.getCompetencies());
     toast.success(
@@ -226,7 +229,7 @@ export function CompetenciesView({ onBack }: CompetenciesViewProps) {
       }
       return comp;
     });
-    storage.saveCompetencies(updatedCompetencies);
+    if (!persisted(storage.saveCompetencies(updatedCompetencies))) return;
     // Também limpa a referência nos cargos (ver removeQuestionIdsFromRoles).
     const affectedRoles = removeQuestionIdsFromRoles([questionId]);
     setAllCompetencies(storage.getCompetencies());

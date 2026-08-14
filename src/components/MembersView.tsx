@@ -45,6 +45,9 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
 
   const formatStartDate = (date: Date | string): string => {
     const d = new Date(date);
+    // Datas vindas do localStorage/import podem ser inválidas: sem a guarda o
+    // card exibia "undefined. NaN".
+    if (Number.isNaN(d.getTime())) return '---';
     const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
     return `${months[d.getMonth()]}. ${d.getFullYear()}`;
   };

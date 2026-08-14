@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { AssemblyViewReadOnly, hexToRgb, normalizeCategoryId, formatDate } from '../AssemblyViewReadOnly';
+import { AssemblyViewReadOnly, hexToRgb, formatDate } from '../AssemblyViewReadOnly';
+import { normalizeCategoryId } from '../../lib/categoryShapes';
 import { DiamondMesh } from '../DiamondMesh';
 import { ElementRenderer } from '../ElementRenderer';
 import type { SavedWork, AssembledElement } from '../../types';
