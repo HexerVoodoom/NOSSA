@@ -50,9 +50,13 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
   ).map(category => {
     const responsesInCategory = responses.filter(r => {
       // Para atividades
+      // Numa avaliação de atividades TODA resposta é de uma atividade. Antes
+      // exigíamos reencontrá-la no cargo: se o cargo fosse excluído (ou a
+      // atividade removida) depois da avaliação, o relatório salvo passava a
+      // exibir 0 perguntas e média 0.0 — os dados continuavam gravados, só
+      // sumiam da tela.
       if (work.evaluationType === 'atividades') {
-        const activity = role?.activities?.find(a => a.id === r.questionId);
-        return activity !== undefined && category.id === 'activities-block';
+        return category.id === 'activities-block';
       }
 
       const question = allQuestions.find(q => q.id === r.questionId) ||
@@ -102,8 +106,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
 
     // Para atividades (legado/fallback)
     if (work.evaluationType === 'atividades') {
-      const activity = role?.activities?.find(a => a.id === r.questionId);
-      if (!activity) return [];
+      // Idem: não descarta as palavras-chave quando o cargo/atividade sumiu.
       return safeKeywords(r);
     }
 
@@ -423,7 +426,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                           .filter((response) => {
                             // Para atividades
                             if (work.evaluationType === 'atividades') {
-                              return role?.activities?.some(a => a.id === response.questionId);
+                              return true;
                             }
 
                             const question = allQuestions.find(q => q.id === response.questionId) ||
@@ -441,7 +444,10 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                           })
                           .map((response, idx) => {
                           const questionText = work.evaluationType === 'atividades'
-                            ? role?.activities?.find(a => a.id === response.questionId)?.text
+                            ? (role?.activities?.find(a => a.id === response.questionId)?.text
+                               // Sem o cargo não há texto: mostra a nota com um
+                               // rótulo neutro em vez de sumir com a linha.
+                               ?? 'Atividade removida do cargo')
                             : (allQuestions.find(q => q.id === response.questionId) ||
                                role?.customQuestions?.find(q => q.id === response.questionId))?.text;
                           
@@ -547,7 +553,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                       >
                         <h3 
                           className="font-bold mb-2"
-                          style={{ color: stat.category.id === 'cat6' ? '#d97706' : stat.category.color }}
+                          style={{ color: stat.category.id === 'bloco6' ? '#d97706' : stat.category.color }}
                         >
                           {stat.category.name}
                         </h3>

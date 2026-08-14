@@ -43,7 +43,12 @@ export function normalizeCategoryId(categoryId?: string | null): string {
 // derivado da nota (nota - 1). Já houve consumidor dividindo por 5, o que
 // devolvia sempre o primeiro elemento independentemente da nota.
 export function getShapeForIndex(categoryId: string | null | undefined, index: number | null | undefined): string {
-  const block = normalizeCategoryId(categoryId);
+  // Usa resolveCategoryId, NÃO normalizeCategoryId: uma categoria sem bloco
+  // (ex.: 'activities-block', da avaliação de atividades) não tem elemento
+  // nenhum. Cair em 'bloco1' aqui gravaria 'foundation-N' em toda resposta de
+  // atividade, que é justamente o "errado com cara de certo" que queremos evitar.
+  const block = resolveCategoryId(categoryId);
+  if (!block) return '';
   const shapes = categoryShapes[block] ?? [];
   if (index === null || index === undefined || !Number.isFinite(index)) return '';
   return shapes[Math.max(0, Math.trunc(index))] ?? '';

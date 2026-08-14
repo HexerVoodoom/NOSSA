@@ -604,7 +604,7 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
                       >
                         <h3 
                           className="font-bold mb-2"
-                          style={{ color: stat.category.id === 'cat6' ? '#d97706' : stat.category.color }}
+                          style={{ color: stat.category.id === 'bloco6' ? '#d97706' : stat.category.color }}
                         >
                           {stat.category.name}
                         </h3>
