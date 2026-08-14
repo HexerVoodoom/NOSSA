@@ -64,3 +64,38 @@ describe('sanitizeSVG — preservação de geometria (regressão)', () => {
     expect(out).toContain('width="10"');
   });
 });
+
+// Vetores medidos com o DOMPurify real, não deduzidos. Uma revisão apontou que
+// o teste original só exercitava caminhos que JÁ estavam fechados; ao rodar as
+// sondas, seis destes passavam de fato. São todos canais de beacon (revelam IP,
+// referrer e que este usuário abriu esta avaliação), não execução de script.
+describe('sanitizeSVG — referências externas', () => {
+  const externos: Array<[string, string]> = [
+    ['mask', '<svg width="10" height="10"><rect width="5" height="5" mask="url(https://evil.example/x.svg#m)"/></svg>'],
+    ['filter', '<svg width="10" height="10"><rect width="5" height="5" filter="url(https://evil.example/f.svg#f)"/></svg>'],
+    ['clip-path', '<svg width="10" height="10"><rect width="5" height="5" clip-path="url(https://evil.example/c.svg#c)"/></svg>'],
+    ['fill', '<svg width="10" height="10"><rect width="5" height="5" fill="url(https://evil.example/p.svg#p)"/></svg>'],
+    ['tag style com @import', '<svg width="10" height="10"><style>@import url(https://evil.example/x.css);</style><rect width="5" height="5"/></svg>'],
+    ['atributo style com url()', '<svg width="10" height="10" style="background-image:url(https://evil.example/b.png)"><rect width="5" height="5"/></svg>'],
+    ['use com xlink:href', '<svg width="10" height="10"><use xlink:href="https://evil.example/x.svg#a"/></svg>'],
+  ];
+
+  it.each(externos)('bloqueia referência externa via %s', (_nome, svg) => {
+    const out = sanitizeSVG(svg);
+    expect(out).not.toContain('evil.example');
+    expect(out).not.toContain('@import');
+  });
+
+  // O contrapeso: barrar url() externo não pode levar junto o url(#fragmento),
+  // que é exatamente o que 5 elementos da biblioteca usam. Foi assim que a
+  // "Obra Montada" ficou em branco da primeira vez.
+  it('preserva url(#fragmento) interno', () => {
+    const out = sanitizeSVG(
+      '<svg width="1874" height="250" viewBox="0 0 1874 250">' +
+        '<rect width="250" height="1874" transform="rotate(90)" fill="#3E4E5B" mask="url(#path-1-inside-1_25_426)"/></svg>'
+    );
+    expect(out).toContain('mask="url(#path-1-inside-1_25_426)"');
+    expect(out).toContain('viewBox="0 0 1874 250"');
+    expect(out).toContain('transform="rotate(90)"');
+  });
+});

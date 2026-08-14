@@ -5,7 +5,7 @@ import { Download } from 'lucide-react';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { storage } from '../lib/storage';
 import { newBlocks as categories } from '../lib/newBlocks';
-import { categoryShapes, normalizeCategoryId } from '../lib/categoryShapes';
+import { categoryShapes, normalizeCategoryId, getShapeForIndex } from '../lib/categoryShapes';
 
 // Logos
 import imgLogoTortola from "figma:asset/0049d96aabf7ea4e2a663d5f83ebd360cb225dfd.png";
@@ -393,11 +393,16 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
       const shapes = categoryShapes[categoryId];
       const colors = categoryColors[categoryId];
 
-      // Usar diretamente o selectedElementId que já foi calculado corretamente
-      const shapeCode = r.selectedElementId || shapes[r.selectedImageIndex!] || shapes[0];
-      // A cor é baseada no rating (nível de 1-5); rating fora da faixa cai no índice 0
+      // A nota é a fonte da verdade da forma; `selectedElementId` gravado NÃO é
+      // confiável. Em defaultLibrary.json há respostas com nota >= 2 gravadas
+      // junto de um id terminado em '-1' (a forma da nota 1): confiar no valor
+      // salvo faz avaliações antigas desenharem a obra errada. O caminho de
+      // escrita já foi corrigido; aqui derivamos de novo na leitura.
       const rating = Number.isFinite(r.rating) ? Math.min(Math.max(Math.round(r.rating), 1), 5) : 1;
       const colorIndex = rating - 1;
+      // getShapeForIndex devolve '' para categoria sem bloco real: nesse caso
+      // caímos no primeiro elemento do bloco normalizado, como antes.
+      const shapeCode = getShapeForIndex(categoryId, colorIndex) || shapes[0];
       const color = colors[colorIndex] || colors[0];
 
       return {

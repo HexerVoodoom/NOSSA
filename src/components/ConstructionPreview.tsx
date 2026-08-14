@@ -27,15 +27,17 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
   const role = roles.find(r => r.id === evaluation.roleId);
   const allQuestions = getAllQuestionsFromCompetencies();
   
-  // Helper to calculate elementId from imageIndex (fallback for old data)
-  // `selectedImageIndex` é índice direto (0..9), não coordenada de grade: o
-  // Math.floor(idx / 5) daqui devolvia sempre o primeiro elemento, anulando a
-  // nota escolhida.
-  const getElementIdFromImageIndex = (categoryId: string, imageIndex: number | null | undefined, fallbackElementId: string): string => {
-    if (fallbackElementId && fallbackElementId !== '') return fallbackElementId;
-    return getShapeForIndex(categoryId, imageIndex);
+  // A forma vem da NOTA, sempre. O `selectedElementId` gravado é tratado como
+  // não confiável: registros antigos (defaultLibrary.json) trazem nota >= 2 com
+  // id terminado em '-1', a forma da nota 1. Preferir o valor salvo — como era
+  // feito aqui — mantinha essas avaliações desenhando o elemento errado.
+  // `selectedImageIndex` é índice direto (0..9), derivado de (nota - 1); o
+  // Math.floor(idx / 5) que já existiu aqui devolvia sempre o primeiro elemento.
+  const getElementIdFromRating = (categoryId: string, rating: number | null | undefined): string => {
+    const level = Number.isFinite(rating) ? Math.min(Math.max(Math.round(rating as number), 1), 5) : 1;
+    return getShapeForIndex(categoryId, level - 1);
   };
-  
+
   // Ensure assembledElements exists or create from responses
   const assembledElements: PreviewElement[] = evaluation.assembledElements && evaluation.assembledElements.length > 0
     ? evaluation.assembledElements
@@ -49,11 +51,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
         const rawCategoryId = question?.categoryId;
         const legacy = rawCategoryId ? /^cat(\d+)$/.exec(rawCategoryId) : null;
         const categoryId = legacy ? `bloco${legacy[1]}` : (rawCategoryId || 'bloco1');
-        const elementId = getElementIdFromImageIndex(
-          categoryId,
-          response.selectedImageIndex,
-          response.selectedElementId
-        );
+        const elementId = getElementIdFromRating(categoryId, response.rating);
         
         return {
           elementId: elementId,
@@ -84,7 +82,9 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
   // Calculate average level
   // Só entram na média os elementos que realmente têm nota. Avaliações salvas
   // não guardam `level`, e somar undefined produzia NaN na tela.
-  const leveledElements = assembledElements.filter(el => typeof el.level === 'number');
+  // Number.isFinite e não `typeof === 'number'`: NaN é number e voltaria a
+  // contaminar a média (a tela mostrava "NaN").
+  const leveledElements = assembledElements.filter(el => Number.isFinite(el.level));
   const avgLevel = leveledElements.length > 0
     ? leveledElements.reduce((sum, el) => sum + (el.level as number), 0) / leveledElements.length
     : 0;

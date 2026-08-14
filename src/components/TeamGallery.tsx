@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
-import { SavedWork, Member } from '../types';
+import { useState, useEffect, useMemo } from 'react';
+import { SavedWork, Member, Role } from '../types';
 import { storage } from '../lib/storage';
+import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
+import { computeEvaluationStats } from '../lib/evaluationStats';
 import { DS, Card } from './DesignSystem';
 import { ArrowLeft, FileText, Filter, Trash2, Calendar, User, Download } from 'lucide-react';
 import { exportToPDF } from '../lib/pdfExport';
@@ -83,6 +85,26 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
       }
     }
     setFilteredEvaluations(filtered);
+  };
+
+  // Catálogo de perguntas + cargos: lidos uma vez por render, não por card.
+  const allQuestions = useMemo(() => getAllQuestionsFromCompetencies(), [evaluations]);
+  const rolesById = useMemo(() => {
+    const map: Record<string, Role> = {};
+    storage.getRoles().forEach(r => { map[r.id] = r; });
+    return map;
+  }, [evaluations]);
+
+  // Média exibida no card. `null` quando não há nenhuma resposta considerada —
+  // o card mostra '---' em vez de "NaN"/"0.0".
+  const getScore = (work: SavedWork): number | null => {
+    const role = rolesById[work.roleId];
+    const { categoryStats, overallAverage } = computeEvaluationStats({
+      responses: work.responses,
+      evaluationType: work.evaluationType,
+      questions: [...allQuestions, ...(role?.customQuestions || [])],
+    });
+    return categoryStats.length > 0 ? overallAverage : null;
   };
 
   const getUniqueRoles = () => {
@@ -177,12 +199,12 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEvaluations.map((work) => {
-              // Sem essa guarda, uma avaliação sem respostas gera 0/0 = NaN e o card
-              // mostra "NaN" como média.
-              const workResponses = Array.isArray(work.responses) ? work.responses : [];
-              const score = workResponses.length > 0
-                ? workResponses.reduce((s, r) => s + (r.rating || 0), 0) / workResponses.length
-                : null;
+              // A média do card usa o MESMO cálculo da tela de detalhe e do PDF
+              // (lib/evaluationStats). Antes, aqui era a média simples de todas
+              // as respostas gravadas — sem filtrar por tipo de avaliação — e a
+              // mesma avaliação aparecia como 2.3 no card e 2.8 no detalhe.
+              // `computeEvaluationStats` já protege contra 0/0 (NaN).
+              const score = getScore(work);
               const badge = getEvaluationTypeBadge(work.evaluationType);
               return (
                 <Card key={work.id} interactive onClick={() => onViewWork(work)} className="group p-0 overflow-hidden flex flex-col h-full border border-slate-100">

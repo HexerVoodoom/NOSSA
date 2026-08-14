@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Evaluation, SavedWork } from '../types';
 import { storage } from '../lib/storage';
-import { newBlocks as categories } from '../lib/newBlocks';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
+import { computeEvaluationStats } from '../lib/evaluationStats';
 import {
   Download,
   Save,
@@ -54,53 +54,18 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
   const safeKeywords = (r: { keywords?: string[] }): string[] =>
     Array.isArray(r.keywords) ? r.keywords.filter(k => k && k.trim() !== '') : [];
 
-  // Calcular estatísticas por categoria
-  const categoryStats = (evaluation.evaluationType === 'atividades'
-    ? [{ id: 'activities-block', name: 'Avaliação de Atividades', order: 1, color: '#34d399' }]
-    : categories
-  ).map(category => {
-    const responsesInCategory = responses.filter(r => {
-      // Para atividades, a questão vem do role
-      if (evaluation.evaluationType === 'atividades') {
-        const activity = role?.activities?.find(a => a.id === r.questionId);
-        return activity !== undefined && category.id === 'activities-block';
-      }
-
-      const question = allQuestions.find(q => q.id === r.questionId) ||
-                      role?.customQuestions?.find(q => q.id === r.questionId);
-      
-      if (!question || question.categoryId !== category.id) return false;
-
-      // Filtrar baseado no tipo de avaliação para não misturar notas
-      if (evaluation.evaluationType === 'tradicional' && question.type === 'dialogic') {
-        return false;
-      }
-      if (evaluation.evaluationType === 'dialogica' && question.type === 'statement') {
-        return false;
-      }
-
-      return true;
-    });
-    
-    const totalRating = responsesInCategory.reduce((sum, r) => sum + (r.rating || 0), 0);
-    const averageRating = responsesInCategory.length > 0 ? totalRating / responsesInCategory.length : 0;
-    const totalQuestions = responsesInCategory.length;
-    
-    return {
-      category,
-      totalQuestions,
-      averageRating: parseFloat(averageRating.toFixed(2)),
-      responses: responsesInCategory,
-    };
-  }).filter(stat => stat.totalQuestions > 0);
-
-  // Média geral
-  const overallAverage = categoryStats.length > 0 
-    ? parseFloat((categoryStats.reduce((sum, stat) => sum + stat.averageRating, 0) / categoryStats.length).toFixed(2))
-    : 0;
-
-  // Total de perguntas respondidas (filtradas pelo tipo)
-  const totalQuestions = categoryStats.reduce((sum, stat) => sum + stat.totalQuestions, 0);
+  // Mesmo cálculo da galeria e do detalhe salvo (lib/evaluationStats).
+  // Aqui, ao contrário do WorkDetail, a avaliação ainda está em andamento e as
+  // atividades do cargo existem: passamos `activityIds` para não contar
+  // respostas órfãs de atividades já removidas do cargo durante o preenchimento.
+  const { categoryStats, overallAverage, totalQuestions } = computeEvaluationStats({
+    responses,
+    evaluationType: evaluation.evaluationType,
+    questions: [...allQuestions, ...(role?.customQuestions || [])],
+    activityIds: evaluation.evaluationType === 'atividades'
+      ? (role?.activities || []).map(a => a.id)
+      : null,
+  });
 
   // Palavras-chave mais mencionadas (filtradas pelo tipo)
   const allKeywords = responses.flatMap(r => {
