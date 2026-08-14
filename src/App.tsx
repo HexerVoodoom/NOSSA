@@ -41,6 +41,29 @@ type AppView =
   | { type: 'assembly-readonly'; work: SavedWork }
   | { type: 'work-detail'; work: SavedWork };
 
+// A troca de tela é uma SPA: nada no DOM anuncia que a navegação aconteceu.
+// Sem isso, quem usa leitor de tela termina uma avaliação e não recebe nenhuma
+// confirmação de que o resumo carregou. Um aria-live discreto resolve.
+const VIEW_LABELS: Record<AppView['type'], string> = {
+  'home': 'Início',
+  'team-gallery': 'Avaliações salvas',
+  'elements-library': 'Biblioteca de elementos',
+  'element-upload': 'Upload de elementos',
+  'competencies': 'Competências',
+  'tutorial': 'Manual',
+  'role-editor': 'Editor de cargo',
+  'members': 'Equipe',
+  'member-form': 'Cadastro de membro',
+  'member-detail': 'Perfil do membro',
+  'roles': 'Cargos',
+  'evaluation-start': 'Nova avaliação',
+  'evaluation': 'Questionário da avaliação',
+  'construction-preview': 'Prévia da obra',
+  'summary': 'Resumo da avaliação',
+  'assembly-readonly': 'Obra montada',
+  'work-detail': 'Detalhe da avaliação',
+};
+
 export default function App() {
   const [view, setView] = useState<AppView>({ type: 'home' });
   
@@ -131,6 +154,10 @@ export default function App() {
   return (
     <div className="relative min-h-screen">
       <Toaster position="top-center" />
+      {/* Anuncia a tela atual para leitores de tela; invisível para os demais. */}
+      <div aria-live="polite" role="status" className="sr-only">
+        {VIEW_LABELS[view.type]}
+      </div>
       <ErrorBoundary>
       {view.type === 'home' && (
         <HomePage

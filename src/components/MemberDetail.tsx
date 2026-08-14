@@ -22,6 +22,21 @@ interface MemberDetailProps {
   onViewWork: (workId: string) => void;
 }
 
+// Linhas de avaliação eram <div onClick>: operáveis com mouse, invisíveis para
+// o teclado. Enter e Espaço ativam; Espaço tem preventDefault para a página não
+// rolar. `focus-visible` deixa o anel só para quem navega por teclado.
+const linhaAtivavel = (onActivate: () => void) => ({
+  role: 'button' as const,
+  tabIndex: 0,
+  onClick: onActivate,
+  onKeyDown: (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onActivate();
+    }
+  },
+});
+
 export function MemberDetail({ memberId, onBack, onEditMember, onViewWork }: MemberDetailProps) {
   const [member, setMember] = useState<Member | null>(null);
   const [evaluations, setEvaluations] = useState<SavedWork[]>([]);
@@ -217,7 +232,7 @@ export function MemberDetail({ memberId, onBack, onEditMember, onViewWork }: Mem
               ) : (
                 <div className="space-y-4">
                   {evaluationsAsCollaborator.map(ev => (
-                    <div key={ev.id} onClick={() => onViewWork(ev.id)} className="group flex items-center justify-between p-6 rounded-2xl border-2 border-slate-50 hover:border-indigo-500 transition-all cursor-pointer">
+                    <div key={ev.id} {...linhaAtivavel(() => onViewWork(ev.id))} className="group flex items-center justify-between p-6 rounded-2xl border-2 border-slate-50 hover:border-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 transition-all cursor-pointer">
                 <div className="flex items-center gap-4">
                   <div className="size-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all border border-indigo-100 group-hover:border-indigo-500">
                     <History className="size-5" />
@@ -242,7 +257,7 @@ export function MemberDetail({ memberId, onBack, onEditMember, onViewWork }: Mem
                   ))}
                   
                   {evaluationsAsLeader.map(ev => (
-                    <div key={ev.id} onClick={() => onViewWork(ev.id)} className="group flex items-center justify-between p-6 rounded-2xl border-2 border-slate-50 hover:border-emerald-500 transition-all cursor-pointer">
+                    <div key={ev.id} {...linhaAtivavel(() => onViewWork(ev.id))} className="group flex items-center justify-between p-6 rounded-2xl border-2 border-slate-50 hover:border-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 transition-all cursor-pointer">
                   <div className="flex items-center gap-4">
                   <div className="size-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all border border-emerald-100 group-hover:border-emerald-500">
                     <Award className="size-5" />

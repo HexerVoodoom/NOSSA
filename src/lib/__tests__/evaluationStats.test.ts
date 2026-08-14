@@ -6,6 +6,7 @@ import {
   computeOverallAverage,
 } from '../evaluationStats';
 import type { Question, QuestionResponse } from '../../types';
+import { defaultLibrary } from '../defaultLibrary';
 
 const kw: [string, string, string] = ['a', 'b', 'c'];
 
@@ -136,37 +137,60 @@ describe('evaluationStats — média única para galeria, detalhe e PDF', () => 
   });
 });
 
-// O PDF é o documento que chega ao colaborador. Ele mantinha a QUARTA cópia do
-// cálculo — enquanto galeria e detalhe divergiam, o PDF podia divergir de ambos.
-// Agora consome computeEvaluationStats; este teste trava a equivalência com a
-// fórmula que o PDF usava, para que apontar ao módulo não tenha mudado o número.
-describe('paridade com a fórmula que o PDF usava', () => {
-  it('média das médias por bloco confere com o cálculo manual antigo', () => {
-    const questions = [
-      { id: 'q1', categoryId: 'bloco1', text: '', order: 0, type: 'statement' as const },
-      { id: 'q2', categoryId: 'bloco1', text: '', order: 1, type: 'statement' as const },
-      { id: 'q3', categoryId: 'bloco2', text: '', order: 0, type: 'statement' as const },
-    ];
-    const responses = [
-      { questionId: 'q1', keywords: ['', '', ''] as [string, string, string], rating: 5, selectedElementId: '' },
-      { questionId: 'q2', keywords: ['', '', ''] as [string, string, string], rating: 3, selectedElementId: '' },
-      { questionId: 'q3', keywords: ['', '', ''] as [string, string, string], rating: 2, selectedElementId: '' },
-    ];
+// Paridade contra os DADOS REAIS, com implementação independente.
+//
+// A primeira versão deste teste era circular: recalculava a "fórmula antiga" a
+// partir do agrupamento do próprio módulo novo, então só verificava a divisão
+// final. O agrupamento e o filtro por tipo — que são a substância da extração —
+// ficavam sem cobertura. Aqui a réplica reimplementa o pdfExport original desde
+// as respostas cruas, e roda sobre as duas avaliações de defaultLibrary.json.
+describe('paridade com a fórmula original do pdfExport, sobre dados reais', () => {
+  const BLOCOS = ['bloco1', 'bloco2', 'bloco3', 'bloco4', 'bloco5', 'bloco6'];
 
-    const { categoryStats, overallAverage } = computeEvaluationStats({
-      responses,
-      evaluationType: 'tradicional',
-      questions,
-    });
+  // Réplica literal do pdfExport antes da extração — independente do módulo novo.
+  const calculoAntigo = (work: any, questions: Question[]) => {
+    const stats = BLOCOS.map(id => {
+      const rs = (work.responses || []).filter((r: any) => {
+        const q = questions.find(q => q.id === r.questionId);
+        if (!q || q.categoryId !== id) return false;
+        if (work.evaluationType === 'tradicional' && q.type === 'dialogic') return false;
+        if (work.evaluationType === 'dialogica' && q.type === 'statement') return false;
+        return true;
+      });
+      const total = rs.reduce((sum: number, r: any) => sum + (r.rating || 0), 0);
+      return { n: rs.length, avg: rs.length ? parseFloat((total / rs.length).toFixed(2)) : 0 };
+    }).filter(s => s.n > 0);
 
-    // Réplica literal do que pdfExport fazia antes.
-    const antigo = parseFloat(
-      (categoryStats.reduce((acc, s) => acc + s.averageRating, 0) / categoryStats.length).toFixed(2)
-    );
+    return {
+      blocos: stats.length,
+      perguntas: stats.reduce((a, s) => a + s.n, 0),
+      overall: stats.length ? parseFloat((stats.reduce((a, s) => a + s.avg, 0) / stats.length).toFixed(2)) : 0,
+    };
+  };
 
-    expect(overallAverage).toBe(antigo);
-    // bloco1 = (5+3)/2 = 4 ; bloco2 = 2 ; média das médias = 3
-    // (a média simples das notas seria 3.33 — a diferença é o trade-off documentado)
-    expect(overallAverage).toBe(3);
-  });
+  it.each(defaultLibrary.evaluations.map(e => [e.collaboratorName as string, e] as const))(
+    'avaliação de %s produz os mesmos números que antes',
+    (_nome, work: any) => {
+      const role = defaultLibrary.roles.find(r => r.id === work.roleId) as any;
+      const questions = [
+        ...defaultLibrary.competencies.flatMap((c: any) => c.questions || []),
+        ...((role?.customQuestions || []) as Question[]),
+      ] as Question[];
+
+      const antigo = calculoAntigo(work, questions);
+      const novo = computeEvaluationStats({
+        responses: work.responses,
+        evaluationType: work.evaluationType,
+        questions,
+      });
+
+      expect(novo.categoryStats.length).toBe(antigo.blocos);
+      expect(novo.totalQuestions).toBe(antigo.perguntas);
+      expect(novo.overallAverage).toBe(antigo.overall);
+      // Os dados reais precisam produzir algo: um teste que compara 0 com 0 passa
+      // por acidente e não prova nada sobre o agrupamento.
+      expect(antigo.perguntas).toBeGreaterThan(0);
+      expect(antigo.overall).toBeGreaterThan(0);
+    }
+  );
 });

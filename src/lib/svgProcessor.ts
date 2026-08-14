@@ -2,22 +2,32 @@
 
 import DOMPurify from 'dompurify';
 
-// Remove url(...) que aponte para fora do próprio documento.
+// Remove qualquer atributo que referencie algo fora do próprio documento.
 //
-// Medido com o DOMPurify real: sem ALLOWED_URI_REGEXP, `mask`, `filter`,
-// `clip-path` e `fill` aceitam `url(https://...)` — não estão na lista de
-// URI_SAFE_ATTRIBUTES nem são barrados por FORBID_ATTR. Os navegadores atuais
-// recusam buscar documento externo para esses casos, mas isso é política do
-// navegador, não nosso controle. A biblioteca só usa `url(#fragmento)`, então
-// exigir o `#` não custa nada e fecha o canal de beacon.
-const URL_REF_ATTRS = ['mask', 'filter', 'clip-path', 'fill', 'stroke'];
-const EXTERNAL_URL_REF = /url\(\s*['"]?\s*(?!#)/i;
+// Medido com o DOMPurify real: sem ALLOWED_URI_REGEXP, atributos de referência
+// (`mask`, `filter`, `clip-path`, `fill`, `stroke`, `marker-start/mid/end`)
+// aceitam `url(https://...)` — não estão em URI_SAFE_ATTRIBUTES nem em
+// FORBID_ATTR. Navegadores atuais recusam buscar documento externo aí, mas isso
+// é política do navegador, não nosso controle.
+//
+// A primeira versão disto listava os atributos a inspecionar, e a lista saiu
+// incompleta: `marker-start/mid/end` ficaram de fora e continuavam abertos.
+// Enumerar é frágil — a allowlist do DOMPurify muda entre versões. Verificamos
+// TODOS os atributos e falhamos fechado.
+const CSS_HEX_ESCAPE = /\\([0-9a-f]{1,6})\s?/gi;
+const EXTERNAL_REF = /url\(\s*['"]?\s*(?!#)|:\/\//i;
+
+// `\75 rl(...)` é um url-token válido em CSS: o navegador desescapa antes de
+// interpretar, então a checagem também precisa desescapar antes de comparar.
+function decodeCssEscapes(value: string): string {
+  return value.replace(CSS_HEX_ESCAPE, (_, hex) => String.fromCodePoint(parseInt(hex, 16)));
+}
 
 DOMPurify.addHook('afterSanitizeAttributes', node => {
   if (!(node instanceof Element)) return;
-  URL_REF_ATTRS.forEach(attr => {
-    const value = node.getAttribute(attr);
-    if (value && EXTERNAL_URL_REF.test(value)) node.removeAttribute(attr);
+  // Cópia do array: remover durante a iteração encurta a NamedNodeMap viva.
+  Array.from(node.attributes).forEach(attr => {
+    if (EXTERNAL_REF.test(decodeCssEscapes(attr.value))) node.removeAttribute(attr.name);
   });
 });
 

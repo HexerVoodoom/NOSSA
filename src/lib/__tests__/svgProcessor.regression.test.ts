@@ -78,6 +78,14 @@ describe('sanitizeSVG — referências externas', () => {
     ['tag style com @import', '<svg width="10" height="10"><style>@import url(https://evil.example/x.css);</style><rect width="5" height="5"/></svg>'],
     ['atributo style com url()', '<svg width="10" height="10" style="background-image:url(https://evil.example/b.png)"><rect width="5" height="5"/></svg>'],
     ['use com xlink:href', '<svg width="10" height="10"><use xlink:href="https://evil.example/x.svg#a"/></svg>'],
+    // A primeira versão do hook enumerava atributos e esqueceu a família marker-*.
+    // Enumerar é frágil: a allowlist do DOMPurify muda entre versões.
+    ['marker-start', '<svg width="10" height="10"><path d="M0 0" marker-start="url(https://evil.example/m.svg#m)"/></svg>'],
+    ['marker-mid', '<svg width="10" height="10"><path d="M0 0" marker-mid="url(https://evil.example/m.svg#m)"/></svg>'],
+    ['marker-end', '<svg width="10" height="10"><path d="M0 0" marker-end="url(https://evil.example/m.svg#m)"/></svg>'],
+    // `\75 rl(` é um url-token válido: o navegador desescapa antes de interpretar.
+    ['escape CSS hexadecimal', '<svg width="10" height="10"><rect width="5" height="5" fill="\\75 rl(https://evil.example/x#a)"/></svg>'],
+    ['url externa depois de uma interna', '<svg width="10" height="10"><rect width="5" height="5" fill="url(#a) url(https://evil.example/e)"/></svg>'],
   ];
 
   it.each(externos)('bloqueia referência externa via %s', (_nome, svg) => {
