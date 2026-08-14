@@ -69,6 +69,27 @@ describe('AssemblyViewReadOnly — renderização', () => {
     expect(screen.getByText('Analista')).toBeInTheDocument();
   });
 
+  // Uma avaliação de ATIVIDADES não tem bloco: suas perguntas nem estão no
+  // catálogo de competências. O caminho de escrita já recusa inventar elemento,
+  // mas a leitura normalizava para 'bloco1' e desenhava 25 lajes idênticas
+  // achatadas numa linha de 1px. Melhor dizer que não há obra.
+  it('[regressão] avaliação de atividades mostra estado vazio, não lajes inventadas', () => {
+    const atividades = {
+      ...LEGACY_WORK,
+      evaluationType: 'atividades',
+      questionIds: ['ativ-1', 'ativ-2'],
+      responses: [
+        { questionId: 'ativ-1', keywords: ['', '', ''], rating: 5, selectedElementId: '', selectedImageIndex: 4 },
+        { questionId: 'ativ-2', keywords: ['', '', ''], rating: 2, selectedElementId: '', selectedImageIndex: 1 },
+      ],
+    } as unknown as SavedWork;
+
+    const { container } = render(<AssemblyViewReadOnly work={atividades} onBack={() => {}} />);
+
+    expect(screen.getByText(/não gera obra montada/i)).toBeInTheDocument();
+    expect(container.querySelectorAll('[data-obra-element]')).toHaveLength(0);
+  });
+
   it('[regressão] sobrevive a responses ausente (registro importado)', () => {
     const broken = { ...LEGACY_WORK, responses: undefined } as unknown as SavedWork;
     render(<AssemblyViewReadOnly work={broken} onBack={() => {}} />);

@@ -68,18 +68,26 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
     }
 
     const competencies = storage.getCompetencies();
-    const allQuestions: (Question & { competencyName?: string })[] = [];
+    // A competência DONA de cada pergunta viaja junto. Antes o filtro dialógico
+    // reencontrava a competência por NOME
+    // (`competencies.find(c => c.name === q.competencyName)`), e `find` devolve a
+    // PRIMEIRA homônima: duas competências com o mesmo nome se confundiam e a
+    // pergunta dialógica de uma competência que o cargo NÃO usa entrava na
+    // avaliação por carona no nome da outra. Nome não é chave; a referência é.
+    const allQuestions: (Question & { competencyName?: string; ownerQuestionIds?: string[] })[] = [];
     competencies.forEach(comp => {
+      const ownerQuestionIds = comp.questions.map(cq => cq.id);
       comp.questions.forEach(q => {
-        allQuestions.push({ ...q, competencyName: comp.name });
+        allQuestions.push({ ...q, competencyName: comp.name, ownerQuestionIds });
       });
     });
-    
+
     return allQuestions
       .filter(q => {
+        // A dialógica é a pergunta-par da competência: basta o cargo usar
+        // QUALQUER pergunta DESTA competência (não de uma homônima qualquer).
         if (evaluation.evaluationType === 'dialogica' && q.type === 'dialogic' && !q.parentQuestionId) {
-          const comp = competencies.find(c => c.name === q.competencyName);
-          return comp ? comp.questions.some(cq => evaluation.questionIds.includes(cq.id)) : false;
+          return (q.ownerQuestionIds || []).some(id => evaluation.questionIds.includes(id));
         }
         return evaluation.questionIds.includes(q.id);
       })

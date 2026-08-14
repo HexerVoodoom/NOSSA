@@ -220,6 +220,42 @@ describe('CategoryQuestionFlow — fluxo de avaliação', () => {
     expect(onComplete).not.toHaveBeenCalled();
   });
 
+  // Regressão (reproduzida no navegador): o filtro dialógico reencontrava a
+  // competência da pergunta por NOME. `find` devolve a PRIMEIRA homônima, então
+  // uma segunda competência com o mesmo nome — que o cargo NÃO usa — tinha sua
+  // pergunta dialógica incluída na avaliação por carona no nome da outra.
+  it('avaliação dialógica ignora competência homônima não usada pelo cargo', () => {
+    const homonima: Competency = {
+      id: 'comp-1-clone',
+      name: 'Execução', // MESMO nome de comp-1
+      categoryId: 'bloco1',
+      order: 3,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      questions: [
+        { id: 'q-clone-dial', categoryId: 'bloco1', text: 'PERGUNTA INTRUSA', order: 1, type: 'dialogic' },
+      ],
+    };
+    const comUsada: Competency = {
+      ...COMPETENCIES[0],
+      questions: [
+        ...COMPETENCIES[0].questions,
+        { id: 'q1-dial', categoryId: 'bloco1', text: 'Pergunta legítima da competência do cargo', order: 2, type: 'dialogic' },
+      ],
+    };
+    localStorage.setItem(KEYS.COMPETENCIES, JSON.stringify([comUsada, COMPETENCIES[1], homonima]));
+
+    render(
+      <CategoryQuestionFlow
+        evaluation={baseEvaluation({ evaluationType: 'dialogica', questionIds: ['q1'] })}
+        onComplete={vi.fn()}
+        onBack={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('Pergunta legítima da competência do cargo')).toBeInTheDocument();
+    expect(screen.queryByText('PERGUNTA INTRUSA')).not.toBeInTheDocument();
+  });
+
   // Regressão: `useState(evaluation.responses)` não normalizava o valor, então
   // uma avaliação legada/importada sem `responses` derrubava a tela no primeiro
   // `responses.find(...)`. As demais views já se protegiam; esta não.

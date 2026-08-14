@@ -5,7 +5,7 @@ import { Download } from 'lucide-react';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { storage } from '../lib/storage';
 import { newBlocks as categories } from '../lib/newBlocks';
-import { categoryShapes, normalizeCategoryId, getShapeForIndex } from '../lib/categoryShapes';
+import { categoryShapes, normalizeCategoryId, resolveCategoryId, getShapeForIndex } from '../lib/categoryShapes';
 
 // Logos
 import imgLogoTortola from "figma:asset/0049d96aabf7ea4e2a663d5f83ebd360cb225dfd.png";
@@ -388,7 +388,13 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
     .filter(r => r.selectedImageIndex !== undefined && r.selectedImageIndex !== null)
     .map((r, idx) => {
       const question = findQuestion(r.questionId);
-      const categoryId = normalizeCategoryId(question?.categoryId);
+      // resolveCategoryId, não normalizeCategoryId: uma avaliação de ATIVIDADES
+      // não tem bloco (nem suas perguntas estão no catálogo, então findQuestion
+      // devolve undefined). Normalizar aqui reintroduzia o fallback 'bloco1' que
+      // o caminho de escrita já rejeita — a obra saía como 25 lajes idênticas
+      // achatadas numa linha de 1px. Sem forma correspondente, não desenhamos.
+      const categoryId = resolveCategoryId(question?.categoryId);
+      if (!categoryId) return null;
 
       const shapes = categoryShapes[categoryId];
       const colors = categoryColors[categoryId];
@@ -400,8 +406,6 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
       // escrita já foi corrigido; aqui derivamos de novo na leitura.
       const rating = Number.isFinite(r.rating) ? Math.min(Math.max(Math.round(r.rating), 1), 5) : 1;
       const colorIndex = rating - 1;
-      // getShapeForIndex devolve '' para categoria sem bloco real: nesse caso
-      // caímos no primeiro elemento do bloco normalizado, como antes.
       const shapeCode = getShapeForIndex(categoryId, colorIndex) || shapes[0];
       const color = colors[colorIndex] || colors[0];
 
@@ -411,7 +415,9 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
         color,
         categoryId,
       };
-    });
+    })
+    .filter((el): el is NonNullable<typeof el> => el !== null);
+
   
   // Se não existir assembledElements (obras antigas), gerar montagem automática
   const getAssembledElements = (): AssembledElement[] => {
@@ -526,8 +532,24 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
               </div>
             </div>
             
+            {/* Sem elementos desenháveis (ex.: avaliação de ATIVIDADES, cujas
+                perguntas não pertencem a nenhum bloco): dizer isso é melhor do
+                que exibir um canvas vazio sem explicação — ou, como antes,
+                lajes idênticas achatadas numa linha. */}
+            {selectedElements.length === 0 && (
+              <div className="mt-[24px] rounded-[12px] border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                <p className="text-[14px] font-semibold text-slate-700">
+                  Esta avaliação não gera obra montada
+                </p>
+                <p className="mt-1 text-[13px] text-slate-500">
+                  A obra é construída a partir dos blocos de competências. Avaliações de
+                  atividades não possuem blocos correspondentes.
+                </p>
+              </div>
+            )}
+
             {/* Diamond mesh canvas - Read only */}
-            <div className="diamond-mesh-container pointer-events-none mt-[24px]">
+            <div className={`diamond-mesh-container pointer-events-none mt-[24px] ${selectedElements.length === 0 ? 'hidden' : ''}`}>
               <DiamondMesh
                 elements={selectedElements}
                 assembledElements={assembledElements}
