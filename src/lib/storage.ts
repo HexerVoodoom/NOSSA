@@ -259,7 +259,7 @@ export const storage = {
     return safeParse<Role[]>(STORAGE_KEYS.ROLES, []);
   },
   
-  saveRole(role: Role): void {
+  saveRole(role: Role): boolean {
     const roles = this.getRoles();
     const index = roles.findIndex(r => r.id === role.id);
     if (index >= 0) {
@@ -267,7 +267,7 @@ export const storage = {
     } else {
       roles.push(role);
     }
-    safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
+    return safeSetItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
   },
   
   deleteRole(roleId: string): void {
@@ -280,7 +280,7 @@ export const storage = {
     return safeParse<SavedWork[]>(STORAGE_KEYS.EVALUATIONS, []);
   },
   
-  saveEvaluation(evaluation: SavedWork): void {
+  saveEvaluation(evaluation: SavedWork): boolean {
     const evaluations = this.getEvaluations();
     const index = evaluations.findIndex(e => e.id === evaluation.id);
     if (index >= 0) {
@@ -288,7 +288,7 @@ export const storage = {
     } else {
       evaluations.push(evaluation);
     }
-    safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
+    return safeSetItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(evaluations));
   },
   
   deleteEvaluation(evaluationId: string): void {
@@ -323,7 +323,7 @@ export const storage = {
     return safeParse<Member[]>(STORAGE_KEYS.MEMBERS, []);
   },
   
-  saveMember(member: Member): void {
+  saveMember(member: Member): boolean {
     const members = this.getMembers();
     const index = members.findIndex(m => m.id === member.id);
     if (index >= 0) {
@@ -331,7 +331,7 @@ export const storage = {
     } else {
       members.push(member);
     }
-    safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
+    return safeSetItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
   },
   
   deleteMember(memberId: string): void {
@@ -490,20 +490,20 @@ export const storage = {
         throw new Error('Formato de arquivo inválido');
       }
 
-      // Importa membros (se não existirem, cria novos)
+      // Importa membros (se não existirem, cria novos). Se a gravação falhar
+      // (cota estourada), aborta em vez de relatar sucesso com o disco cheio.
       if (Array.isArray(data.members)) {
         const existingMembers = this.getMembers();
-        data.members.forEach((member: Member) => {
-          if (!existingMembers.find(m => m.id === member.id)) {
-            this.saveMember(member);
-          }
-        });
+        for (const member of data.members as Member[]) {
+          if (existingMembers.find(m => m.id === member.id)) continue;
+          if (!this.saveMember(member)) return false;
+        }
       }
 
       // Importa avaliações
-      data.evaluations.forEach((evaluation: SavedWork) => {
-        this.saveEvaluation(evaluation);
-      });
+      for (const evaluation of data.evaluations as SavedWork[]) {
+        if (!this.saveEvaluation(evaluation)) return false;
+      }
 
       return true;
     } catch (error) {
