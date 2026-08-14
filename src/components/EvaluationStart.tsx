@@ -204,6 +204,7 @@ export function EvaluationStart({ onStart, onBack, onAddMember }: EvaluationStar
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [selectedLeader, setSelectedLeader] = useState<string>('');
   const [selectedCollaborator, setSelectedCollaborator] = useState<string>('');
+  const [selectedMethod, setSelectedMethod] = useState<EvaluationType | null>(null);
   useEffect(() => {
     setRoles(storage.getRoles());
     setMembers(storage.getMembers());
@@ -231,13 +232,65 @@ export function EvaluationStart({ onStart, onBack, onAddMember }: EvaluationStar
   const collaboratorRoles = roles.filter(r => r.type === 'collaborator');
 
   const canStart = selectedRole && selectedLeader && selectedCollaborator;
-  
+
   const startEval = (type: EvaluationType) => {
     if (canStart && selectedRoleObj) {
       onStart(selectedRoleObj, selectedLeader, selectedCollaborator, type);
     }
   };
-  
+
+  // --- Grupo de metodologia (radiogroup) -----------------------------------
+  // As três metodologias são uma escolha única e mutuamente exclusiva, então
+  // expomos role="radiogroup" / role="radio" + aria-checked em vez de três
+  // botões soltos: o leitor de tela anuncia "1 de 3" e o estado escolhido.
+  // As setas apenas MOVEM O FOCO (não marcam): marcar aqui dispara o início da
+  // avaliação, e a WAI-ARIA prevê exatamente essa variação quando a seleção
+  // tem consequência. Enter/Espaço marca e inicia.
+  const hasActivities = !!selectedRoleObj?.activities?.length;
+  const methodologies: { type: EvaluationType; enabled: boolean }[] = [
+    { type: 'dialogica', enabled: true },
+    { type: 'tradicional', enabled: true },
+    { type: 'atividades', enabled: hasActivities },
+  ];
+  const enabledMethodologies = methodologies.filter(m => m.enabled).map(m => m.type);
+  const methodRefs = useRef<Partial<Record<EvaluationType, HTMLDivElement | null>>>({});
+
+  const chooseMethod = (type: EvaluationType) => {
+    setSelectedMethod(type);
+    startEval(type);
+  };
+
+  // Tabindex rotativo: o grupo inteiro é UMA parada de Tab.
+  const methodTabIndex = (type: EvaluationType) => {
+    const current = selectedMethod && enabledMethodologies.includes(selectedMethod)
+      ? selectedMethod
+      : enabledMethodologies[0];
+    return type === current ? 0 : -1;
+  };
+
+  const handleMethodKeyDown = (type: EvaluationType) => (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    const list = enabledMethodologies;
+    const index = list.indexOf(type);
+    if (index < 0 || list.length === 0) return;
+    let next: EvaluationType | undefined;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = list[(index + 1) % list.length];
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = list[(index - 1 + list.length) % list.length];
+    else if (e.key === 'Home') next = list[0];
+    else if (e.key === 'End') next = list[list.length - 1];
+    if (!next) return;
+    e.preventDefault();
+    methodRefs.current[next]?.focus();
+  };
+
+  const methodProps = (type: EvaluationType) => ({
+    ref: (el: HTMLDivElement | null) => { methodRefs.current[type] = el; },
+    role: 'radio',
+    'aria-checked': selectedMethod === type,
+    tabIndex: methodTabIndex(type),
+    onKeyDown: handleMethodKeyDown(type),
+  });
+
   return (
     <div className="min-h-screen bg-[#fafafa]">
       {/* HERO HEADER */}
@@ -353,8 +406,8 @@ export function EvaluationStart({ onStart, onBack, onAddMember }: EvaluationStar
               <p className={DS.typography.body}>Como você deseja conduzir este ciclo de feedback?</p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card interactive onClick={() => startEval('dialogica')} className="group border-b-8 border-b-slate-900">
+            <div className="grid md:grid-cols-3 gap-6" role="radiogroup" aria-label="Escolha a Metodologia">
+              <Card interactive onClick={() => chooseMethod('dialogica')} {...methodProps('dialogica')} className="group border-b-8 border-b-slate-900">
                 <div className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all mb-6">
                   <MessageSquare className="w-6 h-6" />
                 </div>
@@ -365,7 +418,7 @@ export function EvaluationStart({ onStart, onBack, onAddMember }: EvaluationStar
                 </div>
               </Card>
 
-              <Card interactive onClick={() => startEval('tradicional')} className="group border-b-8 border-b-indigo-500">
+              <Card interactive onClick={() => chooseMethod('tradicional')} {...methodProps('tradicional')} className="group border-b-8 border-b-indigo-500">
                 <div className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-500 group-hover:text-white transition-all mb-6">
                   <ClipboardList className="w-6 h-6" />
                 </div>
@@ -376,10 +429,13 @@ export function EvaluationStart({ onStart, onBack, onAddMember }: EvaluationStar
                 </div>
               </Card>
 
-              <Card 
-                interactive={!!selectedRoleObj?.activities?.length} 
-                onClick={() => selectedRoleObj?.activities?.length && startEval('atividades')} 
-                className={`group border-b-8 border-b-emerald-500 ${!selectedRoleObj?.activities?.length ? 'opacity-50 grayscale' : ''}`}
+              <Card
+                interactive={hasActivities}
+                onClick={hasActivities ? () => chooseMethod('atividades') : undefined}
+                {...methodProps('atividades')}
+                tabIndex={hasActivities ? methodTabIndex('atividades') : -1}
+                aria-disabled={!hasActivities}
+                className={`group border-b-8 border-b-emerald-500 ${!hasActivities ? 'opacity-50 grayscale' : ''}`}
               >
                 <div className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition-all mb-6">
                   <ListChecks className="w-6 h-6" />

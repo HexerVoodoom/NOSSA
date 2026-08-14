@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useId } from 'react';
 import { Member } from '../types';
 import { storage } from '../lib/storage';
-import { DS } from './DesignSystem';
+import { activationProps, focusRing } from './DesignSystem';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { 
   ArrowLeft,
@@ -166,8 +166,9 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
               return (
                 <div
                   key={member.id}
-                  onClick={() => onViewMember?.(member.id)}
-                  className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-slate-200 cursor-pointer transition-all"
+                  {...activationProps(() => onViewMember?.(member.id))}
+                  aria-label={`Ver perfil de ${member.firstName} ${member.lastName || ''}`.trim()}
+                  className={`group bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-slate-200 cursor-pointer transition-all ${focusRing}`}
                 >
                   <div className="flex items-start justify-between mb-6">
                     <div className="size-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#0f172b] group-hover:text-white transition-all duration-500">
@@ -180,16 +181,16 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
                       <button
                         onClick={(e) => { e.stopPropagation(); onEditMember(member); }}
                         aria-label={`Editar ${member.firstName} ${member.lastName || ''}`.trim()}
-                        className="p-2 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all"
+                        className={`p-2 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all ${focusRing}`}
                       >
-                        <Edit2 className="w-4 h-4" />
+                        <Edit2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); setMemberToDelete(member); }}
                         aria-label={`Excluir ${member.firstName} ${member.lastName || ''}`.trim()}
-                        className="p-2 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                        className={`p-2 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all ${focusRing}`}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
                   </div>

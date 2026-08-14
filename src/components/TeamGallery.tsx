@@ -3,7 +3,7 @@ import { SavedWork, Member, Role } from '../types';
 import { storage } from '../lib/storage';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { computeEvaluationStats } from '../lib/evaluationStats';
-import { DS, Card } from './DesignSystem';
+import { DS, Card, focusRing } from './DesignSystem';
 import { ArrowLeft, FileText, Filter, Trash2, Calendar, User, Download } from 'lucide-react';
 import { exportToPDF } from '../lib/pdfExport';
 import { toast } from 'sonner';
@@ -207,7 +207,13 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
               const score = getScore(work);
               const badge = getEvaluationTypeBadge(work.evaluationType);
               return (
-                <Card key={work.id} interactive onClick={() => onViewWork(work)} className="group p-0 overflow-hidden flex flex-col h-full border border-slate-100">
+                <Card
+                  key={work.id}
+                  interactive
+                  onClick={() => onViewWork(work)}
+                  aria-label={`Ver avaliação de ${work.collaboratorName || 'colaborador sem nome'}`}
+                  className="group p-0 overflow-hidden flex flex-col h-full border border-slate-100"
+                >
                   <div className="bg-slate-900 p-6 text-white relative">
                     <div className="absolute top-6 right-6 text-right">
                       <p className="text-2xl font-black tracking-tighter leading-none">{score !== null ? score.toFixed(1) : '---'}</p>
@@ -236,16 +242,18 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
 
                     <div className="pt-4 border-t border-slate-50 flex gap-2">
                       <button 
-                        onClick={(e) => handleExportPDF(work, e)} 
-                        className="flex-1 h-10 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 text-[13px] font-bold transition-all flex items-center justify-center gap-2"
+                        onClick={(e) => handleExportPDF(work, e)}
+                        aria-label={`Exportar PDF da avaliação de ${work.collaboratorName || 'colaborador sem nome'}`}
+                        className={`flex-1 h-10 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 text-[13px] font-bold transition-all flex items-center justify-center gap-2 ${focusRing}`}
                       >
-                        <Download className="size-4" /> PDF
+                        <Download className="size-4" aria-hidden="true" /> PDF
                       </button>
-                      <button 
-                        onClick={(e) => handleDeleteEvaluation(work.id, e)} 
-                        className="size-10 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
+                      <button
+                        onClick={(e) => handleDeleteEvaluation(work.id, e)}
+                        aria-label={`Excluir avaliação de ${work.collaboratorName || 'colaborador sem nome'}`}
+                        className={`size-10 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center ${focusRing}`}
                       >
-                        <Trash2 className="size-4" />
+                        <Trash2 className="size-4" aria-hidden="true" />
                       </button>
                     </div>
                   </div>

@@ -46,11 +46,96 @@ export function Button({ variant = 'primary', className = '', children, ...props
   );
 }
 
-export function Card({ interactive = false, className = '', children, ...props }: { interactive?: boolean; className?: string; children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
+/**
+ * Anel de foco padrão para alvos que não são <button>/<a> nativos.
+ * Usa `focus-visible` (não `focus`): quem clica com o mouse não vê diferença
+ * alguma, quem navega pelo teclado enxerga onde está.
+ */
+export const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+
+const NESTED_CONTROL_SELECTOR =
+  'button, a[href], input, select, textarea, label, [role="button"], [role="radio"], [role="checkbox"], [role="link"]';
+
+/**
+ * Um card clicável costuma conter os próprios botões (exportar, excluir).
+ * Sem esta guarda, acionar o botão interno dispararia TAMBÉM o handler do card
+ * (duas ações por um clique). Não dependemos de `stopPropagation` em cada
+ * chamador — a checagem fica no card, que é quem tem o problema.
+ */
+function isFromNestedControl(
+  target: EventTarget | null,
+  currentTarget: HTMLElement,
+): boolean {
+  if (!(target instanceof Element) || target === currentTarget) return false;
+  const control = target.closest(NESTED_CONTROL_SELECTOR);
+  return !!control && control !== currentTarget && currentTarget.contains(control);
+}
+
+/**
+ * Semântica de botão para elementos que não são <button>: papel, foco por
+ * teclado e ativação por Enter/Espaço. Espaço faz `preventDefault` para a
+ * página não rolar. Usado pelo `Card interactive` e pelos cards de membro,
+ * que têm layout próprio e não passam pelo `Card`.
+ */
+export function activationProps(onActivate: () => void) {
+  return {
+    role: 'button' as const,
+    tabIndex: 0,
+    onClick: (e: React.MouseEvent<HTMLElement>) => {
+      if (isFromNestedControl(e.target, e.currentTarget)) return;
+      onActivate();
+    },
+    onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
+      // Teclas digitadas dentro de um controle aninhado pertencem a ele.
+      if (e.target !== e.currentTarget) return;
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        onActivate();
+      }
+    },
+  };
+}
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  interactive?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}
+
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(function Card(
+  { interactive = false, className = '', children, onClick, onKeyDown, ...props },
+  ref,
+) {
   const baseClass = interactive ? DS.cards.interactive : DS.cards.base;
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (interactive && isFromNestedControl(e.target, e.currentTarget)) return;
+    onClick?.(e);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(e);
+    if (!interactive || !onClick || e.defaultPrevented) return;
+    if (e.target !== e.currentTarget) return;
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      onClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+    }
+  };
+
+  // `role`/`tabIndex` vêm antes de {...props} de propósito: quem precisa de
+  // outra semântica (ex.: role="radio" num grupo) consegue sobrescrever.
   return (
-    <div className={`${baseClass} ${className}`} {...props}>
+    <div
+      ref={ref}
+      className={`${baseClass}${interactive ? ` ${focusRing}` : ''} ${className}`}
+      {...(interactive ? { role: 'button', tabIndex: 0 } : {})}
+      {...props}
+      onClick={onClick ? handleClick : undefined}
+      onKeyDown={interactive || onKeyDown ? handleKeyDown : undefined}
+    >
       {children}
     </div>
   );
-}
+});
