@@ -1,6 +1,7 @@
 import { Role, Evaluation, SavedWork, SectionImages, Member, Competency } from '../types';
 import { traditionalCompetencies } from './newCompetencies';
 import { defaultRoles, getMissingDefaultRoles } from './defaultRoles';
+import { defaultLibrary } from './defaultLibrary';
 
 const STORAGE_KEYS = {
   ROLES: 'obra-viva-roles',
@@ -14,13 +15,70 @@ const STORAGE_KEYS = {
   COMPETENCIES_INITIALIZED: 'obra-viva-competencies-initialized',
   BACKUP: 'obra-viva-backup',
   COMPETENCIES_VERSION: 'obra-viva-competencies-version',
+  LIBRARY_INITIALIZED: 'obra-viva-library-initialized',
+};
+
+// Parses a localStorage value defensively — corrupted/truncated JSON (quota
+// eviction, manual edits, extension interference) falls back instead of
+// throwing and white-screening the app.
+function safeParse<T>(key: string, fallback: T): T {
+  const raw = localStorage.getItem(key);
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch (error) {
+    console.error(`Erro ao ler "${key}" do localStorage, usando valor padrão:`, error);
+    return fallback;
+  }
+}
+
+// Seeds the client's default library (members, roles, competencies, evaluations)
+// on first run, before any other empty-state initialization. Never overwrites
+// data the user already has stored.
+const initializeDefaultLibrary = () => {
+  const initialized = localStorage.getItem(STORAGE_KEYS.LIBRARY_INITIALIZED);
+  if (initialized) return;
+
+  // Evaluations reference member/role/competency IDs from this same library,
+  // so only seed them when the rest of the store is empty too — otherwise a
+  // partially-populated store (e.g. from a prior session) would seed
+  // evaluations pointing at members/roles that don't exist.
+  const storeIsEmpty =
+    !localStorage.getItem(STORAGE_KEYS.MEMBERS) &&
+    !localStorage.getItem(STORAGE_KEYS.ROLES) &&
+    !localStorage.getItem(STORAGE_KEYS.COMPETENCIES) &&
+    !localStorage.getItem(STORAGE_KEYS.EVALUATIONS);
+
+  if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) {
+    localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(defaultLibrary.members));
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.ROLES)) {
+    localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(defaultLibrary.roles));
+    localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.COMPETENCIES)) {
+    localStorage.setItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(defaultLibrary.competencies));
+    localStorage.setItem(STORAGE_KEYS.COMPETENCIES_INITIALIZED, 'true');
+    localStorage.setItem(STORAGE_KEYS.COMPETENCIES_VERSION, '1.4');
+  }
+  if (storeIsEmpty) {
+    localStorage.setItem(STORAGE_KEYS.EVALUATIONS, JSON.stringify(defaultLibrary.evaluations));
+  }
+
+  localStorage.setItem(STORAGE_KEYS.LIBRARY_INITIALIZED, 'true');
+  console.log('✅ Biblioteca padrão instalada:', {
+    members: defaultLibrary.members.length,
+    roles: defaultLibrary.roles.length,
+    competencies: defaultLibrary.competencies.length,
+    evaluations: defaultLibrary.evaluations.length,
+  });
 };
 
 const initializeDefaultRoles = () => {
   const initialized = localStorage.getItem(STORAGE_KEYS.INITIALIZED);
   if (!initialized) {
     // Usa os novos cargos padrão do defaultRoles.ts
-    const roles = JSON.parse(localStorage.getItem(STORAGE_KEYS.ROLES) || '[]');
+    const roles = safeParse<Role[]>(STORAGE_KEYS.ROLES, []);
     defaultRoles.forEach(role => {
       // Evita duplicatas
       if (!roles.some((r: Role) => r.id === role.id)) {
@@ -32,7 +90,7 @@ const initializeDefaultRoles = () => {
     console.log('✅ Cargos padrão inicializados:', defaultRoles.length);
   } else {
     // Se já foi inicializado, verifica se há novos cargos padrão para adicionar
-    const roles = JSON.parse(localStorage.getItem(STORAGE_KEYS.ROLES) || '[]');
+    const roles = safeParse<Role[]>(STORAGE_KEYS.ROLES, []);
     
     // 1. Adiciona cargos que não existem
     const missingRoles = getMissingDefaultRoles(roles);
@@ -145,8 +203,7 @@ export const storage = {
   // Roles
   getRoles(): Role[] {
     initializeDefaultRoles();
-    const data = localStorage.getItem(STORAGE_KEYS.ROLES);
-    return data ? JSON.parse(data) : [];
+    return safeParse<Role[]>(STORAGE_KEYS.ROLES, []);
   },
   
   saveRole(role: Role): void {
@@ -167,8 +224,7 @@ export const storage = {
   
   // Evaluations
   getEvaluations(): SavedWork[] {
-    const data = localStorage.getItem(STORAGE_KEYS.EVALUATIONS);
-    return data ? JSON.parse(data) : [];
+    return safeParse<SavedWork[]>(STORAGE_KEYS.EVALUATIONS, []);
   },
   
   saveEvaluation(evaluation: SavedWork): void {
@@ -189,8 +245,7 @@ export const storage = {
   
   // Current evaluation (in progress)
   getCurrentEvaluation(): Evaluation | null {
-    const data = localStorage.getItem(STORAGE_KEYS.CURRENT_EVALUATION);
-    return data ? JSON.parse(data) : null;
+    return safeParse<Evaluation | null>(STORAGE_KEYS.CURRENT_EVALUATION, null);
   },
   
   saveCurrentEvaluation(evaluation: Evaluation): void {
@@ -203,8 +258,7 @@ export const storage = {
   
   // Section Images
   getSectionImages(): SectionImages {
-    const data = localStorage.getItem(STORAGE_KEYS.SECTION_IMAGES);
-    return data ? JSON.parse(data) : {};
+    return safeParse<SectionImages>(STORAGE_KEYS.SECTION_IMAGES, {});
   },
   
   saveSectionImages(sectionImages: SectionImages): void {
@@ -213,8 +267,7 @@ export const storage = {
   
   // Members
   getMembers(): Member[] {
-    const data = localStorage.getItem(STORAGE_KEYS.MEMBERS);
-    return data ? JSON.parse(data) : [];
+    return safeParse<Member[]>(STORAGE_KEYS.MEMBERS, []);
   },
   
   saveMember(member: Member): void {
@@ -245,9 +298,8 @@ export const storage = {
   
   // Competencies
   getCompetencies(): Competency[] {
-    const data = localStorage.getItem(STORAGE_KEYS.COMPETENCIES);
-    const competencies: Competency[] = data ? JSON.parse(data) : [];
-    
+    const competencies = safeParse<Competency[]>(STORAGE_KEYS.COMPETENCIES, []);
+
     // Filtra perguntas dialógicas d2, d3, d4 - mantém a principal ou d1
     return competencies.map(comp => ({
       ...comp,
@@ -326,6 +378,7 @@ export const storage = {
   },
   
   initializeCompetencies(): void {
+    initializeDefaultLibrary();
     initializeDefaultCompetencies();
     migrateCompetencies();
   },

@@ -25,8 +25,9 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [responses, setResponses] = useState<QuestionResponse[]>(evaluation.responses);
   const [sectionObservations, setSectionObservations] = useState<Record<string, string>>(evaluation.sectionObservations || {});
+  const [questionData, setQuestionData] = useState<Record<string, any>>({});
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const role = storage.getRoles().find(r => r.id === evaluation.roleId);
 
   useEffect(() => {
@@ -70,17 +71,13 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
     ? [{ id: 'activities-block', name: 'Avaliação de Atividades', order: 1, color: '#10b981', description: 'Avalie o desempenho técnico em cada uma das atividades específicas.' }]
     : categories.filter(cat => questions.some(q => q.categoryId === cat.id));
   
+  const currentCategory = categoriesWithQuestions[currentCategoryIndex];
+  const categoryQuestions = currentCategory ? questions.filter(q => q.categoryId === currentCategory.id) : [];
+
   useEffect(() => {
     if (categoriesWithQuestions.length === 0) onComplete(evaluation);
   }, [categoriesWithQuestions.length, evaluation, onComplete]);
-  
-  if (categoriesWithQuestions.length === 0) return null;
-  
-  const currentCategory = categoriesWithQuestions[currentCategoryIndex];
-  const categoryQuestions = questions.filter(q => q.categoryId === currentCategory.id);
-  
-  const [questionData, setQuestionData] = useState<Record<string, any>>({});
-  
+
   useEffect(() => {
     const data: any = {};
     categoryQuestions.forEach(q => {
@@ -93,7 +90,9 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
     });
     setQuestionData(data);
   }, [currentCategoryIndex]);
-  
+
+  if (categoriesWithQuestions.length === 0) return null;
+
   const updateQuestionData = (questionId: string, field: string, value: any) => {
     setQuestionData(prev => ({
       ...prev,
