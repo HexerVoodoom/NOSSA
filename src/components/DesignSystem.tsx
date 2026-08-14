@@ -17,7 +17,9 @@ export const DS = {
   buttons: {
     primary: "h-11 px-6 rounded-xl bg-slate-900 text-white hover:bg-slate-800 transition-all text-sm font-bold shadow-sm flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50",
     secondary: "h-11 px-6 rounded-xl bg-white border border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900 transition-all text-sm font-bold shadow-sm flex items-center justify-center gap-2 active:scale-95",
-    ghost: "p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all rounded-lg active:scale-90",
+    // slate-400 dava ~2.6:1 contra o fundo claro e reprovava no 1.4.11 — e este
+    // é o botão de voltar de praticamente toda tela.
+    ghost: "p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all rounded-lg active:scale-90",
     danger: "h-11 px-6 rounded-xl bg-white border border-red-200 text-red-700 hover:bg-red-50 hover:border-red-300 transition-all text-sm font-bold flex items-center justify-center gap-2 active:scale-95",
   },
   cards: {

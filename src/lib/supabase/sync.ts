@@ -1,5 +1,5 @@
 import { supabase } from './client';
-import { storage, STORAGE_KEYS, safeSetItem } from '../storage';
+import { storage, STORAGE_KEYS, safeSetItem, CUSTOM_ELEMENTS_KEY } from '../storage';
 
 /**
  * Ponte entre o localStorage (que o app inteiro já usa de forma síncrona) e o
@@ -411,8 +411,16 @@ let retryTimer: number | null = null;
  * chama NÃO deve liberar a tela nesse caso: seguir em frente mostraria o cache
  * do usuário anterior para quem acabou de entrar.
  */
-export async function startSync(): Promise<boolean> {
-  if (!supabase) return true;
+export type SyncResult =
+  /** Tudo certo: dados carregados, pode liberar a tela. */
+  | 'ok'
+  /** O banco recusou este usuário. Limpe os dados locais. */
+  | 'denied'
+  /** Não deu para falar com o banco. NÃO limpe nada — pode ser só a rede. */
+  | 'unavailable';
+
+export async function startSync(): Promise<SyncResult> {
+  if (!supabase) return 'ok';
 
   // Pergunta ao banco, explicitamente, se este usuário tem acesso.
   //
@@ -421,17 +429,22 @@ export async function startSync(): Promise<boolean> {
   // chamada, alguém de fora entraria com o app "funcionando" e vazio, em vez
   // da tela de sem acesso.
   const { data: allowed, error: accessError } = await supabase.rpc('tem_acesso');
-  if (accessError || allowed !== true) {
-    if (accessError) console.error('Falha ao verificar acesso:', accessError.message);
-    return false;
+  if (accessError) {
+    // Erro ao perguntar é diferente de resposta "não": pode ser a rede. Barra a
+    // entrada do mesmo jeito, mas sem apagar nada do que está no navegador.
+    console.error('Falha ao verificar acesso:', accessError.message);
+    return 'unavailable';
   }
+  if (allowed !== true) return 'denied';
 
   installWriteInterceptors();
   await flushPending();
 
   const seeded = await seedIfNeverSeeded();
   const ok = seeded ? true : await pullAll();
-  if (!ok) return false;
+  // Aqui o acesso já foi confirmado, então a falha é de conexão — jamais tratar
+  // como recusa: quem chama apagaria a fila de alterações ainda não enviadas.
+  if (!ok) return 'unavailable';
 
   subscribeToRemoteChanges();
 
@@ -448,7 +461,7 @@ export async function startSync(): Promise<boolean> {
       if (pendingCount() > 0) void flushPending();
     }, 30_000);
   }
-  return true;
+  return 'ok';
 }
 
 /**
@@ -484,6 +497,14 @@ export async function stopSync(): Promise<void> {
   localStorage.removeItem(STORAGE_KEYS.BACKUP);
   localStorage.removeItem(STORAGE_KEYS.CURRENT_EVALUATION);
   localStorage.removeItem(STORAGE_KEYS.SECTION_IMAGES);
+
+  // Elementos enviados pelo próprio usuário. Não são dados de RH, mas são
+  // conteúdo de quem estava logado e não têm por que sobrar para o próximo.
+  localStorage.removeItem(CUSTOM_ELEMENTS_KEY);
+
+  // Sem zerar, um estouro de cota na sessão de alguém deixaria o aviso de
+  // "sincronização pode estar quebrada" ligado para quem entrasse depois.
+  queueOverflowed = false;
 
   for (const key of Object.values(TABLE_TO_KEY)) {
     localStorage.removeItem(key);

@@ -171,9 +171,19 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
     const year = Number(formData.startYear);
     if (formData.startYear && (!Number.isFinite(year) || year < 1900 || year > 2100)) {
       newErrors.startDate = 'Informe um ano entre 1900 e 2100';
-    }
-    if (!formData.startYear && (formData.startDay || formData.startMonth)) {
+    } else if (!formData.startYear && (formData.startDay || formData.startMonth)) {
       newErrors.startDate = 'Informe o ano para registrar a data de início';
+    } else if (formData.startDay && !formData.startMonth) {
+      // Sem isto, "dia 15" sem mês era salvo como 15 de janeiro — um mês que
+      // ninguém digitou, exibido depois como se fosse informação real.
+      newErrors.startDate = 'Informe o mês, ou deixe o dia em branco';
+    } else if (formData.startDay && formData.startMonth && formData.startYear) {
+      // `new Date(2024, 1, 31)` não reclama: rola para 2 de março. Sem conferir,
+      // 31/Fevereiro era salvo silenciosamente como uma data diferente.
+      const d = new Date(year, Number(formData.startMonth) - 1, Number(formData.startDay));
+      if (d.getMonth() !== Number(formData.startMonth) - 1) {
+        newErrors.startDate = 'Essa data não existe. Confira o dia e o mês.';
+      }
     }
 
     setErrors(newErrors);
@@ -318,6 +328,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                   <select
                     aria-label="Mês de início (opcional)"
                     aria-invalid={!!errors.startDate}
+                    aria-describedby={errors.startDate ? `${startDateId}-error` : `${startDateId}-hint`}
                     value={formData.startMonth}
                     onChange={(e) => setFormData(prev => ({ ...prev, startMonth: e.target.value }))}
                     className={DS.inputs.base}
@@ -334,6 +345,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                     maxLength={4}
                     aria-label="Ano de início"
                     aria-invalid={!!errors.startDate}
+                    aria-describedby={errors.startDate ? `${startDateId}-error` : `${startDateId}-hint`}
                     placeholder="Ano"
                     value={formData.startYear}
                     onChange={(e) => setFormData(prev => ({

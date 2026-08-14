@@ -13,27 +13,29 @@
 -- 1. Tabelas de dados
 -- ---------------------------------------------------------------------------
 
+-- O limite de tamanho evita que um arquivo de importação malformado (ou um
+-- clique errado) encha o banco compartilhado com uma única linha gigante.
 create table if not exists public.members (
   id text primary key,
-  data jsonb not null check (jsonb_typeof(data) = 'object'),
+  data jsonb not null check (jsonb_typeof(data) = 'object' and pg_column_size(data) < 1000000),
   updated_at timestamptz not null default now()
 );
 
 create table if not exists public.roles (
   id text primary key,
-  data jsonb not null check (jsonb_typeof(data) = 'object'),
+  data jsonb not null check (jsonb_typeof(data) = 'object' and pg_column_size(data) < 1000000),
   updated_at timestamptz not null default now()
 );
 
 create table if not exists public.competencies (
   id text primary key,
-  data jsonb not null check (jsonb_typeof(data) = 'object'),
+  data jsonb not null check (jsonb_typeof(data) = 'object' and pg_column_size(data) < 1000000),
   updated_at timestamptz not null default now()
 );
 
 create table if not exists public.evaluations (
   id text primary key,
-  data jsonb not null check (jsonb_typeof(data) = 'object'),
+  data jsonb not null check (jsonb_typeof(data) = 'object' and pg_column_size(data) < 1000000),
   updated_at timestamptz not null default now()
 );
 

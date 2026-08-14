@@ -80,7 +80,14 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
     }
 
     setSubmitting(true);
-    const { error } = await supabase.from('allowed_emails').insert({ email });
+    // `invited_by` é enviado explicitamente, mesmo existindo DEFAULT auth.uid()
+    // na coluna: a política de INSERT exige `invited_by = auth.uid()`, e depender
+    // da ordem entre aplicar o default e avaliar o WITH CHECK deixaria o convite
+    // quebrando por um detalhe interno do banco.
+    const { data: userData } = await supabase.auth.getUser();
+    const { error } = await supabase
+      .from('allowed_emails')
+      .insert({ email, invited_by: userData.user?.id ?? null });
     setSubmitting(false);
 
     if (error) {

@@ -230,6 +230,37 @@ describe('MemberForm — criação vs edição', () => {
     expect(screen.getByRole('alert').textContent).toContain('ano');
   });
 
+  it('[regressão] 31 de fevereiro é recusado em vez de virar 2 de março', () => {
+    seed([]);
+    const { container } = render(
+      <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
+    );
+    preencherNomeECargo(container);
+    fireEvent.change(screen.getByLabelText('Dia de início (opcional)'), { target: { value: '31' } });
+    fireEvent.change(screen.getByLabelText('Mês de início (opcional)'), { target: { value: '2' } });
+    fireEvent.change(screen.getByLabelText('Ano de início'), { target: { value: '2024' } });
+    escolherCargoESalvar();
+
+    // `new Date(2024, 1, 31)` não reclama: rola para 2 de março, e o membro
+    // ficava com uma data que ninguém digitou.
+    expect(storage.getMembers()).toHaveLength(0);
+    expect(screen.getByRole('alert').textContent).toContain('não existe');
+  });
+
+  it('[regressão] dia sem mês é recusado em vez de virar janeiro', () => {
+    seed([]);
+    const { container } = render(
+      <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
+    );
+    preencherNomeECargo(container);
+    fireEvent.change(screen.getByLabelText('Dia de início (opcional)'), { target: { value: '15' } });
+    fireEvent.change(screen.getByLabelText('Ano de início'), { target: { value: '2020' } });
+    escolherCargoESalvar();
+
+    expect(storage.getMembers()).toHaveLength(0);
+    expect(screen.getByRole('alert').textContent).toContain('mês');
+  });
+
   it('[regressão] ano fora de 1900-2100 é recusado em vez de virar data absurda', () => {
     seed([]);
     const { container } = render(

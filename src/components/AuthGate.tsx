@@ -5,7 +5,7 @@ import { startSync, stopSync } from '../lib/supabase/sync';
 import { DS, Button, Card } from './DesignSystem';
 import { LogIn, ShieldAlert } from 'lucide-react';
 
-type SyncState = 'idle' | 'syncing' | 'ready' | 'denied';
+type SyncState = 'idle' | 'syncing' | 'ready' | 'denied' | 'unavailable';
 
 /**
  * Portão de entrada do app.
@@ -58,18 +58,24 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const runSync = () => {
     setSyncState('syncing');
     startSync()
-      .then(async ok => {
-        if (ok) { setSyncState('ready'); return; }
-        // Barrado (ou banco fora do ar): desmonta e limpa. Sem isto, os
-        // interceptadores e o cache da pessoa anterior continuariam vivos
-        // atrás da tela de "sem acesso".
-        await stopSync();
-        setSyncState('denied');
+      .then(async result => {
+        if (result === 'ok') { setSyncState('ready'); return; }
+        if (result === 'denied') {
+          // Recusa confirmada pelo banco: desmonta e limpa, senão os
+          // interceptadores e o cache da pessoa anterior continuariam vivos
+          // atrás da tela de "sem acesso".
+          await stopSync();
+          setSyncState('denied');
+          return;
+        }
+        // 'unavailable': não deu para falar com o banco. NÃO limpar nada — a
+        // limpeza apagaria a fila de alterações que ainda não subiram, e uma
+        // oscilação de rede viraria perda de trabalho.
+        setSyncState('unavailable');
       })
-      .catch(async err => {
+      .catch(err => {
         console.error('Falha ao sincronizar com o Supabase:', err);
-        await stopSync();
-        setSyncState('denied');
+        setSyncState('unavailable');
       });
   };
 
@@ -91,6 +97,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   if (session) {
     if (syncState === 'ready') return <>{children}</>;
     if (syncState === 'denied') return <AccessDenied onRetry={runSync} />;
+    if (syncState === 'unavailable') return <Unavailable onRetry={runSync} />;
     return <FullScreenMessage>Sincronizando dados…</FullScreenMessage>;
   }
 
@@ -236,6 +243,35 @@ function AccessDenied({ onRetry }: { onRetry: () => void }) {
             Sair e entrar com outra conta
           </Button>
         </div>
+      </Card>
+    </div>
+  );
+}
+
+/**
+ * Autenticou e tem acesso, mas o banco não respondeu. Diferente de "sem
+ * acesso": aqui nada é apagado do navegador, porque pode haver alteração ainda
+ * não enviada esperando a conexão voltar.
+ */
+function Unavailable({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6 py-12">
+      <Card className="w-full max-w-md space-y-6 text-center">
+        <div className="size-12 rounded-2xl bg-slate-900 flex items-center justify-center mx-auto">
+          <ShieldAlert className="size-6 text-white" aria-hidden="true" />
+        </div>
+        <div className="space-y-2">
+          <h1 className={DS.typography.section}>Sem conexão com o banco</h1>
+          <p className={DS.typography.body}>
+            Não foi possível carregar os dados agora. Verifique sua internet e
+            tente de novo.
+          </p>
+          <p className="text-sm text-slate-600">
+            Nada do que você já salvou foi perdido — o que ainda não subiu fica
+            guardado e é enviado quando a conexão voltar.
+          </p>
+        </div>
+        <Button onClick={onRetry} className="w-full">Tentar de novo</Button>
       </Card>
     </div>
   );

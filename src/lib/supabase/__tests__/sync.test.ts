@@ -100,7 +100,7 @@ describe('verificação de acesso', () => {
     // "banco vazio" e o app abria normalmente para quem não tem acesso.
     h.state.hasAccess = { data: false, error: null };
 
-    expect(await startSync()).toBe(false);
+    expect(await startSync()).toBe('denied');
   });
 
   it('[regressão] barrado não instala os interceptadores de escrita', async () => {
@@ -114,9 +114,34 @@ describe('verificação de acesso', () => {
     expect(calls.filter(c => c.op === 'upsert')).toHaveLength(0);
   });
 
-  it('falha ao verificar acesso também barra (não abre em caso de dúvida)', async () => {
+  it('falha ao verificar acesso barra, mas como indisponível — não como recusa', async () => {
     h.state.hasAccess = { data: null, error: { message: 'rede fora' } };
-    expect(await startSync()).toBe(false);
+    expect(await startSync()).toBe('unavailable');
+  });
+
+  it('[regressão] falha de rede depois do acesso liberado não vira recusa', async () => {
+    // Distinguir os dois é o que impede a perda de dados do teste seguinte:
+    // quem trata "unavailable" como "denied" limpa a fila.
+    h.state.hasAccess = { data: true, error: null };
+    h.state.selectResult = { data: null, error: { message: 'rede fora' } };
+
+    expect(await startSync()).toBe('unavailable');
+  });
+
+  it('[regressão] oscilação de rede no login não apaga alterações pendentes', async () => {
+    localStorage.setItem(
+      KEYS.PENDING,
+      JSON.stringify([{ kind: 'upsert', table: 'members', id: 'm1', row: { id: 'm1', firstName: 'Ana' } }])
+    );
+    h.state.writeError = { message: 'rede fora' };
+    h.state.selectResult = { data: null, error: { message: 'rede fora' } };
+
+    const result = await startSync();
+
+    // O app só pode limpar a máquina numa recusa confirmada. Tratar queda de
+    // rede como recusa jogaria fora o trabalho ainda não enviado.
+    expect(result).toBe('unavailable');
+    expect(pendingCount()).toBe(1);
   });
 });
 

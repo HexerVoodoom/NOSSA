@@ -89,6 +89,20 @@ colar lá). Desativem os provedores que não forem usar.
 **Para criar um usuário de e-mail e senha:** **Authentication** → **Users** →
 **Add user** → **Create new user**, marcando *Auto Confirm User*.
 
+> ### ⚠️ Passo obrigatório de segurança
+>
+> Em **Authentication** → **Sign In / Providers**, **desligue "Allow new users
+> to sign up"**.
+>
+> Com essa opção ligada, qualquer pessoa na internet pode se cadastrar sozinha
+> informando um e-mail inventado terminado em `@nossapessoaseempresas.com.br`
+> — e, pela regra de domínio, entraria como **administrador**, com acesso
+> total aos dados e ao controle de acessos. Todo usuário de senha deve ser
+> criado à mão em **Authentication → Users**.
+>
+> Pelo mesmo motivo: **nunca desligue "Confirm email"**. Ela é a segunda
+> barreira que impede um cadastro desses de valer.
+
 > Atenção, e é proposital: **habilitar o Google não abre a ferramenta para
 > qualquer um.** Qualquer pessoa do mundo com conta Google consegue *fazer
 > login*, mas só quem está nas duas listas acima consegue *ver dados*. Essa
