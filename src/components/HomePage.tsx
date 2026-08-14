@@ -1,6 +1,7 @@
 import { Building2, Users, Briefcase, GraduationCap, BookOpen, Archive } from 'lucide-react';
 import { FileManager } from './FileManager';
 import { SignOutButton } from './SignOutButton';
+import { AccessManagementButton } from './AccessManagementButton';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
 import imgLogoTortola from "figma:asset/0049d96aabf7ea4e2a663d5f83ebd360cb225dfd.png";
 import imgLogoNOSSA from "figma:asset/d08376795895de90a85e101961d369a69979dcc3.png";
@@ -17,6 +18,7 @@ interface HomePageProps {
   onViewCompetencies: () => void;
   onViewElementUpload?: () => void;
   onViewTutorial: () => void;
+  onViewAccessManagement: () => void;
 }
 
 export function HomePage({ 
@@ -24,8 +26,9 @@ export function HomePage({
   onViewSaved, 
   onViewMembers, 
   onViewRoles, 
-  onViewCompetencies, 
-  onViewTutorial 
+  onViewCompetencies,
+  onViewTutorial,
+  onViewAccessManagement
 }: HomePageProps) {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
@@ -54,6 +57,7 @@ export function HomePage({
               Manual
             </button>
             <FileManager />
+            <AccessManagementButton onClick={onViewAccessManagement} />
             <SignOutButton />
           </div>
         </div>

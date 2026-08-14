@@ -1,23 +1,27 @@
-import { useState, useEffect, useId } from 'react';
+import { useState, useEffect, useRef, useId } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured } from '../lib/supabase/client';
-import { startSync } from '../lib/supabase/sync';
+import { supabase, isSupabaseConfigured, AUTO_ALLOWED_DOMAIN } from '../lib/supabase/client';
+import { startSync, stopSync } from '../lib/supabase/sync';
 import { DS, Button, Card } from './DesignSystem';
-import { LogIn } from 'lucide-react';
+import { LogIn, ShieldAlert } from 'lucide-react';
+
+type SyncState = 'idle' | 'syncing' | 'ready' | 'denied';
 
 /**
  * Portão de entrada do app.
  *
  * Sem Supabase configurado (nenhuma variável de ambiente), renderiza as
  * crianças direto: o app segue funcionando só com dados locais, como sempre.
- * Com Supabase configurado, exige login antes de mostrar qualquer coisa e
- * sincroniza os dados do banco antes de liberar a tela.
+ *
+ * Com Supabase configurado, exige login E carrega os dados do banco antes de
+ * mostrar qualquer tela. Se a carga falhar, NÃO libera o app: entrar com o
+ * cache da pessoa anterior na tela seria mostrar dados de RH para quem talvez
+ * não tenha acesso a eles.
  */
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
-  const [syncing, setSyncing] = useState(false);
-  const [synced, setSynced] = useState(false);
+  const [syncState, setSyncState] = useState<SyncState>('idle');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,6 +29,12 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const [submitting, setSubmitting] = useState(false);
   const emailId = useId();
   const passwordId = useId();
+  const errorId = useId();
+
+  // Identifica de quem é a sessão já sincronizada. Trocar de usuário na mesma
+  // máquina precisa refazer a carga: sem isto, o segundo a entrar via o cache
+  // do primeiro.
+  const syncedUserId = useRef<string | null>(null);
 
   useEffect(() => {
     if (!supabase) { setCheckingSession(false); return; }
@@ -32,31 +42,44 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       setSession(data.session);
       setCheckingSession(false);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
+      if (event === 'SIGNED_OUT') {
+        syncedUserId.current = null;
+        setSyncState('idle');
+        void stopSync();
+      }
     });
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // Puxa os dados do banco assim que há sessão, antes de liberar as telas —
-  // caso contrário o app renderizaria com o cache local desatualizado.
+  const userId = session?.user.id ?? null;
+
   useEffect(() => {
-    if (!session || synced || syncing) return;
-    setSyncing(true);
+    if (!userId) return;
+    if (syncedUserId.current === userId) return;
+
+    // Marca antes de começar: o StrictMode invoca este efeito duas vezes, e
+    // sem a trava as duas execuções disparariam a carga inicial em paralelo.
+    syncedUserId.current = userId;
+    setSyncState('syncing');
+
     startSync()
-      .catch(err => console.error('Falha ao sincronizar com o Supabase:', err))
-      .finally(() => { setSyncing(false); setSynced(true); });
-  }, [session, synced, syncing]);
+      .then(ok => setSyncState(ok ? 'ready' : 'denied'))
+      .catch(err => {
+        console.error('Falha ao sincronizar com o Supabase:', err);
+        setSyncState('denied');
+      });
+  }, [userId]);
 
   if (!isSupabaseConfigured) return <>{children}</>;
 
-  if (checkingSession) {
-    return <FullScreenMessage>Carregando…</FullScreenMessage>;
-  }
+  if (checkingSession) return <FullScreenMessage>Carregando…</FullScreenMessage>;
 
   if (session) {
-    if (!synced) return <FullScreenMessage>Sincronizando dados…</FullScreenMessage>;
-    return <>{children}</>;
+    if (syncState === 'ready') return <>{children}</>;
+    if (syncState === 'denied') return <AccessDenied />;
+    return <FullScreenMessage>Sincronizando dados…</FullScreenMessage>;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,12 +98,32 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     setSubmitting(false);
   };
 
+  const handleGoogle = async () => {
+    if (!supabase) return;
+    setError(null);
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    if (oauthError) setError(oauthError.message);
+  };
+
   return (
-    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6 py-12">
       <Card className="w-full max-w-md space-y-8">
         <div className="space-y-2">
           <h1 className={DS.typography.section}>Arquitetura de Carreira</h1>
           <p className={DS.typography.body}>Entre com sua conta para acessar a ferramenta.</p>
+        </div>
+
+        <Button variant="secondary" onClick={handleGoogle} className="w-full">
+          Entrar com Google
+        </Button>
+
+        <div className="flex items-center gap-4" aria-hidden="true">
+          <span className="h-px flex-1 bg-slate-200" />
+          <span className="text-[11px] font-bold tracking-wider text-slate-400">OU</span>
+          <span className="h-px flex-1 bg-slate-200" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -91,6 +134,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
               type="email"
               autoComplete="email"
               required
+              aria-invalid={!!error}
+              aria-describedby={error ? errorId : undefined}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={DS.inputs.base}
@@ -105,6 +150,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
               type="password"
               autoComplete="current-password"
               required
+              aria-invalid={!!error}
+              aria-describedby={error ? errorId : undefined}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={DS.inputs.base}
@@ -112,18 +159,62 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
             />
           </div>
 
-          {error && <p role="alert" className="text-red-500 text-xs font-bold">{error}</p>}
+          {error && (
+            <p id={errorId} role="alert" className="text-red-700 text-xs font-bold">{error}</p>
+          )}
 
-          <Button type="submit" disabled={submitting} className="w-full">
+          <Button
+            type="submit"
+            aria-disabled={submitting}
+            onClick={(e) => { if (submitting) e.preventDefault(); }}
+            className="w-full"
+          >
             <LogIn className="size-4" aria-hidden="true" />
             {submitting ? 'Entrando…' : 'Entrar'}
           </Button>
         </form>
 
-        <p className="text-[11px] text-slate-400 leading-relaxed">
-          As contas são criadas pelo administrador no painel do Supabase. Se não
-          consegue entrar, procure quem administra a ferramenta.
+        <p className="text-[11px] text-slate-500 leading-relaxed">
+          Quem tem e-mail <strong>@{AUTO_ALLOWED_DOMAIN}</strong> entra direto.
+          Outros e-mails precisam ser convidados por alguém que já usa a
+          ferramenta.
         </p>
+      </Card>
+    </div>
+  );
+}
+
+/**
+ * Autenticou, mas o banco não liberou os dados: e-mail fora da lista de acesso
+ * (o caso comum, já que qualquer conta Google consegue fazer login) ou banco
+ * fora do ar. A mensagem cobre os dois sem prometer qual é.
+ */
+function AccessDenied() {
+  return (
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6 py-12">
+      <Card className="w-full max-w-md space-y-6 text-center">
+        <div className="size-12 rounded-2xl bg-slate-900 flex items-center justify-center mx-auto">
+          <ShieldAlert className="size-6 text-white" aria-hidden="true" />
+        </div>
+        <div className="space-y-2">
+          <h1 className={DS.typography.section}>Sem acesso</h1>
+          <p className={DS.typography.body}>
+            Sua conta entrou, mas não tem permissão para ver os dados desta
+            ferramenta. Peça a alguém que já usa a ferramenta para convidar seu
+            e-mail — ou entre com um e-mail <strong>@{AUTO_ALLOWED_DOMAIN}</strong>.
+          </p>
+          <p className={DS.typography.caption}>
+            Se você já tem acesso, pode ser instabilidade na conexão com o
+            banco. Tente de novo em instantes.
+          </p>
+        </div>
+        <Button
+          variant="secondary"
+          onClick={() => { void supabase?.auth.signOut(); }}
+          className="w-full"
+        >
+          Sair e tentar com outra conta
+        </Button>
       </Card>
     </div>
   );
@@ -131,7 +222,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
 function FullScreenMessage({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center" aria-busy="true">
       <p className={DS.typography.body} role="status">{children}</p>
     </div>
   );

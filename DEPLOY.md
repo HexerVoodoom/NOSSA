@@ -65,12 +65,34 @@ segurança por linha (RLS) — que é o que impede alguém de fora de ler os dad
 — e liga o Realtime, que faz a tela de uma pessoa atualizar sozinha quando
 outra salva algo.
 
-### 3.3 Criar os usuários
+### 3.3 Quem pode entrar
 
-**Authentication** → **Users** → **Add user** → **Create new user**, com
-e-mail e senha, marcando *Auto Confirm User*. Repitam para cada pessoa que vai
-usar a ferramenta. Não existe cadastro aberto: só quem vocês criarem aqui
-consegue entrar — é proposital.
+Há duas formas de entrar: **com a conta Google** ou com **e-mail e senha**.
+
+Quem tem acesso liberado:
+
+1. **Qualquer e-mail `@nossapessoaseempresas.com.br`** — entra direto, sem
+   precisar de convite, com permissão total (inclusive para convidar outros).
+2. **E-mails convidados** — qualquer outro endereço (Gmail pessoal, e-mail do
+   cliente) só entra depois de ser adicionado na tela **Acessos**, dentro da
+   própria ferramenta (botão no topo da tela inicial).
+
+Quem não está em nenhum dos dois casos consegue fazer login, mas vê uma tela
+de "sem acesso" e não enxerga dado nenhum — isso é garantido pelo banco, não
+só pela tela.
+
+**Para habilitar o login com Google:** Supabase → **Authentication** →
+**Providers** → **Google** → ativar, e seguir as instruções para criar o
+OAuth Client no Google Cloud (o painel mostra a *callback URL* que vocês devem
+colar lá). Desativem os provedores que não forem usar.
+
+**Para criar um usuário de e-mail e senha:** **Authentication** → **Users** →
+**Add user** → **Create new user**, marcando *Auto Confirm User*.
+
+> Atenção, e é proposital: **habilitar o Google não abre a ferramenta para
+> qualquer um.** Qualquer pessoa do mundo com conta Google consegue *fazer
+> login*, mas só quem está nas duas listas acima consegue *ver dados*. Essa
+> separação é o que o passo 3.2 configurou.
 
 ### 3.4 Informar as chaves para a aplicação
 
@@ -104,9 +126,25 @@ banco passa a ser a fonte da verdade e os demais navegadores baixam dele.
 
 Ela é pública por natureza (vai dentro do navegador, qualquer pessoa consegue
 lê-la) — isso é normal e esperado. Quem protege os dados são as políticas de
-RLS criadas no passo 3.2, que só liberam leitura/escrita para usuário
-autenticado. **Nunca** coloquem a chave `service_role` no `.env` nem no
-Cloudflare: essa ignora todas as regras de segurança.
+RLS criadas no passo 3.2, que conferem o e-mail de quem está logado contra o
+domínio corporativo e a lista de convidados. **Nunca** coloquem a chave
+`service_role` no `.env` nem no Cloudflare: essa ignora todas as regras de
+segurança.
+
+### Decisões de segurança que vocês devem conhecer
+
+- **Todo mundo do domínio corporativo é administrador.** Foi pedido assim
+  ("permissão total"). Na prática: qualquer pessoa `@nossapessoaseempresas.com.br`
+  pode convidar gente de fora. Se um dia quiserem restringir isso a poucas
+  pessoas, é uma alteração pequena na função `e_admin()` do `schema.sql`.
+- **Sair da ferramenta apaga os dados daquele navegador.** Isso é de propósito:
+  em computador compartilhado, a próxima pessoa não pode ver a base de RH de
+  quem usou antes.
+- **Dados de RH são dados pessoais (LGPD).** Vale checar em qual região o
+  projeto Supabase foi criado (fora do Brasil implica transferência
+  internacional, que precisa de base legal documentada) e formalizar o contrato
+  de operador com a Supabase. Vale também definir por quanto tempo as
+  avaliações ficam guardadas.
 
 ## 4. Rodando localmente para testar antes de publicar
 
