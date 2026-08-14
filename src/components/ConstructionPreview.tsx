@@ -21,13 +21,14 @@ interface ConstructionPreviewProps {
 }
 
 // Competency shapes mapping for each category (same as CategoryQuestionFlow)
+// As categorias reais são 'bloco1'..'bloco6' (lib/newBlocks); 'cat1'..'cat6' são legado
 const categoryShapes: Record<string, string[]> = {
-  'cat1': ['foundation-1', 'foundation-2', 'foundation-3', 'foundation-4', 'foundation-5', 'foundation-6', 'foundation-7', 'foundation-8', 'foundation-9', 'foundation-10'],
-  'cat2': ['structure-1', 'structure-2', 'structure-3', 'structure-4', 'structure-5', 'structure-6', 'structure-7', 'structure-8', 'structure-9', 'structure-10'],
-  'cat3': ['wall-1', 'wall-2', 'wall-3', 'wall-4', 'wall-5', 'wall-6', 'wall-7', 'wall-8', 'wall-9', 'wall-10'],
-  'cat4': ['window-1', 'window-2', 'window-3', 'window-4', 'window-5', 'window-6', 'window-7', 'window-8', 'window-9', 'window-10'],
-  'cat5': ['detail-1', 'detail-2', 'detail-3', 'detail-4', 'detail-5', 'detail-6', 'detail-7', 'detail-8', 'detail-9', 'detail-10'],
-  'cat6': ['roof-1', 'roof-2', 'roof-3', 'roof-4', 'roof-5', 'roof-6', 'roof-7', 'roof-8', 'roof-9', 'roof-10'],
+  'bloco1': ['foundation-1', 'foundation-2', 'foundation-3', 'foundation-4', 'foundation-5', 'foundation-6', 'foundation-7', 'foundation-8', 'foundation-9', 'foundation-10'],
+  'bloco2': ['structure-1', 'structure-2', 'structure-3', 'structure-4', 'structure-5', 'structure-6', 'structure-7', 'structure-8', 'structure-9', 'structure-10'],
+  'bloco3': ['wall-1', 'wall-2', 'wall-3', 'wall-4', 'wall-5', 'wall-6', 'wall-7', 'wall-8', 'wall-9', 'wall-10'],
+  'bloco4': ['window-1', 'window-2', 'window-3', 'window-4', 'window-5', 'window-6', 'window-7', 'window-8', 'window-9', 'window-10'],
+  'bloco5': ['detail-1', 'detail-2', 'detail-3', 'detail-4', 'detail-5', 'detail-6', 'detail-7', 'detail-8', 'detail-9', 'detail-10'],
+  'bloco6': ['roof-1', 'roof-2', 'roof-3', 'roof-4', 'roof-5', 'roof-6', 'roof-7', 'roof-8', 'roof-9', 'roof-10'],
 };
 
 export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: ConstructionPreviewProps) {
@@ -50,12 +51,16 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
   // Ensure assembledElements exists or create from responses
   const assembledElements: PreviewElement[] = evaluation.assembledElements && evaluation.assembledElements.length > 0
     ? evaluation.assembledElements
-    : evaluation.responses.map((response) => {
+    : (Array.isArray(evaluation.responses) ? evaluation.responses : []).map((response) => {
         // Find the question to get its categoryId
         const question = allQuestions.find(q => q.id === response.questionId) ||
-                        role?.customQuestions?.find(q => q.id === response.questionId);
-        
-        const categoryId = question?.categoryId || 'cat1';
+                        (Array.isArray(role?.customQuestions)
+                          ? role!.customQuestions!.find(q => q.id === response.questionId)
+                          : undefined);
+
+        const rawCategoryId = question?.categoryId;
+        const legacy = rawCategoryId ? /^cat(\d+)$/.exec(rawCategoryId) : null;
+        const categoryId = legacy ? `bloco${legacy[1]}` : (rawCategoryId || 'bloco1');
         const elementId = getElementIdFromImageIndex(
           categoryId,
           response.selectedImageIndex,
@@ -74,17 +79,19 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
   
   // Group elements by category
   const elementsByCategory = assembledElements.reduce((acc, element) => {
-    if (!acc[element.categoryId]) {
-      acc[element.categoryId] = [];
+    const key = element.categoryId || 'bloco1';
+    if (!acc[key]) {
+      acc[key] = [];
     }
-    acc[element.categoryId].push(element);
+    acc[key].push(element);
     return acc;
   }, {} as Record<string, typeof assembledElements>);
 
   // Calculate stats
   const totalElements = assembledElements.length;
-  const completedQuadrants = Object.keys(elementsByCategory).length;
   const totalQuadrants = newBlocks.length;
+  // Só contam quadrantes que realmente existem, senão o placar passava do total
+  const completedQuadrants = newBlocks.filter(b => (elementsByCategory[b.id]?.length ?? 0) > 0).length;
   
   // Calculate average level
   // Só entram na média os elementos que realmente têm nota. Avaliações salvas
@@ -184,7 +191,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
                   <div className="h-[203px] relative rounded-[10px] w-full border-2 border-slate-200 p-[26px] flex items-center justify-around gap-[20px]">
                     {elements.length > 0 ? (
                       elements.map((element, idx) => (
-                        <div key={idx} className="flex flex-col items-center gap-[8px] flex-1 max-w-[200px]">
+                        <div key={`${element.elementId || 'el'}-${idx}`} className="flex flex-col items-center gap-[8px] flex-1 max-w-[200px]">
                           {/* Element Icon/Shape Preview */}
                           <div className="h-[90px] flex items-center justify-center">
                             <div 
@@ -200,7 +207,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
                           
                           {/* Element Name */}
                           <p className="font-['Arial:Regular',sans-serif] text-[12px] text-[#45556c] text-center line-clamp-2">
-                            {element.name || element.elementId}
+                            {element.name || element.elementId || 'Elemento sem nome'}
                           </p>
                           
                           {/* Level Badge */}

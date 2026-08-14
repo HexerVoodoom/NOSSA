@@ -1,4 +1,4 @@
-import { getCustomElement, hasCustomElement } from '../lib/customElements';
+import { getCustomElement } from '../lib/customElements';
 import { sanitizeSVG } from '../lib/svgProcessor';
 
 interface ElementRendererProps {
@@ -73,23 +73,32 @@ const getDefaultElement = (code: string, color: string) => {
 };
 
 export function ElementRenderer({ code, color, mode = 'architectural', className = '' }: ElementRendererProps) {
+  // Código/cor ausentes em registros legados: nunca chamar startsWith em undefined
+  const safeCode = typeof code === 'string' ? code : '';
+  const safeColor = typeof color === 'string' && color.trim() !== '' ? color : '#6155f5';
+
   // 1. Prioridade máxima: Elementos incorporados no código
-  const builtInElement = getCustomElement(code);
-  if (builtInElement) {
+  const builtInElement = safeCode ? getCustomElement(safeCode) : null;
+  // Chaves herdadas do Object.prototype ('constructor', 'toString', ...) retornam
+  // um objeto sem `svg`; só aceitamos quando o SVG é realmente uma string
+  const builtInSvg = typeof builtInElement?.svg === 'string' ? builtInElement.svg : '';
+  const sanitized = builtInSvg ? sanitizeSVG(builtInSvg) : '';
+
+  if (sanitized) {
     return (
       <div className={`${className} flex items-center justify-center size-full`}>
         {/* SVG sanitizado antes da injeção (bloqueia script/handlers) */}
         <div
-          dangerouslySetInnerHTML={{ __html: sanitizeSVG(builtInElement.svg) }}
+          dangerouslySetInnerHTML={{ __html: sanitized }}
           className="w-full h-full flex items-center justify-center"
-          style={{ color }}
+          style={{ color: safeColor }}
         />
       </div>
     );
   }
 
-  // 2. Fallback: Elemento geométrico padrão
-  const element = getDefaultElement(code, color);
-  
+  // 2. Fallback: Elemento geométrico padrão (também quando a sanitização esvazia o SVG)
+  const element = getDefaultElement(safeCode, safeColor);
+
   return <div className={`${className} flex items-center justify-center size-full`}>{element}</div>;
 }

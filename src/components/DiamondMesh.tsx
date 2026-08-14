@@ -29,43 +29,54 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
   const containerRef = useRef<HTMLDivElement>(null);
   
   const BASE_SIZE = 80;
-  
+
+  // Ids atuais das categorias são 'bloco1'..'bloco6'; 'cat1'..'cat6' são legado.
+  const normalizeCategoryId = (categoryId?: string): string => {
+    if (!categoryId) return 'bloco1';
+    const legacy = /^cat(\d+)$/.exec(categoryId);
+    return legacy ? `bloco${legacy[1]}` : categoryId;
+  };
+
   // Função para obter o z-index baseado na categoria
   // Ordem de sobreposição (de baixo para cima): Piso < Paredes < Colunas < Portas/Janelas < Telhado
   const getCategoryZIndex = (categoryId?: string): number => {
     const zIndexMap: Record<string, number> = {
-      'cat1': 10,  // Piso - mais atrás
-      'cat3': 20,  // Paredes - acima do piso
-      'cat2': 30,  // Colunas - sobrepõem paredes
-      'cat4': 40,  // Portas - sobrepõem paredes
-      'cat5': 50,  // Janelas - sobrepõem paredes
-      'cat6': 60,  // Telhado - mais na frente
+      'bloco1': 10,  // Piso - mais atrás
+      'bloco3': 20,  // Paredes - acima do piso
+      'bloco2': 30,  // Colunas - sobrepõem paredes
+      'bloco4': 40,  // Portas - sobrepõem paredes
+      'bloco5': 50,  // Janelas - sobrepõem paredes
+      'bloco6': 60,  // Telhado - mais na frente
     };
-    return categoryId ? (zIndexMap[categoryId] || 10) : 10;
+    return zIndexMap[normalizeCategoryId(categoryId)] || 10;
   };
-  
+
   // Função para obter dimensões baseadas no tipo de elemento
   const getElementDimensions = (shapeCode: string, categoryId?: string): { width: number; height: number } => {
     const baseWidth = BASE_SIZE;
     const baseHeight = BASE_SIZE;
-    
+    const code = typeof shapeCode === 'string' ? shapeCode : '';
+
     // Ajustar tamanhos por categoria para criar proporções arquitetônicas realistas
     const categoryScaleMap: Record<string, number> = {
-      'cat1': 2.0,   // Piso - MAIOR (dobro do tamanho)
-      'cat2': 0.5,   // Colunas - 1/2 do tamanho atual (bem menores)
-      'cat3': 1.8,   // Paredes - MAIORES
-      'cat4': 0.25,  // Portas - 1/4 do tamanho atual (bem menores)
-      'cat5': 0.6,   // Janelas - menores
-      'cat6': 1.2,   // Telhado - médio
+      'bloco1': 2.0,   // Piso - MAIOR (dobro do tamanho)
+      'bloco2': 0.5,   // Colunas - 1/2 do tamanho atual (bem menores)
+      'bloco3': 1.8,   // Paredes - MAIORES
+      'bloco4': 0.25,  // Portas - 1/4 do tamanho atual (bem menores)
+      'bloco5': 0.6,   // Janelas - menores
+      'bloco6': 1.2,   // Telhado - médio
     };
-    
-    // Base scale da categoria + user scale adjustment
-    const baseScale = categoryId ? (categoryScaleMap[categoryId] || 1.0) : 1.0;
-    const userScale = categoryId ? (categoryScales[categoryId] || 1.0) : 1.0;
+
+    const catKey = normalizeCategoryId(categoryId);
+    // Base scale da categoria + user scale adjustment.
+    // Escalas 0/negativas/NaN colapsariam o elemento; caem para 1.0.
+    const baseScale = categoryScaleMap[catKey] || 1.0;
+    const rawUserScale = categoryScales[catKey] ?? categoryScales[categoryId ?? ''] ?? 1.0;
+    const userScale = Number.isFinite(rawUserScale) && rawUserScale > 0 ? rawUserScale : 1.0;
     const scale = baseScale * userScale;
-    
+
     // Fundamento (foundation) - quadrado
-    if (shapeCode.startsWith('foundation-')) {
+    if (code.startsWith('foundation-')) {
       return { 
         width: baseWidth * scale, 
         height: baseHeight * scale 
@@ -73,7 +84,7 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
     }
     
     // Colunas (structure) - verticais mas não tão altas (reduzido de 5/3 para 4/3)
-    if (shapeCode.startsWith('structure-')) {
+    if (code.startsWith('structure-')) {
       return { 
         width: baseWidth * 0.6 * scale,  // Reduzido de 0.8 para 0.6
         height: baseWidth * 0.6 * (4/3) * scale  // Reduzido de 5/3 para 4/3
@@ -81,7 +92,7 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
     }
     
     // Paredes (wall) - horizontais e grandes (aspect-ratio 4:3)
-    if (shapeCode.startsWith('wall-')) {
+    if (code.startsWith('wall-')) {
       return { 
         width: baseWidth * 1.3 * scale, 
         height: baseWidth * 1.3 * (3/4) * scale 
@@ -89,15 +100,16 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
     }
     
     // Janelas (window) - pequenas e quadradas
-    if (shapeCode.startsWith('window-')) {
+    if (code.startsWith('window-')) {
       return { 
         width: baseWidth * 0.6 * scale, 
         height: baseWidth * 0.6 * scale 
       };
     }
     
-    // Detalhes/Portas (detail) - verticais médias (aspect-ratio 2:3)
-    if (shapeCode.startsWith('detail-')) {
+    // Detalhes/Portas (detail/door) - verticais médias (aspect-ratio 2:3)
+    // 'door-' era ignorado e caía no fallback quadrado
+    if (code.startsWith('detail-') || code.startsWith('door-')) {
       return { 
         width: baseWidth * 0.7 * scale, 
         height: baseWidth * 0.7 * (3/2) * scale 
@@ -105,7 +117,7 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
     }
     
     // Telhados (roof) - largos e baixos (aspect-ratio 5:3)
-    if (shapeCode.startsWith('roof-')) {
+    if (code.startsWith('roof-')) {
       return { 
         width: baseWidth * 1.4 * scale, 
         height: baseWidth * 1.4 * (3/5) * scale 
@@ -124,6 +136,7 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
     
     // Verificar se a categoria está bloqueada
     const element = assembledElements[index];
+    if (!element || !element.position) return; // registro legado sem posição
     if (element.categoryId && lockedCategories[element.categoryId]) {
       // Categoria bloqueada - não permitir drag
       return;
@@ -233,11 +246,15 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
         if (!element) return;
         
         const dimensions = getElementDimensions(element.shapeCode, element.categoryId);
-        const left = assembled.position.x - dimensions.width / 2;
-        const top = assembled.position.y - dimensions.height / 2;
-        const right = assembled.position.x + dimensions.width / 2;
-        const bottom = assembled.position.y + dimensions.height / 2;
-        
+        // Posições ausentes/NaN envenenariam o bounding box (tudo fora da tela)
+        const px = Number(assembled.position?.x);
+        const py = Number(assembled.position?.y);
+        if (!Number.isFinite(px) || !Number.isFinite(py)) return;
+        const left = px - dimensions.width / 2;
+        const top = py - dimensions.height / 2;
+        const right = px + dimensions.width / 2;
+        const bottom = py + dimensions.height / 2;
+
         minX = Math.min(minX, left);
         minY = Math.min(minY, top);
         maxX = Math.max(maxX, right);
@@ -261,9 +278,9 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
       const newElements = assembledElements.map(assembled => ({
         ...assembled,
         position: {
-          x: assembled.position.x + offsetX,
-          y: assembled.position.y + offsetY,
-          z: assembled.position.z || 0,
+          x: (Number(assembled.position?.x) || 0) + offsetX,
+          y: (Number(assembled.position?.y) || 0) + offsetY,
+          z: Number(assembled.position?.z) || 0,
         }
       }));
       setCenteredElements(newElements);
@@ -305,10 +322,24 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
           
           // Z-index: dragging (1000) > hovered (500) > categoria normal
           const zIndex = isDragging ? 1000 : isHovered ? 500 : getCategoryZIndex(element.categoryId);
-          
+
+          // Posição pode faltar/ser inválida em registros antigos
+          const posX = Number(assembled.position?.x);
+          const posY = Number(assembled.position?.y);
+          const safeX = Number.isFinite(posX) ? posX : 0;
+          const safeY = Number.isFinite(posY) ? posY : 0;
+
+          // rotation é `number | {x,y,z}` — os dois ramos precisam ser tratados
+          const rawRotation = assembled.rotation;
+          const rotationDeg = typeof rawRotation === 'number'
+            ? rawRotation
+            : Number(rawRotation?.z) || 0;
+          const safeRotation = Number.isFinite(rotationDeg) ? rotationDeg : 0;
+          const zoom = isDragging ? 1.1 : isHovered && !isLocked ? 1.05 : 1;
+
           return (
             <div
-              key={index}
+              key={`${assembled.elementId}-${index}`}
               className={`absolute transition-all duration-150 ${
                 readOnly 
                   ? 'cursor-default' 
@@ -317,11 +348,11 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
                   : 'cursor-move hover:shadow-2xl'
               } ${isHovered && !readOnly && !isLocked ? 'ring-2 ring-[#6155f5] ring-offset-2 rounded-lg' : ''}`}
               style={{
-                left: assembled.position.x - dimensions.width / 2,
-                top: assembled.position.y - dimensions.height / 2,
+                left: safeX - dimensions.width / 2,
+                top: safeY - dimensions.height / 2,
                 width: dimensions.width,
                 height: dimensions.height,
-                transform: `scale(${isDragging ? 1.1 : isHovered && !isLocked ? 1.05 : 1})`,
+                transform: `scale(${zoom})${safeRotation ? ` rotate(${safeRotation}deg)` : ''}`,
                 zIndex,
                 opacity: isLocked ? 0.7 : 1,
               }}
