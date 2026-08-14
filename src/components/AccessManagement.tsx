@@ -1,4 +1,4 @@
-import { useState, useEffect, useId } from 'react';
+import { useState, useEffect, useId, useRef } from 'react';
 import { supabase, isSupabaseConfigured, AUTO_ALLOWED_DOMAIN } from '../lib/supabase/client';
 import { DS, Button, Card } from './DesignSystem';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
@@ -7,8 +7,16 @@ import { toast } from 'sonner';
 
 interface AllowedEmail {
   email: string;
-  invited_by: string | null;
   created_at: string;
+}
+
+const SEM_PERMISSAO =
+  'Você não tem permissão para alterar a lista de acessos. Peça a alguém com ' +
+  'e-mail do domínio da empresa.';
+
+// 42501 = insufficient_privilege; PGRST301 = JWT ausente/expirado.
+function isPermissionError(error: { code?: string }): boolean {
+  return error.code === '42501' || error.code === 'PGRST301';
 }
 
 interface AccessManagementProps {
@@ -31,20 +39,26 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
   const [submitting, setSubmitting] = useState(false);
   const [toRemove, setToRemove] = useState<AllowedEmail | null>(null);
   const newEmailId = useId();
+  const inviteInputRef = useRef<HTMLInputElement>(null);
+  const loadedOnce = useRef(false);
 
   const load = async () => {
     if (!supabase) return;
-    setLoading(true);
+    // Só mostra "Carregando…" na primeira vez: recarregar depois de convidar
+    // ou remover desmontava a lista e jogava o foco do teclado para o body.
+    if (!loadedOnce.current) setLoading(true);
     const { data, error } = await supabase
       .from('allowed_emails')
-      .select('email, invited_by, created_at')
+      .select('email, created_at')
       .order('created_at', { ascending: true });
     if (error) {
-      setLoadError(error.message);
+      console.error('Falha ao carregar a lista de acessos:', error);
+      setLoadError('Não foi possível carregar a lista de acessos.');
     } else {
       setLoadError(null);
       setEmails(data ?? []);
     }
+    loadedOnce.current = true;
     setLoading(false);
   };
 
@@ -70,31 +84,45 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
     setSubmitting(false);
 
     if (error) {
-      toast.error(
-        error.code === '23505'
-          ? 'Esse e-mail já está na lista.'
-          : `Não foi possível convidar: ${error.message}`
-      );
+      // Mensagens do Postgres vêm em inglês e falando de "row-level security
+      // policy" — inútil para quem usa a ferramenta. O texto cru vai para o
+      // console de quem for investigar.
+      console.error('Falha ao convidar:', error);
+      if (error.code === '23505') toast.error('Esse e-mail já está na lista.');
+      else if (isPermissionError(error)) toast.error(SEM_PERMISSAO);
+      else toast.error('Não foi possível convidar. Tente de novo.');
       return;
     }
     setNewEmail('');
     toast.success(`${email} agora pode entrar.`);
-    void load();
+    await load();
+    inviteInputRef.current?.focus();
   };
 
   const handleRemove = async () => {
     if (!supabase || !toRemove) return;
-    const { error } = await supabase
+    const target = toRemove;
+    setToRemove(null);
+
+    // `select()` faz o PostgREST devolver as linhas afetadas. Sem isso, uma
+    // exclusão barrada pela RLS volta "0 linhas e nenhum erro" e a tela dizia
+    // "não tem mais acesso" para alguém que continuava com acesso.
+    const { data, error } = await supabase
       .from('allowed_emails')
       .delete()
-      .eq('email', toRemove.email);
+      .eq('email', target.email)
+      .select('email');
+
     if (error) {
-      toast.error(`Não foi possível remover: ${error.message}`);
+      console.error('Falha ao remover acesso:', error);
+      toast.error(isPermissionError(error) ? SEM_PERMISSAO : 'Não foi possível remover. Tente de novo.');
+    } else if (!data || data.length === 0) {
+      toast.error(SEM_PERMISSAO);
     } else {
-      toast.success(`${toRemove.email} não tem mais acesso.`);
-      void load();
+      toast.success(`${target.email} não tem mais acesso.`);
     }
-    setToRemove(null);
+    await load();
+    inviteInputRef.current?.focus();
   };
 
   if (!isSupabaseConfigured) {
@@ -148,6 +176,7 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
               <label htmlFor={newEmailId} className="sr-only">E-mail para convidar</label>
               <input
                 id={newEmailId}
+                ref={inviteInputRef}
                 type="email"
                 required
                 value={newEmail}
@@ -165,9 +194,7 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
           {loading && <p className={DS.typography.body} role="status">Carregando…</p>}
 
           {loadError && (
-            <p role="alert" className="text-red-500 text-xs font-bold">
-              Não foi possível carregar a lista: {loadError}
-            </p>
+            <p role="alert" className="text-red-700 text-xs font-bold">{loadError}</p>
           )}
 
           {!loading && !loadError && emails.length === 0 && (
@@ -182,11 +209,6 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
                 <li key={entry.email} className="flex items-center justify-between py-4 gap-4">
                   <div className="min-w-0">
                     <p className={DS.typography.bodyEmphasis + ' truncate'}>{entry.email}</p>
-                    {entry.invited_by && (
-                      <p className={DS.typography.caption + ' truncate'}>
-                        convidado por {entry.invited_by}
-                      </p>
-                    )}
                   </div>
                   <button
                     type="button"

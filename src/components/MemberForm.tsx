@@ -5,6 +5,11 @@ import { DS, Button, Card } from './DesignSystem';
 import { ArrowLeft, ChevronDown, UserCircle } from 'lucide-react';
 import { toast } from "sonner";
 
+const MONTHS = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+];
+
 interface MemberFormProps {
   member: Member | null;
   onBack: () => void;
@@ -39,31 +44,28 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
     return `${year}-${month}-${day}`;
   };
 
-  const formatYearMonthForInput = (date: Date | string | undefined): string => {
-    if (!date) return '';
-    const d = new Date(date);
+  // A data de início é montada de três campos independentes. Dia e mês são
+  // opcionais porque parte da equipe só sabe o ano (ou mês/ano) de admissão.
+  // A precisão é DEDUZIDA do que foi preenchido — não existe um seletor de
+  // modo escondendo campos, que é onde as pessoas erram.
+  const startPart = (part: 'day' | 'month' | 'year'): string => {
+    const raw = member?.startDate;
+    if (!raw) return '';
+    const d = new Date(raw);
     if (Number.isNaN(d.getTime())) return '';
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const precision = member?.startDatePrecision || 'day';
+    if (part === 'year') return String(d.getFullYear());
+    if (part === 'month') return precision === 'year' ? '' : String(d.getMonth() + 1);
+    return precision === 'day' ? String(d.getDate()) : '';
   };
-
-  const formatYearForInput = (date: Date | string | undefined): string => {
-    if (!date) return '';
-    const d = new Date(date);
-    if (Number.isNaN(d.getTime())) return '';
-    return String(d.getFullYear());
-  };
-
-  const [startDatePrecision, setStartDatePrecision] = useState<'day' | 'month' | 'year'>(
-    member?.startDatePrecision || 'day'
-  );
 
   const [formData, setFormData] = useState({
     firstName: member?.firstName || '',
     lastName: member?.lastName || '',
     birthDate: formatDateForInput(member?.birthDate),
-    startDate: formatDateForInput(member?.startDate),
-    startDateYearMonth: formatYearMonthForInput(member?.startDate),
-    startDateYear: formatYearForInput(member?.startDate),
+    startDay: startPart('day'),
+    startMonth: startPart('month'),
+    startYear: startPart('year'),
     position: member?.position || '',
   });
   
@@ -142,10 +144,38 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  // A precisão vem do que a pessoa preencheu, não de um seletor de modo: quem
+  // sabe só o ano preenche só o ano.
+  const startPrecision: 'day' | 'month' | 'year' =
+    formData.startDay ? 'day' : formData.startMonth ? 'month' : 'year';
+
+  // Dia e mês ausentes viram 1, então `startDate` continua sendo uma Date
+  // completa e válida para quem calcula tempo de casa ou ordena por ela;
+  // `startDatePrecision` diz o que exibir de volta.
+  const buildStartDate = (): Date | undefined => {
+    const year = Number(formData.startYear);
+    if (!formData.startYear || !Number.isFinite(year)) return undefined;
+    const month = formData.startMonth ? Number(formData.startMonth) : 1;
+    const day = formData.startDay ? Number(formData.startDay) : 1;
+    const d = new Date(year, month - 1, day);
+    return Number.isNaN(d.getTime()) ? undefined : d;
+  };
+
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.firstName.trim()) newErrors.firstName = 'Nome é obrigatório';
     if (!formData.position.trim()) newErrors.position = 'Cargo é obrigatório';
+
+    // Sem esta checagem, um ano inválido ou dia sem ano era descartado em
+    // silêncio: o membro salvava sem data de início e ainda dava toast verde.
+    const year = Number(formData.startYear);
+    if (formData.startYear && (!Number.isFinite(year) || year < 1900 || year > 2100)) {
+      newErrors.startDate = 'Informe um ano entre 1900 e 2100';
+    }
+    if (!formData.startYear && (formData.startDay || formData.startMonth)) {
+      newErrors.startDate = 'Informe o ano para registrar a data de início';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -163,23 +193,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
       return Number.isNaN(d.getTime()) ? undefined : d;
     };
 
-    // Quando só ano (ou ano+mês) é conhecido, dia/mês são fixados em 1 —
-    // `startDate` continua sendo uma Date completa e válida para quem já
-    // calcula tempo de casa/ordena por ela; `startDatePrecision` diz o que
-    // realmente mostrar de volta na tela.
-    const buildStartDate = (): Date | undefined => {
-      if (startDatePrecision === 'year') {
-        const year = Number(formData.startDateYear);
-        if (!Number.isFinite(year) || formData.startDateYear.length !== 4) return undefined;
-        return new Date(year, 0, 1);
-      }
-      if (startDatePrecision === 'month') {
-        const [year, month] = formData.startDateYearMonth.split('-').map(Number);
-        if (!Number.isFinite(year) || !Number.isFinite(month)) return undefined;
-        return new Date(year, month - 1, 1);
-      }
-      return formData.startDate ? createDateWithoutTimezone(formData.startDate) : undefined;
-    };
+    const startDate = buildStartDate();
 
     const newMember: Member = {
       // Date.now() sozinho colide em dois cadastros no mesmo milissegundo
@@ -188,8 +202,8 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim() || undefined,
       birthDate: formData.birthDate ? createDateWithoutTimezone(formData.birthDate) : undefined,
-      startDate: buildStartDate(),
-      startDatePrecision,
+      startDate,
+      startDatePrecision: startDate ? startPrecision : undefined,
       position: formData.position.trim(),
       createdAt: member?.createdAt || new Date(),
     };
@@ -236,7 +250,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label htmlFor={firstNameId} className={DS.inputs.label}>Nome <span className="text-red-500">*</span></label>
+                <label htmlFor={firstNameId} className={DS.inputs.label}>Nome <span className="text-red-700">*</span></label>
                 <input
                   id={firstNameId}
                   type="text"
@@ -248,7 +262,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                   className={DS.inputs.base + (errors.firstName ? ' border-red-200 bg-red-50' : '')}
                   placeholder="Ex: João"
                 />
-                {errors.firstName && <p id={`${firstNameId}-error`} className="text-red-500 text-xs font-bold">{errors.firstName}</p>}
+                {errors.firstName && <p id={`${firstNameId}-error`} className="text-red-700 text-xs font-bold">{errors.firstName}</p>}
               </div>
 
               <div className="space-y-2">
@@ -275,52 +289,70 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                   className={DS.inputs.base}
                 />
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-2">
-                  <label htmlFor={startDateId} className={DS.inputs.label}>Início na Empresa</label>
+              {/*
+                Dia e mês são opcionais e sempre visíveis. Muita gente não sabe
+                o dia exato de admissão de colegas antigos; um seletor de "modo"
+                escondendo campos obrigava a pessoa a decidir antes de digitar,
+                e dependia de <input type="month">, que o Firefox e o Safari não
+                implementam — lá virava caixa de texto livre e a data era
+                descartada em silêncio ao salvar.
+              */}
+              <fieldset className="space-y-2">
+                <legend className={DS.inputs.label}>Início na Empresa</legend>
+                <div className="grid grid-cols-[1fr_1.4fr_1fr] gap-2">
                   <select
-                    aria-label="Precisão da data de início na empresa"
-                    value={startDatePrecision}
-                    onChange={(e) => setStartDatePrecision(e.target.value as 'day' | 'month' | 'year')}
-                    className="text-[11px] font-bold text-slate-500 bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-slate-300 rounded"
+                    id={startDateId}
+                    aria-label="Dia de início (opcional)"
+                    aria-invalid={!!errors.startDate}
+                    aria-describedby={errors.startDate ? `${startDateId}-error` : `${startDateId}-hint`}
+                    value={formData.startDay}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startDay: e.target.value }))}
+                    className={DS.inputs.base}
                   >
-                    <option value="day">Dia, mês e ano</option>
-                    <option value="month">Só mês e ano</option>
-                    <option value="year">Só o ano</option>
+                    <option value="">Dia</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
                   </select>
-                </div>
-                {startDatePrecision === 'day' && (
-                  <input
-                    id={startDateId}
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+
+                  <select
+                    aria-label="Mês de início (opcional)"
+                    aria-invalid={!!errors.startDate}
+                    value={formData.startMonth}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startMonth: e.target.value }))}
                     className={DS.inputs.base}
-                  />
-                )}
-                {startDatePrecision === 'month' && (
+                  >
+                    <option value="">Mês</option>
+                    {MONTHS.map((name, i) => (
+                      <option key={name} value={i + 1}>{name}</option>
+                    ))}
+                  </select>
+
                   <input
-                    id={startDateId}
-                    type="month"
-                    value={formData.startDateYearMonth}
-                    onChange={(e) => setFormData(prev => ({ ...prev, startDateYearMonth: e.target.value }))}
-                    className={DS.inputs.base}
-                  />
-                )}
-                {startDatePrecision === 'year' && (
-                  <input
-                    id={startDateId}
-                    type="number"
+                    type="text"
                     inputMode="numeric"
-                    placeholder="Ex: 2019"
-                    min={1900}
-                    max={2100}
-                    value={formData.startDateYear}
-                    onChange={(e) => setFormData(prev => ({ ...prev, startDateYear: e.target.value }))}
+                    maxLength={4}
+                    aria-label="Ano de início"
+                    aria-invalid={!!errors.startDate}
+                    placeholder="Ano"
+                    value={formData.startYear}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      startYear: e.target.value.replace(/\D/g, '').slice(0, 4),
+                    }))}
                     className={DS.inputs.base}
                   />
+                </div>
+                {errors.startDate ? (
+                  <p id={`${startDateId}-error`} role="alert" className="text-red-700 text-xs font-bold">
+                    {errors.startDate}
+                  </p>
+                ) : (
+                  <p id={`${startDateId}-hint`} className="text-xs text-slate-600">
+                    Não sabe o dia ou o mês? Deixe em branco e informe só o ano.
+                  </p>
                 )}
-              </div>
+              </fieldset>
             </div>
           </Card>
 
@@ -333,7 +365,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
             </div>
 
             <div className="relative" ref={dropdownRef}>
-              <label className={DS.inputs.label} id={listboxId + '-label'}>Selecione o Cargo <span className="text-red-500">*</span></label>
+              <label className={DS.inputs.label} id={listboxId + '-label'}>Selecione o Cargo <span className="text-red-700">*</span></label>
 
               <button
                 type="button"
@@ -385,7 +417,7 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                 </div>
               )}
               
-              {errors.position && <p className="text-red-500 text-xs font-bold mt-2">{errors.position}</p>}
+              {errors.position && <p className="text-red-700 text-xs font-bold mt-2">{errors.position}</p>}
               
               <p className="text-[11px] text-slate-400 mt-4 leading-relaxed">
                 * Novos cargos devem ser criados primeiro na aba <span className="font-bold text-slate-600">Arquitetura de Cargos</span>.

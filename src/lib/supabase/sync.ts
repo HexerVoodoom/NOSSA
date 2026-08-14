@@ -55,8 +55,20 @@ function readPending(): PendingOp[] {
   }
 }
 
+// Se a fila não couber no localStorage, a escrita local já aconteceu e a
+// alteração ficaria sem nenhum registro de que precisa subir — exatamente o
+// sumiço silencioso que a fila existe para evitar. Avisamos alto.
+let queueOverflowed = false;
+export function hasQueueOverflowed(): boolean { return queueOverflowed; }
+
 function writePending(ops: PendingOp[]): void {
-  safeSetItem(PENDING_KEY, JSON.stringify(ops));
+  if (!safeSetItem(PENDING_KEY, JSON.stringify(ops))) {
+    queueOverflowed = true;
+    console.error(
+      'Não foi possível registrar a alteração na fila de sincronização. ' +
+      'Ela pode não chegar ao banco — libere espaço no navegador.'
+    );
+  }
 }
 
 function enqueue(op: PendingOp): void {
@@ -123,7 +135,18 @@ async function pullTable(table: TableName): Promise<boolean> {
     console.error(`Falha ao carregar "${table}" do Supabase:`, error.message);
     return false;
   }
-  const remoteRows = (data ?? []).map(row => (row as { data: { id: string } }).data);
+  // Uma linha corrompida no banco (sem `data`, ou objeto sem `id`) não pode
+  // derrubar a carga inteira: sem esta filtragem, um registro ruim lançava
+  // exceção aqui e todo mundo caía na tela de "sem acesso".
+  const remoteRows: { id: string }[] = [];
+  for (const raw of data ?? []) {
+    const row = (raw as { data?: unknown }).data;
+    if (row && typeof row === 'object' && typeof (row as { id?: unknown }).id === 'string') {
+      remoteRows.push(row as { id: string });
+    } else {
+      console.error(`Registro ignorado em "${table}" por estar corrompido:`, raw);
+    }
+  }
   const merged = applyPending(table, remoteRows);
   if (safeSetItem(TABLE_TO_KEY[table], JSON.stringify(merged))) {
     notifyLocalChange(TABLE_TO_KEY[table]);
@@ -246,6 +269,9 @@ function installWriteInterceptors(): void {
     deleteCompetency: storage.deleteCompetency,
     saveEvaluation: storage.saveEvaluation,
     deleteEvaluation: storage.deleteEvaluation,
+    restoreBackup: storage.restoreBackup,
+    importConfiguration: storage.importConfiguration,
+    importEvaluations: storage.importEvaluations,
   };
 
   const o = originals;
@@ -276,16 +302,19 @@ function installWriteInterceptors(): void {
     return ok;
   };
   storage.saveCompetencies = (competencies) => {
-    // Compara antes e depois: `saveCompetencies` mescla, então uma competência
-    // que sumiu da lista local precisa virar DELETE no banco — um upsert em
-    // massa nunca apagaria nada e o registro voltaria no próximo pull.
-    const before = new Set(storage.getCompetencies().map(c => c.id));
     const ok = o.saveCompetencies!.call(storage, competencies);
     if (!ok) return ok;
-    const after = storage.getCompetencies();
-    const afterIds = new Set(after.map(c => c.id));
-    for (const id of before) if (!afterIds.has(id)) queueDelete('competencies', id);
-    for (const row of after) queueUpsert('competencies', row as unknown as { id: string });
+    // `saveCompetencies` só mescla — nunca remove (exclusão passa por
+    // `deleteCompetency`, interceptado logo abaixo). Então os registros que
+    // mudaram são exatamente os recebidos. Relemos do storage porque o save
+    // normaliza as perguntas antes de gravar, e é a versão normalizada que
+    // precisa subir. Enfileirar a tabela inteira aqui encheria a fila com
+    // centenas de árvores de perguntas a cada edição de uma frase.
+    const stored = new Map(storage.getCompetencies().map(c => [c.id, c]));
+    for (const changed of competencies) {
+      const row = stored.get(changed.id);
+      if (row) queueUpsert('competencies', row as unknown as { id: string });
+    }
     return ok;
   };
   storage.deleteCompetency = (id) => {
@@ -303,6 +332,50 @@ function installWriteInterceptors(): void {
     if (ok) queueDelete('evaluations', id);
     return ok;
   };
+
+  storage.restoreBackup = () => {
+    const ok = o.restoreBackup!.call(storage);
+    if (!ok) return ok;
+    // Restaurar grava direto no localStorage, sem passar pelos métodos acima.
+    // Sem enfileirar aqui, a restauração valia só neste navegador e a próxima
+    // sincronização a desfazia em silêncio — mostrando "Backup restaurado".
+    queueEverythingLocal();
+    return ok;
+  };
+
+  storage.importConfiguration = (json) => {
+    const ok = o.importConfiguration!.call(storage, json);
+    if (ok) queueEverythingLocal();
+    return ok;
+  };
+
+  storage.importEvaluations = (json) => {
+    const ok = o.importEvaluations!.call(storage, json);
+    if (ok) queueEverythingLocal();
+    return ok;
+  };
+}
+
+/**
+ * Enfileira tudo o que está no navegador. Usado pelas operações em massa
+ * (restaurar backup, importar arquivo), que gravam direto no localStorage e
+ * portanto não passam pelos interceptadores individuais.
+ *
+ * Observação: isto sobe e sobrescreve, mas não apaga do banco o que sumiu na
+ * restauração — a alternativa seria um "apague tudo o que não está aqui", que
+ * transforma um clique errado em perda de dados para a equipe inteira.
+ */
+function queueEverythingLocal(): void {
+  const payload: [TableName, { id: string }[]][] = [
+    ['members', storage.getMembers()],
+    ['roles', storage.getRoles()],
+    ['competencies', storage.getCompetencies() as unknown as { id: string }[]],
+    ['evaluations', storage.getEvaluations()],
+  ];
+  for (const [table, rows] of payload) {
+    for (const row of rows) enqueue({ kind: 'upsert', table, id: row.id, row });
+  }
+  void flushPending();
 }
 
 function uninstallWriteInterceptors(): void {
@@ -329,6 +402,7 @@ function subscribeToRemoteChanges(): void {
 
 // Reenvia o que ficou pendente assim que a conexão volta.
 let onlineHandler: (() => void) | null = null;
+let retryTimer: number | null = null;
 
 /**
  * Chamado uma vez por sessão, após o login.
@@ -339,6 +413,18 @@ let onlineHandler: (() => void) | null = null;
  */
 export async function startSync(): Promise<boolean> {
   if (!supabase) return true;
+
+  // Pergunta ao banco, explicitamente, se este usuário tem acesso.
+  //
+  // Não dá para inferir isso do resultado das leituras: quando a RLS barra um
+  // SELECT, o PostgREST responde 200 com lista vazia — não é erro. Sem esta
+  // chamada, alguém de fora entraria com o app "funcionando" e vazio, em vez
+  // da tela de sem acesso.
+  const { data: allowed, error: accessError } = await supabase.rpc('tem_acesso');
+  if (accessError || allowed !== true) {
+    if (accessError) console.error('Falha ao verificar acesso:', accessError.message);
+    return false;
+  }
 
   installWriteInterceptors();
   await flushPending();
@@ -352,6 +438,15 @@ export async function startSync(): Promise<boolean> {
   if (!onlineHandler) {
     onlineHandler = () => { void flushPending(); };
     window.addEventListener('online', onlineHandler);
+  }
+
+  // Uma falha que não seja queda de rede (erro 500, portal de wi-fi, política
+  // recusada) deixaria a fila parada até a próxima escrita do usuário. Uma
+  // tentativa periódica garante que ela sozinha volta a escoar.
+  if (retryTimer === null) {
+    retryTimer = window.setInterval(() => {
+      if (pendingCount() > 0) void flushPending();
+    }, 30_000);
   }
   return true;
 }
@@ -371,7 +466,24 @@ export async function stopSync(): Promise<void> {
     window.removeEventListener('online', onlineHandler);
     onlineHandler = null;
   }
+  if (retryTimer !== null) {
+    window.clearInterval(retryTimer);
+    retryTimer = null;
+  }
   uninstallWriteInterceptors();
+
+  // A fila carrega registros inteiros de RH. Deixá-la aqui faria duas coisas
+  // ruins: expõe dados da pessoa anterior e, no login seguinte, `applyPending`
+  // reinjetaria essas linhas no cache de quem entrou — e `flushPending` as
+  // gravaria no banco sob a identidade errada.
+  localStorage.removeItem(PENDING_KEY);
+
+  // O backup guarda uma cópia completa de membros, avaliações e competências.
+  // Sem apagá-lo, bastava a próxima pessoa clicar em "Restaurar backup" para
+  // ver toda a base de quem usou o computador antes.
+  localStorage.removeItem(STORAGE_KEYS.BACKUP);
+  localStorage.removeItem(STORAGE_KEYS.CURRENT_EVALUATION);
+  localStorage.removeItem(STORAGE_KEYS.SECTION_IMAGES);
 
   for (const key of Object.values(TABLE_TO_KEY)) {
     localStorage.removeItem(key);

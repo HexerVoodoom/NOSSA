@@ -109,7 +109,18 @@ returns boolean language sql stable security definer set search_path = '' as $$
          )
 $$;
 
-revoke execute on function public.current_email() from anon, authenticated;
+-- Funções nascem com EXECUTE concedido a PUBLIC. Revogar só de `anon` e
+-- `authenticated` não tira nada: a permissão vem de PUBLIC e continua valendo.
+-- Por isso o revoke precisa citar `public` explicitamente.
+revoke execute on function public.current_email() from public, anon, authenticated;
+revoke execute on function public.email_e_corporativo(text) from public, anon, authenticated;
+revoke execute on function public.tem_acesso() from public;
+revoke execute on function public.e_admin() from public;
+
+-- O app chama `tem_acesso()` diretamente para saber se mostra a ferramenta ou
+-- a tela de "sem acesso" — uma leitura barrada pela RLS devolve lista vazia,
+-- não erro, então sem esta chamada não dá para distinguir "sem permissão" de
+-- "banco vazio".
 grant execute on function public.tem_acesso() to authenticated;
 grant execute on function public.e_admin() to authenticated;
 
@@ -161,9 +172,12 @@ drop policy if exists "convidados visiveis" on public.allowed_emails;
 create policy "convidados visiveis" on public.allowed_emails
   for select to authenticated using ((select public.tem_acesso()));
 
+-- `invited_by` é preso ao usuário da sessão: sem isso o cliente pode mandar
+-- qualquer UUID e a trilha de quem convidou quem vira ficção.
 drop policy if exists "somente admin convida" on public.allowed_emails;
 create policy "somente admin convida" on public.allowed_emails
-  for insert to authenticated with check ((select public.e_admin()));
+  for insert to authenticated
+  with check ((select public.e_admin()) and invited_by = (select auth.uid()));
 
 drop policy if exists "somente admin remove" on public.allowed_emails;
 create policy "somente admin remove" on public.allowed_emails
@@ -173,6 +187,21 @@ drop policy if exists "somente admin edita" on public.allowed_emails;
 create policy "somente admin edita" on public.allowed_emails
   for update to authenticated
   using ((select public.e_admin())) with check ((select public.e_admin()));
+
+-- ---------------------------------------------------------------------------
+-- 3.1 Conta de emergência (recomendado)
+-- ---------------------------------------------------------------------------
+--
+-- Se o domínio acima estiver escrito errado, ninguém vira admin, a lista de
+-- convidados fica vazia e só admin pode inserir nela — ou seja, ninguém mais
+-- consegue liberar acesso a não ser mexendo no SQL de novo. Deixar um e-mail
+-- explícito como admin evita esse impasse.
+--
+-- Descomente e troque pelo e-mail da pessoa responsável:
+--
+-- insert into public.allowed_emails (email, role, invited_by)
+-- values ('responsavel@exemplo.com.br', 'admin', null)
+-- on conflict (email) do nothing;
 
 -- ---------------------------------------------------------------------------
 -- 4. Realtime

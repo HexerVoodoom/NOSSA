@@ -28,6 +28,8 @@ const h = vi.hoisted(() => {
       data: null as unknown,
       error: { message: 'duplicate', code: '23505' } as { message: string; code?: string } | null,
     },
+    // Resposta de `rpc('tem_acesso')`.
+    hasAccess: { data: true as unknown, error: null as { message: string } | null },
   };
 
   const fakeSupabase = {
@@ -57,6 +59,10 @@ const h = vi.hoisted(() => {
         }),
       };
     },
+    rpc: (name: string) => {
+      calls.push({ table: `rpc:${name}`, op: 'select' });
+      return Promise.resolve(state.hasAccess);
+    },
     channel: () => ({ on() { return this; }, subscribe() { return this; } }),
     removeChannel: () => Promise.resolve('ok'),
   };
@@ -75,13 +81,43 @@ vi.mock('../client', () => ({
 import { pullAll, flushPending, startSync, stopSync, pendingCount } from '../sync';
 import { storage } from '../../storage';
 
-beforeEach(() => {
+beforeEach(async () => {
+  // `stopSync` é assíncrono (fecha o canal). Sem esperar, a limpeza de um teste
+  // vazava para dentro do seguinte.
+  await stopSync();
   localStorage.clear();
   calls.length = 0;
   h.state.writeError = null;
   h.state.selectResult = { data: [], error: null };
   h.state.seedInsertResult = { data: null, error: { message: 'duplicate', code: '23505' } };
-  void stopSync();
+  h.state.hasAccess = { data: true, error: null };
+});
+
+describe('verificação de acesso', () => {
+  it('[regressão] usuário sem permissão não passa, mesmo o banco não dando erro', async () => {
+    // Quando a RLS barra um SELECT, o PostgREST responde 200 com lista vazia.
+    // Sem perguntar `tem_acesso()` explicitamente, isso era indistinguível de
+    // "banco vazio" e o app abria normalmente para quem não tem acesso.
+    h.state.hasAccess = { data: false, error: null };
+
+    expect(await startSync()).toBe(false);
+  });
+
+  it('[regressão] barrado não instala os interceptadores de escrita', async () => {
+    h.state.hasAccess = { data: false, error: null };
+    await startSync();
+    calls.length = 0;
+
+    storage.saveMember({ id: 'm1', firstName: 'Ana', position: 'Analista', createdAt: new Date() });
+    await flushPending();
+
+    expect(calls.filter(c => c.op === 'upsert')).toHaveLength(0);
+  });
+
+  it('falha ao verificar acesso também barra (não abre em caso de dúvida)', async () => {
+    h.state.hasAccess = { data: null, error: { message: 'rede fora' } };
+    expect(await startSync()).toBe(false);
+  });
 });
 
 describe('pull do banco', () => {
@@ -186,6 +222,70 @@ describe('interceptadores de escrita', () => {
     storage.saveMember({ id: 'm2', firstName: 'Bia', position: 'Analista', createdAt: new Date() });
     await flushPending();
     expect(calls.filter(c => c.op === 'upsert')).toHaveLength(0);
+  });
+});
+
+describe('operações em massa e limpeza', () => {
+  it('[regressão] restaurar backup sobe os dados em vez de valer só neste navegador', async () => {
+    await startSync();
+    storage.saveMember({ id: 'm1', firstName: 'Ana', position: 'Analista', createdAt: new Date() });
+    storage.createBackup();
+    await flushPending();
+    calls.length = 0;
+
+    storage.restoreBackup();
+    await flushPending();
+
+    // Antes, restaurar gravava direto no localStorage: a próxima sincronização
+    // desfazia tudo em silêncio, depois de dizer "Backup restaurado".
+    expect(calls.some(c => c.table === 'members' && c.op === 'upsert')).toBe(true);
+  });
+
+  it('[regressão] logout limpa o backup e a fila, não só as tabelas', async () => {
+    await startSync();
+    storage.saveMember({ id: 'm1', firstName: 'Ana', position: 'Analista', createdAt: new Date() });
+    storage.createBackup();
+
+    await stopSync();
+
+    // O backup guarda uma cópia inteira da base: deixá-lo permitia à próxima
+    // pessoa da máquina clicar em "Restaurar" e ver os dados de quem saiu.
+    expect(localStorage.getItem('obra-viva-backup')).toBeNull();
+    expect(localStorage.getItem(KEYS.PENDING)).toBeNull();
+  });
+
+  it('[regressão] registro corrompido no banco não derruba a carga inteira', async () => {
+    h.state.selectResult = {
+      data: [
+        { id: 'ok', data: { id: 'ok', firstName: 'Ana' } },
+        { id: 'ruim', data: null },
+        { id: 'sem-id', data: { firstName: 'Sem id' } },
+      ],
+      error: null,
+    };
+
+    const ok = await pullAll();
+
+    expect(ok).toBe(true);
+    const stored = JSON.parse(localStorage.getItem(KEYS.MEMBERS)!);
+    expect(stored).toHaveLength(1);
+    expect(stored[0].id).toBe('ok');
+  });
+
+  it('[regressão] editar uma competência não enfileira a biblioteca inteira', async () => {
+    await startSync();
+    // Repovoa depois do startSync: o pull inicial (banco vazio no dublê) zera
+    // o cache local.
+    storage.initializeCompetencies();
+    const todas = storage.getCompetencies();
+    expect(todas.length).toBeGreaterThan(5);
+    calls.length = 0;
+
+    storage.saveCompetencies([todas[0]]);
+    await flushPending();
+
+    const upserts = calls.filter(c => c.table === 'competencies' && c.op === 'upsert');
+    expect(upserts).toHaveLength(1);
   });
 });
 

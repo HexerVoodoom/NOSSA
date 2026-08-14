@@ -157,27 +157,29 @@ describe('MemberForm — criação vs edição', () => {
     expect(d.getDate()).toBe(10);
   });
 
+  const preencherNomeECargo = (container: HTMLElement, nome = 'Ana') => {
+    const textInputs = container.querySelectorAll('input[type="text"]');
+    fireEvent.change(textInputs[0], { target: { value: nome } });
+  };
+
+  const escolherCargoESalvar = () => {
+    fireEvent.click(screen.getByText('Escolha um cargo configurado...'));
+    fireEvent.click(screen.getByText('Analista'));
+    fireEvent.click(screen.getByText('Adicionar Membro'));
+  };
+
   it('[regressão] "Início na Empresa" aceita só o ano quando o dia não é conhecido', () => {
     seed([]);
     const { container } = render(
       <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
     );
-    const textInputs = container.querySelectorAll('input[type="text"]');
-    fireEvent.change(textInputs[0], { target: { value: 'Ana' } });
-
-    const precisionSelect = screen.getByLabelText('Precisão da data de início na empresa');
-    fireEvent.change(precisionSelect, { target: { value: 'year' } });
-    const yearInput = container.querySelector('input[type="number"]') as HTMLInputElement;
-    fireEvent.change(yearInput, { target: { value: '2019' } });
-
-    fireEvent.click(screen.getByText('Escolha um cargo configurado...'));
-    fireEvent.click(screen.getByText('Analista'));
-    fireEvent.click(screen.getByText('Adicionar Membro'));
+    preencherNomeECargo(container);
+    fireEvent.change(screen.getByLabelText('Ano de início'), { target: { value: '2019' } });
+    escolherCargoESalvar();
 
     const saved = storage.getMembers()[0];
     expect(saved.startDatePrecision).toBe('year');
-    const d = new Date(saved.startDate as unknown as string);
-    expect(d.getFullYear()).toBe(2019);
+    expect(new Date(saved.startDate as unknown as string).getFullYear()).toBe(2019);
   });
 
   it('[regressão] "Início na Empresa" aceita só mês e ano', () => {
@@ -185,23 +187,78 @@ describe('MemberForm — criação vs edição', () => {
     const { container } = render(
       <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
     );
-    const textInputs = container.querySelectorAll('input[type="text"]');
-    fireEvent.change(textInputs[0], { target: { value: 'Ana' } });
-
-    const precisionSelect = screen.getByLabelText('Precisão da data de início na empresa');
-    fireEvent.change(precisionSelect, { target: { value: 'month' } });
-    const monthInput = container.querySelector('input[type="month"]') as HTMLInputElement;
-    fireEvent.change(monthInput, { target: { value: '2020-05' } });
-
-    fireEvent.click(screen.getByText('Escolha um cargo configurado...'));
-    fireEvent.click(screen.getByText('Analista'));
-    fireEvent.click(screen.getByText('Adicionar Membro'));
+    preencherNomeECargo(container);
+    fireEvent.change(screen.getByLabelText('Mês de início (opcional)'), { target: { value: '5' } });
+    fireEvent.change(screen.getByLabelText('Ano de início'), { target: { value: '2020' } });
+    escolherCargoESalvar();
 
     const saved = storage.getMembers()[0];
     expect(saved.startDatePrecision).toBe('month');
     const d = new Date(saved.startDate as unknown as string);
     expect(d.getFullYear()).toBe(2020);
     expect(d.getMonth()).toBe(4);
+  });
+
+  it('data completa continua sendo salva com precisão de dia', () => {
+    seed([]);
+    const { container } = render(
+      <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
+    );
+    preencherNomeECargo(container);
+    fireEvent.change(screen.getByLabelText('Dia de início (opcional)'), { target: { value: '10' } });
+    fireEvent.change(screen.getByLabelText('Mês de início (opcional)'), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText('Ano de início'), { target: { value: '2021' } });
+    escolherCargoESalvar();
+
+    const saved = storage.getMembers()[0];
+    expect(saved.startDatePrecision).toBe('day');
+    const d = new Date(saved.startDate as unknown as string);
+    expect([d.getFullYear(), d.getMonth(), d.getDate()]).toEqual([2021, 2, 10]);
+  });
+
+  it('[regressão] dia sem ano não salva em silêncio — mostra erro', () => {
+    seed([]);
+    const { container } = render(
+      <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
+    );
+    preencherNomeECargo(container);
+    fireEvent.change(screen.getByLabelText('Dia de início (opcional)'), { target: { value: '10' } });
+    escolherCargoESalvar();
+
+    // Antes o membro era salvo sem data de início e ainda dava toast de sucesso.
+    expect(storage.getMembers()).toHaveLength(0);
+    expect(screen.getByRole('alert').textContent).toContain('ano');
+  });
+
+  it('[regressão] ano fora de 1900-2100 é recusado em vez de virar data absurda', () => {
+    seed([]);
+    const { container } = render(
+      <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
+    );
+    preencherNomeECargo(container);
+    fireEvent.change(screen.getByLabelText('Ano de início'), { target: { value: '0007' } });
+    escolherCargoESalvar();
+
+    expect(storage.getMembers()).toHaveLength(0);
+    expect(screen.getByRole('alert')).toBeTruthy();
+  });
+
+  it('edição relê os três campos a partir da precisão salva', () => {
+    seed([]);
+    const existing = {
+      id: 'm1',
+      firstName: 'Ana',
+      position: 'Analista',
+      startDate: new Date(2018, 0, 1),
+      startDatePrecision: 'year' as const,
+      createdAt: new Date(),
+    };
+    render(<MemberForm member={existing} onBack={() => {}} onSave={() => {}} />);
+
+    expect((screen.getByLabelText('Ano de início') as HTMLInputElement).value).toBe('2018');
+    // Precisão "year": dia e mês ficam vazios, não "1" e "Janeiro" inventados.
+    expect((screen.getByLabelText('Dia de início (opcional)') as HTMLSelectElement).value).toBe('');
+    expect((screen.getByLabelText('Mês de início (opcional)') as HTMLSelectElement).value).toBe('');
   });
 });
 

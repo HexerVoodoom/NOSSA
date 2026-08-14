@@ -55,6 +55,24 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   const userId = session?.user.id ?? null;
 
+  const runSync = () => {
+    setSyncState('syncing');
+    startSync()
+      .then(async ok => {
+        if (ok) { setSyncState('ready'); return; }
+        // Barrado (ou banco fora do ar): desmonta e limpa. Sem isto, os
+        // interceptadores e o cache da pessoa anterior continuariam vivos
+        // atrás da tela de "sem acesso".
+        await stopSync();
+        setSyncState('denied');
+      })
+      .catch(async err => {
+        console.error('Falha ao sincronizar com o Supabase:', err);
+        await stopSync();
+        setSyncState('denied');
+      });
+  };
+
   useEffect(() => {
     if (!userId) return;
     if (syncedUserId.current === userId) return;
@@ -62,14 +80,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     // Marca antes de começar: o StrictMode invoca este efeito duas vezes, e
     // sem a trava as duas execuções disparariam a carga inicial em paralelo.
     syncedUserId.current = userId;
-    setSyncState('syncing');
-
-    startSync()
-      .then(ok => setSyncState(ok ? 'ready' : 'denied'))
-      .catch(err => {
-        console.error('Falha ao sincronizar com o Supabase:', err);
-        setSyncState('denied');
-      });
+    runSync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   if (!isSupabaseConfigured) return <>{children}</>;
@@ -78,7 +90,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (session) {
     if (syncState === 'ready') return <>{children}</>;
-    if (syncState === 'denied') return <AccessDenied />;
+    if (syncState === 'denied') return <AccessDenied onRetry={runSync} />;
     return <FullScreenMessage>Sincronizando dados…</FullScreenMessage>;
   }
 
@@ -89,10 +101,13 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     setError(null);
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
     if (signInError) {
+      // Mensagens do provedor vêm em inglês e técnicas demais para quem usa a
+      // ferramenta; o texto original fica no console para investigação.
+      console.error('Falha no login:', signInError);
       setError(
         signInError.message === 'Invalid login credentials'
           ? 'E-mail ou senha incorretos.'
-          : signInError.message
+          : 'Não foi possível entrar. Tente de novo em instantes.'
       );
     }
     setSubmitting(false);
@@ -105,7 +120,10 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       provider: 'google',
       options: { redirectTo: window.location.origin },
     });
-    if (oauthError) setError(oauthError.message);
+    if (oauthError) {
+      console.error('Falha no login com Google:', oauthError);
+      setError('Não foi possível entrar com o Google. Tente de novo.');
+    }
   };
 
   return (
@@ -189,7 +207,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
  * (o caso comum, já que qualquer conta Google consegue fazer login) ou banco
  * fora do ar. A mensagem cobre os dois sem prometer qual é.
  */
-function AccessDenied() {
+function AccessDenied({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6 py-12">
       <Card className="w-full max-w-md space-y-6 text-center">
@@ -203,18 +221,21 @@ function AccessDenied() {
             ferramenta. Peça a alguém que já usa a ferramenta para convidar seu
             e-mail — ou entre com um e-mail <strong>@{AUTO_ALLOWED_DOMAIN}</strong>.
           </p>
-          <p className={DS.typography.caption}>
+          <p className="text-sm text-slate-600">
             Se você já tem acesso, pode ser instabilidade na conexão com o
-            banco. Tente de novo em instantes.
+            banco.
           </p>
         </div>
-        <Button
-          variant="secondary"
-          onClick={() => { void supabase?.auth.signOut(); }}
-          className="w-full"
-        >
-          Sair e tentar com outra conta
-        </Button>
+        <div className="space-y-3">
+          <Button onClick={onRetry} className="w-full">Tentar de novo</Button>
+          <Button
+            variant="secondary"
+            onClick={() => { void supabase?.auth.signOut(); }}
+            className="w-full"
+          >
+            Sair e entrar com outra conta
+          </Button>
+        </div>
       </Card>
     </div>
   );
