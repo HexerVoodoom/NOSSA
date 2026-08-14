@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Upload, X, Check, Download, Info, Save, CheckCircle2 } from 'lucide-react';
 import { processSVGForUpload, sanitizeSVG } from '../lib/svgProcessor';
 import { getCustomElementsStats } from '../lib/customElements';
-import { CUSTOM_ELEMENTS_KEY } from '../lib/storage';
+import { CUSTOM_ELEMENTS_KEY, safeSetItem } from '../lib/storage';
 
 interface UploadedElement {
   id: string;
@@ -23,6 +23,34 @@ const ELEMENT_STRUCTURE = [
   { section: 'Seção 5: Transparência & Visão (Janela)', prefix: 'window', count: 10 },
   { section: 'Seção 6: Proteção & Cobertura (Telhado)', prefix: 'roof', count: 10 },
 ];
+
+// Teto por arquivo. O localStorage tem ~5 MB no total e um SVG do Illustrator
+// com raster embutido passa disso sozinho: sem o corte, o primeiro upload
+// grande derruba a gravação de TODOS os outros elementos.
+const MAX_SVG_BYTES = 512 * 1024;
+
+// Um JSON importado ia direto para o estado e para o localStorage sem nenhuma
+// checagem de forma: `[1,2,3]` ou `{"foundation-1": 42}` corrompia a chave
+// compartilhada, que é exportada e entra nos backups.
+function isUploadedElement(value: unknown): value is UploadedElement {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const v = value as Record<string, unknown>;
+  return typeof v.svg === 'string';
+}
+
+export function sanitizeUploadedElements(raw: unknown): Record<string, UploadedElement> {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const out: Record<string, UploadedElement> = {};
+  for (const [id, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (!id || !isUploadedElement(value)) continue;
+    // Um arquivo importado nunca passou por processSVGForUpload: sanitiza aqui
+    // em vez de confiar apenas no saneamento de renderização.
+    const svg = processSVGForUpload(value.svg);
+    if (!svg) continue;
+    out[id] = { id, svg, name: typeof value.name === 'string' ? value.name : id };
+  }
+  return out;
+}
 
 export function ElementUploadView({ onBack }: ElementUploadViewProps) {
   const [uploadedElements, setUploadedElements] = useState<Record<string, UploadedElement>>({});
@@ -45,6 +73,36 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
     }
   }, []);
 
+  // Uma escrita que falha por cota não pode passar despercebida: antes o
+  // setItem cru estourava QuotaExceededError e derrubava a tela, com o estado
+  // já atualizado — a UI mostrava um envio que não existia no armazenamento.
+  const persist = (updated: Record<string, UploadedElement>): boolean => {
+    if (!safeSetItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(updated))) {
+      alert('Espaço do navegador esgotado: o elemento NÃO foi salvo. Remova elementos antigos e tente de novo.');
+      return false;
+    }
+    setUploadedElements(updated);
+    return true;
+  };
+
+  const acceptSvgFile = async (file: File, elementId: string): Promise<void> => {
+    if (file.size > MAX_SVG_BYTES) {
+      alert(`Arquivo muito grande (${Math.round(file.size / 1024)} KB). O limite por elemento é ${MAX_SVG_BYTES / 1024} KB.`);
+      return;
+    }
+    let processedSVG = '';
+    try {
+      processedSVG = processSVGForUpload(await file.text());
+    } catch (error) {
+      console.error('Erro ao ler o SVG:', error);
+    }
+    if (!processedSVG) {
+      alert('Não foi possível ler este SVG (arquivo inválido ou sem conteúdo desenhável).');
+      return;
+    }
+    persist({ ...uploadedElements, [elementId]: { id: elementId, svg: processedSVG, name: file.name } });
+  };
+
   const handleDrop = async (e: React.DragEvent, elementId: string) => {
     e.preventDefault();
     setDragOver(null);
@@ -52,19 +110,7 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
     const files = Array.from(e.dataTransfer.files);
     const svgFile = files.find(f => f.type === 'image/svg+xml' || f.name.endsWith('.svg'));
 
-    if (svgFile) {
-      const text = await svgFile.text();
-      const processedSVG = processSVGForUpload(text);
-      const newElement: UploadedElement = {
-        id: elementId,
-        svg: processedSVG,
-        name: svgFile.name,
-      };
-
-      const updated = { ...uploadedElements, [elementId]: newElement };
-      setUploadedElements(updated);
-      localStorage.setItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(updated));
-    }
+    if (svgFile) await acceptSvgFile(svgFile, elementId);
   };
 
   const handleDragOver = (e: React.DragEvent, elementId: string) => {
@@ -79,25 +125,14 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>, elementId: string) => {
     const file = e.target.files?.[0];
     if (file && (file.type === 'image/svg+xml' || file.name.endsWith('.svg'))) {
-      const text = await file.text();
-      const processedSVG = processSVGForUpload(text);
-      const newElement: UploadedElement = {
-        id: elementId,
-        svg: processedSVG,
-        name: file.name,
-      };
-
-      const updated = { ...uploadedElements, [elementId]: newElement };
-      setUploadedElements(updated);
-      localStorage.setItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(updated));
+      await acceptSvgFile(file, elementId);
     }
   };
 
   const handleRemove = (elementId: string) => {
     const updated = { ...uploadedElements };
     delete updated[elementId];
-    setUploadedElements(updated);
-    localStorage.setItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(updated));
+    persist(updated);
   };
 
   const handleExport = () => {
@@ -114,13 +149,21 @@ export function ElementUploadView({ onBack }: ElementUploadViewProps) {
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const text = await file.text();
       try {
-        const imported = JSON.parse(text);
-        setUploadedElements(imported);
-        localStorage.setItem(CUSTOM_ELEMENTS_KEY, JSON.stringify(imported));
+        // `file.text()` estava FORA do try: um arquivo ilegível estourava uma
+        // promise rejeitada sem tratamento.
+        const imported = sanitizeUploadedElements(JSON.parse(await file.text()));
+        if (Object.keys(imported).length === 0) {
+          alert('Nenhum elemento válido foi encontrado no arquivo.');
+          return;
+        }
+        persist(imported);
       } catch (error) {
+        console.error('Erro ao importar elementos:', error);
         alert('Erro ao importar arquivo JSON');
+      } finally {
+        // Sem isso, reimportar o MESMO arquivo não dispara onChange.
+        e.target.value = '';
       }
     }
   };

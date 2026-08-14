@@ -14,6 +14,24 @@ interface CategoryQuestionFlowProps {
 }
 
 
+// Quais perguntas pertencem a este tipo de avaliação.
+//
+// Este filtro só existia no render. Como `questionIds` dos cargos traz TODAS as
+// perguntas da competência (statements + dialógicas), o salvamento percorria a
+// lista não filtrada e gravava resposta para pergunta que o líder nunca viu —
+// com a nota inicial 1. Cada avaliação salva carregava dados inventados para
+// cerca de metade das perguntas, e a obra montada a partir de `responses` era
+// construída sobre eles. Filtrar na origem faz salvamento e tela concordarem.
+const isVisibleForQuestionType = (
+  type: Evaluation['evaluationType'],
+  q: Pick<Question, 'type' | 'parentQuestionId'>
+): boolean => {
+  if (type === 'tradicional') return q.type === 'statement' || !q.type;
+  if (type === 'atividades') return q.type === 'activity';
+  if (type === 'dialogica') return q.type === 'dialogic' && !q.parentQuestionId;
+  return true;
+};
+
 export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: CategoryQuestionFlowProps) {
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   // Avaliações legadas/importadas podem vir sem `responses`; sem normalizar,
@@ -24,6 +42,9 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
   const [sectionObservations, setSectionObservations] = useState<Record<string, string>>(evaluation.sectionObservations || {});
   const [questionData, setQuestionData] = useState<Record<string, any>>({});
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const isVisibleForType = (q: Pick<Question, 'type' | 'parentQuestionId'>) =>
+    isVisibleForQuestionType(evaluation.evaluationType, q);
 
   const role = storage.getRoles().find(r => r.id === evaluation.roleId);
 
@@ -54,13 +75,15 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
       });
     });
     
-    return allQuestions.filter(q => {
-      if (evaluation.evaluationType === 'dialogica' && q.type === 'dialogic' && !q.parentQuestionId) {
-        const comp = competencies.find(c => c.name === q.competencyName);
-        return comp ? comp.questions.some(cq => evaluation.questionIds.includes(cq.id)) : false;
-      }
-      return evaluation.questionIds.includes(q.id);
-    });
+    return allQuestions
+      .filter(q => {
+        if (evaluation.evaluationType === 'dialogica' && q.type === 'dialogic' && !q.parentQuestionId) {
+          const comp = competencies.find(c => c.name === q.competencyName);
+          return comp ? comp.questions.some(cq => evaluation.questionIds.includes(cq.id)) : false;
+        }
+        return evaluation.questionIds.includes(q.id);
+      })
+      .filter(isVisibleForType);
   };
   
   const questions = getQuestions();
@@ -172,12 +195,6 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
       <main className={DS.layout.maxWidth + " py-12"}>
         <div className="space-y-8">
           {categoryQuestions
-            .filter(q => {
-              if (evaluation.evaluationType === 'tradicional') return q.type === 'statement' || !q.type;
-              if (evaluation.evaluationType === 'atividades') return q.type === 'activity';
-              if (evaluation.evaluationType === 'dialogica') return q.type === 'dialogic' && !q.parentQuestionId;
-              return true;
-            })
             .map((question, qIndex) => {
               const qd = questionData[question.id] || { keywords: ['', '', ''], rating: 1 };
               const isDialogic = question.type === 'dialogic';

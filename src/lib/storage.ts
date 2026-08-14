@@ -59,7 +59,7 @@ type StoredCompetency = Omit<Competency, 'createdAt'> & { createdAt: string };
 // QuotaExceededError é risco real: em vez de estourar uma exceção não tratada
 // (tela branca no meio de um salvamento), registramos o erro e devolvemos false
 // para quem quiser reagir.
-function safeSetItem(key: string, value: string): boolean {
+export function safeSetItem(key: string, value: string): boolean {
   try {
     localStorage.setItem(key, value);
     return true;
