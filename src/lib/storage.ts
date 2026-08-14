@@ -359,7 +359,7 @@ export const storage = {
     return competencies.map(filterCompetencyQuestions);
   },
 
-  saveCompetency(competency: Competency): void {
+  saveCompetency(competency: Competency): boolean {
     const competencies = this.getCompetencies();
     const index = competencies.findIndex(c => c.id === competency.id);
 
@@ -371,10 +371,12 @@ export const storage = {
     } else {
       competencies.push(filteredCompetency);
     }
-    safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competencies));
+    return safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competencies));
   },
 
-  saveCompetencies(newCompetencies: Competency[]): void {
+  // ATENÇÃO: faz merge (upsert) — nunca remove. Passar uma lista já filtrada
+  // NÃO exclui nada; para excluir use deleteCompetency().
+  saveCompetencies(newCompetencies: Competency[]): boolean {
     const existingCompetencies = this.getCompetencies();
     
     // Filtra e mescla
@@ -391,12 +393,12 @@ export const storage = {
       }
     });
     
-    safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(updatedCompetencies));
+    return safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(updatedCompetencies));
   },
   
-  deleteCompetency(competencyId: string): void {
+  deleteCompetency(competencyId: string): boolean {
     const competencies = this.getCompetencies().filter(c => c.id !== competencyId);
-    safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competencies));
+    return safeSetItem(STORAGE_KEYS.COMPETENCIES, JSON.stringify(competencies));
   },
   
   initializeCompetencies(): void {

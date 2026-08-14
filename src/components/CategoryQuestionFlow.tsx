@@ -23,7 +23,11 @@ const categoryShapes: Record<string, string[]> = {
 
 export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: CategoryQuestionFlowProps) {
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
-  const [responses, setResponses] = useState<QuestionResponse[]>(evaluation.responses);
+  // Avaliações legadas/importadas podem vir sem `responses`; sem normalizar,
+  // o primeiro `.find` derruba a tela inteira.
+  const [responses, setResponses] = useState<QuestionResponse[]>(
+    Array.isArray(evaluation.responses) ? evaluation.responses : []
+  );
   const [sectionObservations, setSectionObservations] = useState<Record<string, string>>(evaluation.sectionObservations || {});
   const [questionData, setQuestionData] = useState<Record<string, any>>({});
   const containerRef = useRef<HTMLDivElement>(null);
@@ -94,10 +98,20 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
   if (categoriesWithQuestions.length === 0) return null;
 
   const updateQuestionData = (questionId: string, field: string, value: any) => {
-    setQuestionData(prev => ({
-      ...prev,
-      [questionId]: { ...prev[questionId], [field]: value }
-    }));
+    setQuestionData(prev => {
+      const current = prev[questionId];
+      const next = { ...current, [field]: value };
+
+      // A nota é a única entrada desta tela — não existe seletor de imagem.
+      // `selectedImageIndex` ficava travado em 0, e como `?? ` não trata 0 como
+      // ausente, o elemento gravado era sempre o da nota 1 (nota 4 gravava
+      // 'foundation-1'), corrompendo a obra montada a partir das respostas.
+      if (field === 'rating') {
+        next.selectedImageIndex = Math.max(0, Number(value) - 1);
+      }
+
+      return { ...prev, [questionId]: next };
+    });
   };
   
   const handleSaveAndMove = (direction: 'next' | 'prev') => {

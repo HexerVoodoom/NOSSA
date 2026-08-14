@@ -1,3 +1,6 @@
+// Matchers de DOM (toBeInTheDocument, toHaveTextContent...) para os testes de
+// componente. A variante `/vitest` registra em `expect` do vitest.
+import '@testing-library/jest-dom/vitest';
 import { beforeEach, afterEach, vi } from 'vitest';
 
 // O localStorage do jsdom é compartilhado entre arquivos/testes do mesmo
