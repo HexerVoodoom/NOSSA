@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { SavedWork, AssembledElement } from '../types';
+import { SavedWork, AssembledElement, QuestionResponse } from '../types';
 import { DiamondMesh } from './DiamondMesh';
-import { Download, ZoomIn, ZoomOut, Lock, Unlock } from 'lucide-react';
-import html2canvas from 'html2canvas';
+import { Download } from 'lucide-react';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { storage } from '../lib/storage';
 import { newBlocks as categories } from '../lib/newBlocks';
+import { categoryShapes, normalizeCategoryId, resolveCategoryId, getShapeForIndex } from '../lib/categoryShapes';
 
 // Logos
 import imgLogoTortola from "figma:asset/0049d96aabf7ea4e2a663d5f83ebd360cb225dfd.png";
@@ -18,29 +18,46 @@ interface AssemblyViewReadOnlyProps {
   onBack: () => void;
 }
 
-// Definições de elementos e cores por categoria (mesmas do CategoryQuestionFlow)
-const categoryShapes: Record<string, string[]> = {
-  'cat1': ['foundation-1', 'foundation-2', 'foundation-3', 'foundation-4', 'foundation-5', 'foundation-6', 'foundation-7', 'foundation-8', 'foundation-9', 'foundation-10'],  // Piso - 2 modelos x 5 níveis
-  'cat2': ['structure-1', 'structure-2', 'structure-3', 'structure-4', 'structure-5', 'structure-6', 'structure-7', 'structure-8', 'structure-9', 'structure-10'], // Coluna - 2 modelos x 5 níveis
-  'cat3': ['wall-1', 'wall-2', 'wall-3', 'wall-4', 'wall-5', 'wall-6', 'wall-7', 'wall-8', 'wall-9', 'wall-10'], // Parede - 2 modelos x 5 níveis
-  'cat4': ['door-1', 'door-2', 'door-3', 'door-4', 'door-5', 'door-6', 'door-7', 'door-8', 'door-9', 'door-10'], // Porta - 2 modelos x 5 níveis
-  'cat5': ['window-1', 'window-2', 'window-3', 'window-4', 'window-5', 'window-6', 'window-7', 'window-8', 'window-9', 'window-10'], // Janela - 2 modelos x 5 níveis
-  'cat6': ['roof-1', 'roof-2', 'roof-3', 'roof-4', 'roof-5', 'roof-6', 'roof-7', 'roof-8', 'roof-9', 'roof-10'], // Telhado - 2 modelos x 5 níveis
-};
 
 const categoryColors: Record<string, string[]> = {
-  'cat1': ['#3e4e5c', '#516b7a', '#7e9ba8', '#cdbea7', '#e07a5f'],
-  'cat2': ['#2e2c6e', '#4b5d8a', '#7b9acc', '#f4b860', '#f28444'],
-  'cat3': ['#1f3b4d', '#247a76', '#48c9b0', '#f5a05a', '#ff4e50'],
-  'cat4': ['#2c3e50', '#5dade2', '#a9dfbf', '#f9e79f', '#f7dc6f'],
-  'cat5': ['#34495e', '#3498db', '#52c9a9', '#f39c12', '#e74c3c'],
-  'cat6': ['#1a1a2e', '#0f3460', '#16213e', '#e94560', '#f39c12'],
+  'bloco1': ['#3e4e5c', '#516b7a', '#7e9ba8', '#cdbea7', '#e07a5f'],
+  'bloco2': ['#2e2c6e', '#4b5d8a', '#7b9acc', '#f4b860', '#f28444'],
+  'bloco3': ['#1f3b4d', '#247a76', '#48c9b0', '#f5a05a', '#ff4e50'],
+  'bloco4': ['#2c3e50', '#5dade2', '#a9dfbf', '#f9e79f', '#f7dc6f'],
+  'bloco5': ['#34495e', '#3498db', '#52c9a9', '#f39c12', '#e74c3c'],
+  'bloco6': ['#1a1a2e', '#0f3460', '#16213e', '#e94560', '#f39c12'],
 };
+
+
+// Datas inválidas (registros importados) virariam "Invalid Date" na tela e no PDF
+export function formatDate(value?: string | Date | null): string {
+  if (!value) return '—';
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('pt-BR');
+}
+
+
+
+// Converte cor hex (#rgb ou #rrggbb) em canais 0-255. Qualquer valor inválido
+// cairia como NaN em setDrawColor/setTextColor e corromperia o PDF.
+export function hexToRgb(hex?: string | null): { r: number; g: number; b: number } {
+  const fallback = { r: 97, g: 85, b: 245 }; // #6155f5
+  if (typeof hex !== 'string') return fallback;
+  const value = hex.trim().replace(/^#/, '');
+  const full = value.length === 3
+    ? value.split('').map(c => c + c).join('')
+    : value;
+  if (!/^[0-9a-fA-F]{6}$/.test(full)) return fallback;
+  return {
+    r: parseInt(full.slice(0, 2), 16),
+    g: parseInt(full.slice(2, 4), 16),
+    b: parseInt(full.slice(4, 6), 16),
+  };
+}
 
 export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('architectural');
-  const categories = newBlocks;
-  
+
   const handleSharePDF = async () => {
     try {
       // Dynamic imports for PDF generation libraries
@@ -53,14 +70,14 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
       });
       
       let isFirstPage = true;
-      
+
       // Group responses by category
-      const responsesByCategory: { [key: string]: typeof work.responses } = {};
-      work.responses.forEach(response => {
-        const question = allQuestions.find(q => q.id === response.questionId) ||
-                        role?.customQuestions?.find(q => q.id === response.questionId);
-        const categoryId = question?.categoryId || 'cat1';
-        
+      const responsesByCategory: Record<string, QuestionResponse[]> = {};
+      responses.forEach(response => {
+        const question = findQuestion(response.questionId);
+        // Normaliza para nunca perder respostas em um bucket inexistente
+        const categoryId = normalizeCategoryId(question?.categoryId);
+
         if (!responsesByCategory[categoryId]) {
           responsesByCategory[categoryId] = [];
         }
@@ -74,17 +91,13 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
       
       // Generate pages for each question
       for (const category of categoriesWithQuestions) {
-        const categoryResponses = responsesByCategory[category.id];
-        const catColorHex = category.color || '#6155f5';
-        const r = parseInt(catColorHex.slice(1, 3), 16);
-        const g = parseInt(catColorHex.slice(3, 5), 16);
-        const b = parseInt(catColorHex.slice(5, 7), 16);
-        
+        const categoryResponses = responsesByCategory[category.id] || [];
+        const { r, g, b } = hexToRgb(category.color);
+
         for (let i = 0; i < categoryResponses.length; i++) {
           const response = categoryResponses[i];
-          const question = allQuestions.find(q => q.id === response.questionId) ||
-                          role?.customQuestions?.find(q => q.id === response.questionId);
-          
+          const question = findQuestion(response.questionId);
+
           if (!question) continue;
           
           // Add new page (except for first page)
@@ -113,12 +126,12 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
           // Category name
           pdf.setFontSize(22);
           pdf.setTextColor(r, g, b);
-          pdf.text(category.name, pageWidth / 2, headerY + 18, { align: 'center' });
-          
+          pdf.text(category.name || '', pageWidth / 2, headerY + 18, { align: 'center' });
+
           // Evaluation info
           pdf.setFontSize(11);
           pdf.setTextColor(100, 116, 139); // slate-500
-          pdf.text(`${work.collaboratorName} | ${work.leaderName}`, pageWidth / 2, headerY + 28, { align: 'center' });
+          pdf.text(`${work.collaboratorName || '—'} | ${work.leaderName || '—'}`, pageWidth / 2, headerY + 28, { align: 'center' });
           
           // Question number indicator
           pdf.setFontSize(9);
@@ -133,7 +146,8 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
           // Question text
           pdf.setTextColor(15, 23, 43); // #0f172b
           pdf.setFontSize(13);
-          const questionLines = pdf.splitTextToSize(question.text, pageWidth - 50);
+          // splitTextToSize lança se receber undefined (pergunta legada/importada)
+          const questionLines = pdf.splitTextToSize(question.text || 'Pergunta sem texto', pageWidth - 50);
           let yPos = contentY + 15;
           pdf.text(questionLines, 25, yPos);
           
@@ -152,7 +166,9 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
           // Keywords list
           pdf.setFontSize(10);
           pdf.setTextColor(71, 85, 105); // slate-600
-          const keywords = response.keywords.filter(k => k && k.trim() !== '');
+          const keywords = (Array.isArray(response.keywords) ? response.keywords : [])
+            .filter(k => typeof k === 'string' && k.trim() !== '')
+            .slice(0, 3); // a moldura comporta 3 linhas; evita transbordo
           if (keywords.length > 0) {
             keywords.forEach((keyword, idx) => {
               pdf.setDrawColor(r, g, b);
@@ -230,7 +246,7 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
           pdf.setTextColor(148, 163, 184);
           
           // Left: Cargo
-          pdf.text(`Cargo: ${work.roleName}`, 20, footerY);
+          pdf.text(`Cargo: ${work.roleName || '—'}`, 20, footerY);
           
           // Center: Page number
           const totalPages = categoriesWithQuestions.reduce((sum, cat) => 
@@ -248,13 +264,17 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
           pdf.text(`${currentPageNum} / ${totalPages}`, pageWidth / 2, footerY, { align: 'center' });
           
           // Right: Date
-          pdf.text(new Date(work.createdAt).toLocaleDateString('pt-BR'), pageWidth - 20, footerY, { align: 'right' });
+          pdf.text(formatDate(work.createdAt), pageWidth - 20, footerY, { align: 'right' });
         }
         
         // Adicionar página de observações ao final da seção, se houver
         if (work.sectionObservations && work.sectionObservations[category.id]) {
-          pdf.addPage();
-          
+          // Só adiciona página se já houver conteúdo (senão sobra uma folha em branco)
+          if (!isFirstPage) {
+            pdf.addPage();
+          }
+          isFirstPage = false;
+
           const pageWidth = pdf.internal.pageSize.getWidth();
           const pageHeight = pdf.internal.pageSize.getHeight();
           
@@ -275,7 +295,7 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
           // Category name
           pdf.setFontSize(22);
           pdf.setTextColor(r, g, b);
-          pdf.text(category.name, pageWidth / 2, obsHeaderY + 18, { align: 'center' });
+          pdf.text(category.name || '', pageWidth / 2, obsHeaderY + 18, { align: 'center' });
           
           // Section subtitle
           pdf.setFontSize(14);
@@ -291,14 +311,17 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
           // Observations text
           pdf.setTextColor(15, 23, 43); // slate-900
           pdf.setFontSize(11);
-          const observationText = work.sectionObservations[category.id];
-          const observationLines = pdf.splitTextToSize(observationText, pageWidth - 50);
+          const observationText = String(work.sectionObservations[category.id] ?? '');
+          const observationLines: string[] = pdf.splitTextToSize(observationText, pageWidth - 50);
           let yPos = contentY + 15;
-          
+          let truncated = false;
+
           // Render text with line breaks support
           observationLines.forEach((line: string) => {
+            if (truncated) return;
             if (yPos > contentY + 160) {
-              // If text is too long, truncate with ellipsis
+              // Texto longo demais: avisa uma única vez e para de desenhar
+              truncated = true;
               pdf.setTextColor(148, 163, 184); // slate-400
               pdf.setFontSize(9);
               pdf.text('(texto truncado - visualize na aplicação para ver o conteúdo completo)', pageWidth / 2, yPos, { align: 'center' });
@@ -317,18 +340,30 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
           pdf.setTextColor(148, 163, 184);
           
           // Left: Cargo
-          pdf.text(`Cargo: ${work.roleName}`, 20, footerY);
+          pdf.text(`Cargo: ${work.roleName || '—'}`, 20, footerY);
           
           // Center: "Observações"
           pdf.text('Observações', pageWidth / 2, footerY, { align: 'center' });
           
           // Right: Date
-          pdf.text(new Date(work.createdAt).toLocaleDateString('pt-BR'), pageWidth - 20, footerY, { align: 'right' });
+          pdf.text(formatDate(work.createdAt), pageWidth - 20, footerY, { align: 'right' });
         }
       }
       
+      // Nenhuma página gerada: avisa em vez de baixar um PDF em branco
+      if (isFirstPage) {
+        alert('Não há respostas para gerar o PDF.');
+        return;
+      }
+
       // Save PDF
-      pdf.save(`obra-viva-${work.collaboratorName}-${new Date().toISOString().split('T')[0]}.pdf`);
+      // Nome de arquivo saneado (nome vazio ou com / quebrava o download)
+      const safeName = (work.collaboratorName || 'colaborador')
+        .normalize('NFD')
+        .replace(/[^a-zA-Z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .toLowerCase() || 'colaborador';
+      pdf.save(`obra-viva-${safeName}-${new Date().toISOString().split('T')[0]}.pdf`);
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
       alert('Erro ao gerar PDF. Por favor, tente novamente.');
@@ -339,30 +374,50 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
   const roles = storage.getRoles();
   const role = roles.find(r => r.id === work.roleId);
   const allQuestions = getAllQuestionsFromCompetencies();
-  
-  const selectedElements = work.responses
+
+  // Registros importados/legados podem não trazer responses
+  const responses: QuestionResponse[] = Array.isArray(work.responses) ? work.responses : [];
+
+  const findQuestion = (questionId: string) =>
+    allQuestions.find(q => q.id === questionId) ||
+    (Array.isArray(role?.customQuestions)
+      ? role!.customQuestions!.find(q => q.id === questionId)
+      : undefined);
+
+  const selectedElements = responses
     .filter(r => r.selectedImageIndex !== undefined && r.selectedImageIndex !== null)
     .map((r, idx) => {
-      const question = allQuestions.find(q => q.id === r.questionId) ||
-                      role?.customQuestions?.find(q => q.id === r.questionId);
-      const categoryId = question?.categoryId || 'cat1';
-      
-      const shapes = categoryShapes[categoryId] || categoryShapes['cat1'];
-      const colors = categoryColors[categoryId] || categoryColors['cat1'];
-      
-      // Usar diretamente o selectedElementId que já foi calculado corretamente
-      const shapeCode = r.selectedElementId || shapes[r.selectedImageIndex!] || shapes[0];
-      // A cor é baseada no rating (nível de 1-5)
-      const colorIndex = (r.rating || 1) - 1;
+      const question = findQuestion(r.questionId);
+      // resolveCategoryId, não normalizeCategoryId: uma avaliação de ATIVIDADES
+      // não tem bloco (nem suas perguntas estão no catálogo, então findQuestion
+      // devolve undefined). Normalizar aqui reintroduzia o fallback 'bloco1' que
+      // o caminho de escrita já rejeita — a obra saía como 25 lajes idênticas
+      // achatadas numa linha de 1px. Sem forma correspondente, não desenhamos.
+      const categoryId = resolveCategoryId(question?.categoryId);
+      if (!categoryId) return null;
+
+      const shapes = categoryShapes[categoryId];
+      const colors = categoryColors[categoryId];
+
+      // A nota é a fonte da verdade da forma; `selectedElementId` gravado NÃO é
+      // confiável. Em defaultLibrary.json há respostas com nota >= 2 gravadas
+      // junto de um id terminado em '-1' (a forma da nota 1): confiar no valor
+      // salvo faz avaliações antigas desenharem a obra errada. O caminho de
+      // escrita já foi corrigido; aqui derivamos de novo na leitura.
+      const rating = Number.isFinite(r.rating) ? Math.min(Math.max(Math.round(r.rating), 1), 5) : 1;
+      const colorIndex = rating - 1;
+      const shapeCode = getShapeForIndex(categoryId, colorIndex) || shapes[0];
       const color = colors[colorIndex] || colors[0];
-      
+
       return {
         elementId: `element-${idx}-${shapeCode}-${colorIndex}`,
         shapeCode,
         color,
         categoryId,
       };
-    });
+    })
+    .filter((el): el is NonNullable<typeof el> => el !== null);
+
   
   // Se não existir assembledElements (obras antigas), gerar montagem automática
   const getAssembledElements = (): AssembledElement[] => {
@@ -370,27 +425,25 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
       return work.assembledElements;
     }
     
-    // Gerar montagem automática para obras antigas
-    const elementsByCategory: Record<string, AssembledElement[]> = {
-      'cat1': [],
-      'cat2': [],
-      'cat3': [],
-      'cat4': [],
-      'cat5': [],
-      'cat6': [],
-    };
-    
+    // Gerar montagem automática para obras antigas.
+    // Bucket criado sob demanda: acessar uma chave fixa quebrava para categorias
+    // fora de 'cat1'..'cat6' (as reais são 'bloco1'..'bloco6').
+    const elementsByCategory: Record<string, AssembledElement[]> = {};
+
     selectedElements.forEach((element) => {
-      if (element.categoryId) {
-        elementsByCategory[element.categoryId].push({
-          ...element,
-          position: { x: 0, y: 0, z: 0 },
-          rotation: 0,
-          scale: 1,
-        });
+      const catId = normalizeCategoryId(element.categoryId);
+      if (!elementsByCategory[catId]) {
+        elementsByCategory[catId] = [];
       }
+      elementsByCategory[catId].push({
+        ...element,
+        categoryId: catId,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: 0,
+        scale: 1,
+      });
     });
-    
+
     const canvasWidth = 1000;
     const centerX = canvasWidth / 2;
     const positionedElements: AssembledElement[] = [];
@@ -398,35 +451,36 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
     // Mesmos cálculos do AssemblyView para consistência
     const BASE_SIZE = 80;
     
-    const categoryHeights = {
-      'cat1': BASE_SIZE * 2.0,        // Piso: 160px
-      'cat3': BASE_SIZE * 1.8 * 0.75, // Paredes: ~108px
-      'cat2': BASE_SIZE * 0.5 * (4/3), // Colunas: ~53px 
-      'cat4': BASE_SIZE * 0.25,        // Portas: 20px
-      'cat5': BASE_SIZE * 0.6,         // Janelas: 48px
-      'cat6': BASE_SIZE * 1.2 * (3/5), // Telhado: ~58px
+    const categoryHeights: Record<string, number> = {
+      'bloco1': BASE_SIZE * 2.0,        // Piso: 160px
+      'bloco3': BASE_SIZE * 1.8 * 0.75, // Paredes: ~108px
+      'bloco2': BASE_SIZE * 0.5 * (4/3), // Colunas: ~53px
+      'bloco4': BASE_SIZE * 0.25,        // Portas: 20px
+      'bloco5': BASE_SIZE * 0.6,         // Janelas: 48px
+      'bloco6': BASE_SIZE * 1.2 * (3/5), // Telhado: ~58px
     };
-    
+
     const floorY = 500;
-    const wallY = floorY - categoryHeights['cat1']/2 - categoryHeights['cat3']/2;
+    const wallY = floorY - categoryHeights['bloco1']/2 - categoryHeights['bloco3']/2;
     const columnY = wallY;
     const doorY = wallY + 10;
     const windowY = wallY - 15;
-    const roofY = wallY - categoryHeights['cat3']/2 - categoryHeights['cat6']/2 - 5;
-    
-    const layoutConfig = {
-      'cat1': { y: floorY, spacing: 100 },
-      'cat3': { y: wallY, spacing: 110 },
-      'cat2': { y: columnY, spacing: 150 },
-      'cat4': { y: doorY, spacing: 180 },
-      'cat5': { y: windowY, spacing: 140 },
-      'cat6': { y: roofY, spacing: 90 },
+    const roofY = wallY - categoryHeights['bloco3']/2 - categoryHeights['bloco6']/2 - 5;
+
+    const layoutConfig: Record<string, { y: number; spacing: number }> = {
+      'bloco1': { y: floorY, spacing: 100 },
+      'bloco3': { y: wallY, spacing: 110 },
+      'bloco2': { y: columnY, spacing: 150 },
+      'bloco4': { y: doorY, spacing: 180 },
+      'bloco5': { y: windowY, spacing: 140 },
+      'bloco6': { y: roofY, spacing: 90 },
     };
-    
+
     Object.entries(elementsByCategory).forEach(([catId, elements]) => {
       if (elements.length === 0) return;
-      
-      const config = layoutConfig[catId as keyof typeof layoutConfig];
+
+      // Categoria desconhecida cairia em `config` undefined (TypeError)
+      const config = layoutConfig[catId] || { y: floorY, spacing: 100 };
       const totalWidth = (elements.length - 1) * config.spacing;
       const startX = centerX - totalWidth / 2;
       
@@ -478,8 +532,24 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
               </div>
             </div>
             
+            {/* Sem elementos desenháveis (ex.: avaliação de ATIVIDADES, cujas
+                perguntas não pertencem a nenhum bloco): dizer isso é melhor do
+                que exibir um canvas vazio sem explicação — ou, como antes,
+                lajes idênticas achatadas numa linha. */}
+            {selectedElements.length === 0 && (
+              <div className="mt-[24px] rounded-[12px] border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                <p className="text-[14px] font-semibold text-slate-700">
+                  Esta avaliação não gera obra montada
+                </p>
+                <p className="mt-1 text-[13px] text-slate-500">
+                  A obra é construída a partir dos blocos de competências. Avaliações de
+                  atividades não possuem blocos correspondentes.
+                </p>
+              </div>
+            )}
+
             {/* Diamond mesh canvas - Read only */}
-            <div className="diamond-mesh-container pointer-events-none mt-[24px]">
+            <div className={`diamond-mesh-container pointer-events-none mt-[24px] ${selectedElements.length === 0 ? 'hidden' : ''}`}>
               <DiamondMesh
                 elements={selectedElements}
                 assembledElements={assembledElements}
@@ -504,7 +574,7 @@ export function AssemblyViewReadOnly({ work, onBack }: AssemblyViewReadOnlyProps
                   <span className="opacity-70">Líder:</span> {work.leaderName}
                 </p>
                 <p className="font-['Inter:Regular',sans-serif] text-[14px]">
-                  <span className="opacity-70">Data:</span> {new Date(work.createdAt).toLocaleDateString('pt-BR')}
+                  <span className="opacity-70">Data:</span> {formatDate(work.createdAt)}
                 </p>
               </div>
             </div>

@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
-import { SavedWork, Member } from '../types';
+import { useState, useEffect, useMemo } from 'react';
+import { SavedWork, Member, Role } from '../types';
 import { storage } from '../lib/storage';
-import { DS, Button, Card } from './DesignSystem';
-import { ArrowLeft, FileText, Filter, X, Trash2, Calendar, User, ShieldCheck, ChevronRight, Download } from 'lucide-react';
+import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
+import { computeEvaluationStats } from '../lib/evaluationStats';
+import { DS, Card, focusRing } from './DesignSystem';
+import { ArrowLeft, FileText, Filter, Trash2, Calendar, User, Download } from 'lucide-react';
 import { exportToPDF } from '../lib/pdfExport';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
 
 interface TeamGalleryProps {
@@ -29,11 +31,41 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
     applyFilters();
   }, [evaluations, selectedRole, startDate, endDate]);
 
+  // createdAt é string ISO em runtime e pode estar ausente/corrompida em registros
+  // antigos: devolvemos NaN de forma controlada em vez de comparar Invalid Date.
+  const getTime = (value: Date | string | undefined): number => {
+    if (!value) return NaN;
+    return new Date(value).getTime();
+  };
+
+  const formatDate = (value: Date | string | undefined): string => {
+    const time = getTime(value);
+    return isNaN(time) ? '---' : new Date(time).toLocaleDateString('pt-BR');
+  };
+
+  // Um input type="date" devolve "AAAA-MM-DD", que new Date() interpreta como UTC.
+  // Em fusos negativos (BRT) isso jogava o filtro para o dia anterior.
+  const parseInputDate = (value: string, endOfDay: boolean): number => {
+    const [year, month, day] = value.split('-').map(Number);
+    if (!year || !month || !day) return NaN;
+    return endOfDay
+      ? new Date(year, month - 1, day, 23, 59, 59, 999).getTime()
+      : new Date(year, month - 1, day, 0, 0, 0, 0).getTime();
+  };
+
   const loadEvaluations = () => {
     const works = storage.getEvaluations();
     const sorted = works
       .filter(w => w.completed)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .sort((a, b) => {
+        // Datas inválidas vão para o fim em vez de gerar ordenação aleatória (NaN).
+        const timeA = getTime(a.createdAt);
+        const timeB = getTime(b.createdAt);
+        if (isNaN(timeA) && isNaN(timeB)) return 0;
+        if (isNaN(timeA)) return 1;
+        if (isNaN(timeB)) return -1;
+        return timeB - timeA;
+      });
     setEvaluations(sorted);
   };
 
@@ -41,16 +73,38 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
     let filtered = [...evaluations];
     if (selectedRole !== 'all') filtered = filtered.filter(work => work.roleId === selectedRole);
     if (startDate) {
-      const start = new Date(startDate);
-      start.setHours(0, 0, 0, 0);
-      filtered = filtered.filter(work => new Date(work.createdAt) >= start);
+      const start = parseInputDate(startDate, false);
+      if (!isNaN(start)) {
+        filtered = filtered.filter(work => getTime(work.createdAt) >= start);
+      }
     }
     if (endDate) {
-      const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
-      filtered = filtered.filter(work => new Date(work.createdAt) <= end);
+      const end = parseInputDate(endDate, true);
+      if (!isNaN(end)) {
+        filtered = filtered.filter(work => getTime(work.createdAt) <= end);
+      }
     }
     setFilteredEvaluations(filtered);
+  };
+
+  // Catálogo de perguntas + cargos: lidos uma vez por render, não por card.
+  const allQuestions = useMemo(() => getAllQuestionsFromCompetencies(), [evaluations]);
+  const rolesById = useMemo(() => {
+    const map: Record<string, Role> = {};
+    storage.getRoles().forEach(r => { map[r.id] = r; });
+    return map;
+  }, [evaluations]);
+
+  // Média exibida no card. `null` quando não há nenhuma resposta considerada —
+  // o card mostra '---' em vez de "NaN"/"0.0".
+  const getScore = (work: SavedWork): number | null => {
+    const role = rolesById[work.roleId];
+    const { categoryStats, overallAverage } = computeEvaluationStats({
+      responses: work.responses,
+      evaluationType: work.evaluationType,
+      questions: [...allQuestions, ...(role?.customQuestions || [])],
+    });
+    return categoryStats.length > 0 ? overallAverage : null;
   };
 
   const getUniqueRoles = () => {
@@ -59,32 +113,9 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
     return roles.filter(r => uniqueRoleIds.includes(r.id));
   };
 
-  const hasActiveFilters = selectedRole !== 'all' || startDate !== '' || endDate !== '';
-
   const getCollaboratorInfo = (work: SavedWork): Member | null => {
     const members = storage.getMembers();
     return members.find(m => m.id === work.collaboratorId) || null;
-  };
-
-  const getSectionScore = (work: SavedWork, categoryId: string): number => {
-    const roles = storage.getRoles();
-    const role = roles.find(ro => ro.id === work.roleId);
-    if (work.evaluationType === 'atividades') {
-      if (categoryId !== 'activities-block') return 0;
-      const activityResponses = work.responses.filter(r => role?.activities?.some(a => a.id === r.questionId));
-      if (activityResponses.length === 0) return 0;
-      return activityResponses.reduce((acc, r) => acc + r.rating, 0) / activityResponses.length;
-    }
-    const allQuestions = [...(storage.getCompetencies()?.flatMap(c => c.questions) || []), ...(role?.customQuestions || [])];
-    const sectionResponses = work.responses.filter(r => {
-      const question = allQuestions.find(q => q.id === r.questionId);
-      if (!question || question.categoryId !== categoryId) return false;
-      if (work.evaluationType === 'tradicional' && question.type === 'dialogic') return false;
-      if (work.evaluationType === 'dialogica' && question.type === 'statement') return false;
-      return true;
-    });
-    if (sectionResponses.length === 0) return 0;
-    return sectionResponses.reduce((acc, r) => acc + r.rating, 0) / sectionResponses.length;
   };
 
   const handleExportPDF = (work: SavedWork, e: React.MouseEvent) => {
@@ -168,21 +199,32 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEvaluations.map((work) => {
-              const score = work.responses.reduce((s, r) => s + r.rating, 0) / work.responses.length;
+              // A média do card usa o MESMO cálculo da tela de detalhe e do PDF
+              // (lib/evaluationStats). Antes, aqui era a média simples de todas
+              // as respostas gravadas — sem filtrar por tipo de avaliação — e a
+              // mesma avaliação aparecia como 2.3 no card e 2.8 no detalhe.
+              // `computeEvaluationStats` já protege contra 0/0 (NaN).
+              const score = getScore(work);
               const badge = getEvaluationTypeBadge(work.evaluationType);
               return (
-                <Card key={work.id} interactive onClick={() => onViewWork(work)} className="group p-0 overflow-hidden flex flex-col h-full border border-slate-100">
+                <Card
+                  key={work.id}
+                  interactive
+                  onClick={() => onViewWork(work)}
+                  aria-label={`Ver avaliação de ${work.collaboratorName || 'colaborador sem nome'}`}
+                  className="group p-0 overflow-hidden flex flex-col h-full border border-slate-100"
+                >
                   <div className="bg-slate-900 p-6 text-white relative">
                     <div className="absolute top-6 right-6 text-right">
-                      <p className="text-2xl font-black tracking-tighter leading-none">{score.toFixed(1)}</p>
+                      <p className="text-2xl font-black tracking-tighter leading-none">{score !== null ? score.toFixed(1) : '---'}</p>
                       <p className="text-[10px] font-bold opacity-40 uppercase">Média</p>
                     </div>
                     <div className="space-y-1">
                       <div className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold border ${badge.color} mb-2`}>
                         {badge.label}
                       </div>
-                      <h3 className="text-xl font-black tracking-tighter leading-tight truncate pr-16">{work.collaboratorName}</h3>
-                      <p className="text-white/40 text-[13px] font-bold">{work.roleName}</p>
+                      <h3 className="text-xl font-black tracking-tighter leading-tight truncate pr-16">{work.collaboratorName || '---'}</h3>
+                      <p className="text-white/40 text-[13px] font-bold">{work.roleName || '---'}</p>
                     </div>
                   </div>
 
@@ -190,26 +232,28 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-slate-500">
                         <User className="size-3.5" />
-                        <span className="text-[13px] font-bold truncate">Líder: {work.leaderName}</span>
+                        <span className="text-[13px] font-bold truncate">Líder: {work.leaderName || '---'}</span>
                       </div>
                       <div className="flex items-center gap-2 text-slate-500">
                         <Calendar className="size-3.5" />
-                        <span className="text-[13px] font-bold">{new Date(work.createdAt).toLocaleDateString('pt-BR')}</span>
+                        <span className="text-[13px] font-bold">{formatDate(work.createdAt)}</span>
                       </div>
                     </div>
 
                     <div className="pt-4 border-t border-slate-50 flex gap-2">
                       <button 
-                        onClick={(e) => handleExportPDF(work, e)} 
-                        className="flex-1 h-10 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 text-[13px] font-bold transition-all flex items-center justify-center gap-2"
+                        onClick={(e) => handleExportPDF(work, e)}
+                        aria-label={`Exportar PDF da avaliação de ${work.collaboratorName || 'colaborador sem nome'}`}
+                        className={`flex-1 h-10 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 text-[13px] font-bold transition-all flex items-center justify-center gap-2 ${focusRing}`}
                       >
-                        <Download className="size-4" /> PDF
+                        <Download className="size-4" aria-hidden="true" /> PDF
                       </button>
-                      <button 
-                        onClick={(e) => handleDeleteEvaluation(work.id, e)} 
-                        className="size-10 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
+                      <button
+                        onClick={(e) => handleDeleteEvaluation(work.id, e)}
+                        aria-label={`Excluir avaliação de ${work.collaboratorName || 'colaborador sem nome'}`}
+                        className={`size-10 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center ${focusRing}`}
                       >
-                        <Trash2 className="size-4" />
+                        <Trash2 className="size-4" aria-hidden="true" />
                       </button>
                     </div>
                   </div>

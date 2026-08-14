@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useId } from 'react';
 import { Member } from '../types';
 import { storage } from '../lib/storage';
-import { DS } from './DesignSystem';
+import { activationProps, focusRing } from './DesignSystem';
+import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { 
   ArrowLeft,
   Briefcase, 
@@ -22,6 +23,8 @@ interface MembersViewProps {
 export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
+  const searchId = useId();
 
   useEffect(() => {
     loadMembers();
@@ -30,24 +33,30 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
   const loadMembers = () => {
     setMembers(storage.getMembers());
   };
-  
-  const isLeadershipPosition = (position: string): boolean => {
-    const roles = storage.getRoles();
-    const role = roles.find(r => r.name === position);
-    return role?.type === 'leadership';
-  };
-  
+
+  // Mapa cargo -> é liderança, calculado uma única vez por render de lista
+  const leadershipByPosition = useMemo(() => {
+    const map = new Map<string, boolean>();
+    storage.getRoles().forEach(role => {
+      map.set(role.name, role.type === 'leadership');
+    });
+    return map;
+  }, [members]);
+
   const formatStartDate = (date: Date | string): string => {
     const d = new Date(date);
+    // Datas vindas do localStorage/import podem ser inválidas: sem a guarda o
+    // card exibia "undefined. NaN".
+    if (Number.isNaN(d.getTime())) return '---';
     const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
     return `${months[d.getMonth()]}. ${d.getFullYear()}`;
   };
 
-  const handleDelete = (member: Member) => {
-    if (window.confirm(`Tem certeza que deseja excluir ${member.firstName} ${member.lastName || ''}?`)) {
-      storage.deleteMember(member.id);
-      loadMembers();
-    }
+  const handleConfirmDelete = () => {
+    if (!memberToDelete) return;
+    storage.deleteMember(memberToDelete.id);
+    setMemberToDelete(null);
+    loadMembers();
   };
 
   const filteredMembers = members.filter(member => {
@@ -72,8 +81,9 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
         </div>
         <nav className="relative flex items-center justify-between px-6 lg:px-[158.5px] py-[16px] h-[81px] border-b border-white/10 backdrop-blur-sm bg-black/10">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={onBack} 
+            <button
+              onClick={onBack}
+              aria-label="Voltar"
               className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/10 transition-all text-white"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -102,15 +112,19 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
         <div className="w-full">
           <div className="relative w-full h-[54px] group">
             <div className="absolute inset-0 bg-[#f8fafc] rounded-[16px] border border-[#b1b1b1] group-focus-within:border-slate-400 group-focus-within:bg-white transition-all pointer-events-none" />
+            <label htmlFor={searchId} className="sr-only">
+              Buscar membros por nome ou cargo
+            </label>
             <div className="relative flex items-center h-full pl-[48px] pr-4">
               <div className="absolute left-[16px]">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                   <path d="M14 14L11.1067 11.1067" stroke="#90A1B9" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" />
                   <path d={svgPaths.p107a080} stroke="#90A1B9" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" />
                 </svg>
               </div>
-              <input 
-                type="text" 
+              <input
+                id={searchId}
+                type="search"
                 placeholder="Buscar por nome ou cargo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -147,13 +161,14 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredMembers.map(member => {
-              const isLeader = isLeadershipPosition(member.position);
+              const isLeader = leadershipByPosition.get(member.position) === true;
               
               return (
                 <div
                   key={member.id}
-                  onClick={() => onViewMember?.(member.id)}
-                  className="group bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-slate-200 cursor-pointer transition-all"
+                  {...activationProps(() => onViewMember?.(member.id))}
+                  aria-label={`Ver perfil de ${member.firstName} ${member.lastName || ''}`.trim()}
+                  className={`group bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-slate-200 cursor-pointer transition-all ${focusRing}`}
                 >
                   <div className="flex items-start justify-between mb-6">
                     <div className="size-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#0f172b] group-hover:text-white transition-all duration-500">
@@ -163,17 +178,19 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
                       </svg>}
                     </div>
                     <div className="flex gap-1 text-slate-300">
-                      <button 
+                      <button
                         onClick={(e) => { e.stopPropagation(); onEditMember(member); }}
-                        className="p-2 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all"
+                        aria-label={`Editar ${member.firstName} ${member.lastName || ''}`.trim()}
+                        className={`p-2 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all ${focusRing}`}
                       >
-                        <Edit2 className="w-4 h-4" />
+                        <Edit2 className="w-4 h-4" aria-hidden="true" />
                       </button>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleDelete(member); }}
-                        className="p-2 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setMemberToDelete(member); }}
+                        aria-label={`Excluir ${member.firstName} ${member.lastName || ''}`.trim()}
+                        className={`p-2 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all ${focusRing}`}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
@@ -209,6 +226,14 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
           </div>
         )}
       </main>
+
+      <DeleteConfirmDialog
+        isOpen={memberToDelete !== null}
+        title="Excluir Membro?"
+        message={`Esta ação removerá ${memberToDelete ? `${memberToDelete.firstName} ${memberToDelete.lastName || ''}`.trim() : 'este membro'} permanentemente.`}
+        onClose={() => setMemberToDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

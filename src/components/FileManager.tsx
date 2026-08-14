@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { FileText, Save, FolderOpen, RotateCcw, X, Check, Download, Upload, AlertTriangle } from 'lucide-react';
 import { storage } from '../lib/storage';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 interface FileManagerProps {
   onReload?: () => void;
@@ -38,7 +38,14 @@ export function FileManager({ onReload }: FileManagerProps) {
   });
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
+  // Normaliza texto para comparação (campos podem vir ausentes em arquivos externos)
+  const norm = (value: any): string => (typeof value === 'string' ? value.toLowerCase().trim() : '');
+
+  // Só aceitamos listas: qualquer outro formato é descartado antes de tocar no localStorage
+  const asArray = (value: any): any[] | null =>
+    Array.isArray(value) && value.every(item => item && typeof item === 'object') ? value : null;
+
   const handleSave = () => {
     setShowMenu(false);
     setShowSaveModal(true);
@@ -66,6 +73,15 @@ export function FileManager({ onReload }: FileManagerProps) {
   };
   
   const executeSave = () => {
+    try {
+      exportSelectedData();
+    } catch (error) {
+      console.error(error);
+      toast.error('Não foi possível exportar os dados.');
+    }
+  };
+
+  const exportSelectedData = () => {
     const data: any = {
       version: '2.0',
       timestamp: new Date().toISOString(),
@@ -116,19 +132,38 @@ export function FileManager({ onReload }: FileManagerProps) {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
+      reader.onerror = () => {
+        toast.error('Não foi possível ler o arquivo selecionado.');
+      };
       reader.onload = (e) => {
         const content = e.target?.result as string;
         try {
-          const data = JSON.parse(content);
-          
-          // Detecta quais dados estão disponíveis no arquivo
+          const parsed = JSON.parse(content);
+          if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+            toast.error('Erro ao ler arquivo. Formato inválido.');
+            return;
+          }
+
+          // Mantém apenas as seções que realmente são listas de objetos
+          const data = {
+            members: asArray(parsed.members),
+            roles: asArray(parsed.roles),
+            competencies: asArray(parsed.competencies),
+            evaluations: asArray(parsed.evaluations),
+          };
+
           const availableOptions: SaveOptions = {
             members: !!data.members,
             roles: !!data.roles,
             competencies: !!data.competencies,
             evaluations: !!data.evaluations,
           };
-          
+
+          if (!Object.values(availableOptions).some(v => v)) {
+            toast.error('Arquivo sem dados reconhecidos (equipe, cargos, competências ou avaliações).');
+            return;
+          }
+
           setLoadOptions(availableOptions);
           setLoadedData(data);
           setShowLoadModal(true);
@@ -173,11 +208,11 @@ export function FileManager({ onReload }: FileManagerProps) {
           const existingMembers = storage.getMembers();
           const newMembers = loadedData.members.filter((m: any) => {
             // Verifica se o ID já existe
-            const idExists = existingMembers.some(em => em.id === m.id);
+            const idExists = !!m.id && existingMembers.some(em => em.id === m.id);
             // Verifica se o nome completo já existe (para evitar duplicados criados em dispositivos diferentes)
-            const nameExists = existingMembers.some(em => 
-              em.firstName.toLowerCase().trim() === m.firstName.toLowerCase().trim() && 
-              (em.lastName || '').toLowerCase().trim() === (m.lastName || '').toLowerCase().trim()
+            const nameExists = existingMembers.some(em =>
+              norm(em.firstName) === norm(m.firstName) &&
+              norm(em.lastName) === norm(m.lastName)
             );
             return !idExists && !nameExists;
           });
@@ -187,8 +222,8 @@ export function FileManager({ onReload }: FileManagerProps) {
         if (loadOptions.roles && loadedData.roles) {
           const existingRoles = storage.getRoles();
           const newRoles = loadedData.roles.filter((r: any) => {
-            const idExists = existingRoles.some(er => er.id === r.id);
-            const nameExists = existingRoles.some(er => er.name.toLowerCase().trim() === r.name.toLowerCase().trim());
+            const idExists = !!r.id && existingRoles.some(er => er.id === r.id);
+            const nameExists = existingRoles.some(er => norm(er.name) === norm(r.name));
             return !idExists && !nameExists;
           });
           localStorage.setItem('obra-viva-roles', JSON.stringify([...existingRoles, ...newRoles]));
@@ -197,8 +232,8 @@ export function FileManager({ onReload }: FileManagerProps) {
         if (loadOptions.competencies && loadedData.competencies) {
           const existingComps = storage.getCompetencies();
           const newComps = loadedData.competencies.filter((c: any) => {
-            const idExists = existingComps.some(ec => ec.id === c.id);
-            const nameExists = existingComps.some(ec => ec.name.toLowerCase().trim() === c.name.toLowerCase().trim());
+            const idExists = !!c.id && existingComps.some(ec => ec.id === c.id);
+            const nameExists = existingComps.some(ec => norm(ec.name) === norm(c.name));
             return !idExists && !nameExists;
           });
           localStorage.setItem('obra-viva-competencies', JSON.stringify([...existingComps, ...newComps]));
@@ -239,6 +274,8 @@ export function FileManager({ onReload }: FileManagerProps) {
           onClick={() => setShowMenu(!showMenu)}
           className="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 transition-colors text-slate-700 text-sm font-medium flex items-center gap-2"
           aria-label="Menu de Arquivos"
+          aria-haspopup="menu"
+          aria-expanded={showMenu}
         >
           <FileText className="w-4 h-4" />
           Arquivo
@@ -249,13 +286,18 @@ export function FileManager({ onReload }: FileManagerProps) {
       {showMenu && (
         <>
           {/* Overlay */}
-          <div 
-            className="fixed inset-0 z-[100]" 
+          <div
+            className="fixed inset-0 z-[100]"
             onClick={() => setShowMenu(false)}
           />
-          
+
           {/* Menu dropdown - posicionado de forma fixa no canto superior direito */}
-          <div className="fixed top-24 right-6 w-64 bg-white rounded-xl shadow-2xl overflow-hidden z-[110] border border-slate-200">
+          <div
+            role="menu"
+            aria-label="Gerenciar Dados"
+            onKeyDown={(e) => { if (e.key === 'Escape') setShowMenu(false); }}
+            className="fixed top-24 right-6 w-64 bg-white rounded-xl shadow-2xl overflow-hidden z-[110] border border-slate-200"
+          >
             <div className="p-4 bg-gradient-to-r from-[#6155f5] to-[#7c3aed]">
               <h3 className="text-white font-semibold text-sm">Gerenciar Dados</h3>
               <p className="text-white/70 text-xs mt-1">Salvar, carregar e restaurar</p>
@@ -264,6 +306,7 @@ export function FileManager({ onReload }: FileManagerProps) {
             <div className="p-2">
               <button
                 onClick={handleSave}
+                role="menuitem"
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 transition-colors text-left"
               >
                 <Save className="w-4 h-4 text-[#6155f5]" />
@@ -275,6 +318,7 @@ export function FileManager({ onReload }: FileManagerProps) {
               
               <button
                 onClick={handleLoad}
+                role="menuitem"
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 transition-colors text-left"
               >
                 <FolderOpen className="w-4 h-4 text-[#6155f5]" />
@@ -288,6 +332,7 @@ export function FileManager({ onReload }: FileManagerProps) {
               
               <button
                 onClick={handleRestoreBackup}
+                role="menuitem"
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-50 transition-colors text-left"
               >
                 <RotateCcw className="w-4 h-4 text-amber-600" />
@@ -304,7 +349,7 @@ export function FileManager({ onReload }: FileManagerProps) {
       {/* Save Modal */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+          <div role="dialog" aria-modal="true" aria-labelledby="save-modal-title" className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
             <div className="p-6 border-b border-slate-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -312,12 +357,13 @@ export function FileManager({ onReload }: FileManagerProps) {
                     <Download className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-slate-900">Salvar Dados</h2>
+                    <h2 id="save-modal-title" className="text-xl font-semibold text-slate-900">Salvar Dados</h2>
                     <p className="text-sm text-slate-600">Selecione o que deseja exportar</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowSaveModal(false)}
+                  aria-label="Fechar"
                   className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5 text-slate-500" />
@@ -401,7 +447,7 @@ export function FileManager({ onReload }: FileManagerProps) {
       {/* Load Modal */}
       {showLoadModal && loadedData && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+          <div role="dialog" aria-modal="true" aria-labelledby="load-modal-title" className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
             <div className="p-6 border-b border-slate-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -409,7 +455,7 @@ export function FileManager({ onReload }: FileManagerProps) {
                     <Upload className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-slate-900">Carregar Dados</h2>
+                    <h2 id="load-modal-title" className="text-xl font-semibold text-slate-900">Carregar Dados</h2>
                     <p className="text-sm text-slate-600">Configure a importação</p>
                   </div>
                 </div>
@@ -418,6 +464,7 @@ export function FileManager({ onReload }: FileManagerProps) {
                     setShowLoadModal(false);
                     setLoadedData(null);
                   }}
+                  aria-label="Fechar"
                   className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5 text-slate-500" />
@@ -427,7 +474,8 @@ export function FileManager({ onReload }: FileManagerProps) {
             
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-3">Selecione o que importar:</label>
+                {/* Rótulo de grupo: não é <label> porque não aponta para um único controle */}
+                <span className="block text-sm font-semibold text-slate-900 mb-3">Selecione o que importar:</span>
                 <div className="space-y-2">
                   {loadedData.members && (
                     <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
@@ -492,8 +540,8 @@ export function FileManager({ onReload }: FileManagerProps) {
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-3">Modo de importação:</label>
-                <div className="space-y-2">
+                <span id="load-mode-label" className="block text-sm font-semibold text-slate-900 mb-3">Modo de importação:</span>
+                <div role="radiogroup" aria-labelledby="load-mode-label" className="space-y-2">
                   <label className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors border-2 border-slate-200">
                     <input
                       type="radio"
@@ -553,14 +601,14 @@ export function FileManager({ onReload }: FileManagerProps) {
       {/* Restore Confirmation Modal */}
       {showRestoreConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+          <div role="dialog" aria-modal="true" aria-labelledby="restore-modal-title" className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
             <div className="p-6 border-b border-slate-200">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
                   <RotateCcw className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-900">Restaurar Versão Anterior</h2>
+                  <h2 id="restore-modal-title" className="text-xl font-semibold text-slate-900">Restaurar Versão Anterior</h2>
                   <p className="text-sm text-slate-600">Esta ação não pode ser desfeita</p>
                 </div>
               </div>

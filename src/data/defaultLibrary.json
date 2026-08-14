@@ -1,0 +1,5508 @@
+{
+  "version": "2.0",
+  "timestamp": "2026-08-13T21:03:51.846Z",
+  "members": [
+    {
+      "id": "member-1786103745884",
+      "firstName": "Luís",
+      "lastName": "Tortola",
+      "birthDate": "1983-04-26T03:00:00.000Z",
+      "startDate": "2014-01-01T02:00:00.000Z",
+      "position": "Gerente Comercial",
+      "createdAt": "2026-08-07T11:53:05.951Z"
+    },
+    {
+      "id": "member-1786307882627",
+      "firstName": "Camila",
+      "lastName": "Coutinho",
+      "birthDate": "1985-08-30T03:00:00.000Z",
+      "position": "Coordenador(a) de Projetos",
+      "createdAt": "2026-08-09T20:35:46.282Z"
+    },
+    {
+      "id": "member-1786307999073",
+      "firstName": "Luan",
+      "lastName": "Rodrigo Frantz",
+      "birthDate": "1992-06-20T03:00:00.000Z",
+      "position": "Desenvolvedor(a) de Projetos",
+      "createdAt": "2026-08-09T20:38:39.534Z"
+    },
+    {
+      "id": "member-1786308043309",
+      "firstName": "Heiron",
+      "lastName": "Douglas Soares",
+      "birthDate": "1998-04-06T03:00:00.000Z",
+      "position": "Desenvolvedor(a) de Projetos",
+      "createdAt": "2026-08-09T20:40:03.724Z"
+    },
+    {
+      "id": "member-1786308204036",
+      "firstName": "Pedro",
+      "lastName": "Henrique Potenciano",
+      "birthDate": "1998-08-03T03:00:00.000Z",
+      "position": "Desenvolvedor(a) de Projetos",
+      "createdAt": "2026-08-09T20:40:45.536Z"
+    },
+    {
+      "id": "member-1786308246397",
+      "firstName": "Nathália",
+      "lastName": "Ribeiro",
+      "birthDate": "1990-01-06T02:00:00.000Z",
+      "position": "Coordenador(a) de Projetos",
+      "createdAt": "2026-08-09T20:43:25.438Z"
+    },
+    {
+      "id": "member-1786308289582",
+      "firstName": "Ingrid",
+      "lastName": "Freire",
+      "birthDate": "1992-02-06T02:00:00.000Z",
+      "position": "Coordenador(a) de Projetos",
+      "createdAt": "2026-08-09T20:44:09.037Z"
+    },
+    {
+      "id": "member-1786308338288",
+      "firstName": "Dayane",
+      "lastName": "Vieira da Silva",
+      "birthDate": "1985-11-08T02:00:00.000Z",
+      "position": "Coordenador(a) de Projetos",
+      "createdAt": "2026-08-09T20:44:56.504Z"
+    },
+    {
+      "id": "member-1786308400193",
+      "firstName": "Nelly",
+      "lastName": "Fernanda Tortola",
+      "birthDate": "1980-03-11T03:00:00.000Z",
+      "position": "Administrativo/ Financeiro / Gestão de Obras",
+      "createdAt": "2026-08-09T20:45:46.472Z"
+    },
+    {
+      "id": "member-1786308468430",
+      "firstName": "Matheus",
+      "lastName": "Faleiro",
+      "birthDate": "2000-03-12T03:00:00.000Z",
+      "position": "Desenvolvedor(a) de Projetos",
+      "createdAt": "2026-08-09T20:46:44.012Z"
+    },
+    {
+      "id": "member-1786308535564",
+      "firstName": "Deborah",
+      "lastName": "Lorrayne Souza",
+      "birthDate": "2001-07-27T03:00:00.000Z",
+      "startDate": "2016-08-03T03:00:00.000Z",
+      "position": "Coordenador(a) de Projetos",
+      "createdAt": "2026-08-09T20:47:49.969Z"
+    },
+    {
+      "id": "member-1786308662346",
+      "firstName": "Isabelle",
+      "lastName": "Peixoto",
+      "birthDate": "1999-08-10T03:00:00.000Z",
+      "startDate": "2026-04-22T03:00:00.000Z",
+      "position": "Desenvolvedor(a) de Projetos",
+      "createdAt": "2026-08-09T20:48:57.199Z"
+    },
+    {
+      "id": "member-1786308700574",
+      "firstName": "Gabriela",
+      "lastName": "Sabatini",
+      "birthDate": "1997-03-11T03:00:00.000Z",
+      "startDate": "2026-04-22T03:00:00.000Z",
+      "position": "Desenvolvedor(a) de Projetos",
+      "createdAt": "2026-08-09T20:51:07.003Z"
+    },
+    {
+      "id": "member-1786308738045",
+      "firstName": "Rafael",
+      "lastName": "Adorno",
+      "birthDate": "1995-03-22T03:00:00.000Z",
+      "startDate": "2026-04-22T03:00:00.000Z",
+      "position": "Desenvolvedor(a) de Projetos",
+      "createdAt": "2026-08-09T20:51:52.214Z"
+    },
+    {
+      "id": "member-1786308793074",
+      "firstName": "Letizia",
+      "lastName": "Pecorone",
+      "birthDate": "1998-01-30T02:00:00.000Z",
+      "startDate": "2026-04-22T03:00:00.000Z",
+      "position": "Desenvolvedor(a) de Projetos",
+      "createdAt": "2026-08-09T20:52:19.882Z"
+    },
+    {
+      "id": "member-1786308842356",
+      "firstName": "Allan",
+      "lastName": "Pedro Laet Silva",
+      "birthDate": "1993-12-19T02:00:00.000Z",
+      "position": "Digitalização",
+      "createdAt": "2026-08-09T20:53:16.042Z"
+    },
+    {
+      "id": "member-1786474156776",
+      "firstName": "Yasmin",
+      "lastName": "Ferreira Barros",
+      "birthDate": "2003-10-24T02:00:00.000Z",
+      "startDate": "2026-05-04T03:00:00.000Z",
+      "position": "Estagiário(a) Desenvolvimento de Projetos",
+      "createdAt": "2026-08-11T18:47:27.105Z"
+    }
+  ],
+  "roles": [
+    {
+      "id": "default-role-3d-manager",
+      "name": "3D Manager",
+      "type": "leadership",
+      "questionIds": [
+        "q-b6-ad-1",
+        "q-b6-ad-2",
+        "q-b6-ad-dial",
+        "q-b1-exec-1",
+        "q-b1-exec-2",
+        "q-b1-exec-3",
+        "q-b1-exec-dial",
+        "q-b2-ci-1",
+        "q-b2-ci-2",
+        "q-b2-ci-3",
+        "q-b2-ci-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-result-1",
+        "q-b1-result-2",
+        "q-b1-result-3",
+        "q-b1-result-4",
+        "q-b1-result-5",
+        "q-b1-result-dial",
+        "q-b1-plan-1",
+        "q-b1-plan-2",
+        "q-b1-plan-3",
+        "q-b1-plan-4",
+        "q-b1-plan-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial"
+      ],
+      "activities": [
+        {
+          "id": "3dm-act-1",
+          "text": "Integra os manuais de marca (brandbooks) aos projetos arquitetônicos, assegurando a aplicação correta de padrões gráficos, tipografia, cores e demais elementos visuais.",
+          "order": 0
+        },
+        {
+          "id": "3dm-act-2",
+          "text": "Desenvolve o Caderno de Arquitetura da Marca, documentando diretrizes técnicas para aplicação de comunicação visual e elementos decorativos nos espaços.",
+          "order": 1
+        },
+        {
+          "id": "3dm-act-3",
+          "text": "Desenvolve uma biblioteca de blocos, materiais, texturas e modelos 3D padronizados conforme as diretrizes da franquia.",
+          "order": 2
+        },
+        {
+          "id": "3dm-act-4",
+          "text": "Mantém organizada e atualizada a biblioteca de blocos, materiais, texturas e modelos 3D padronizados conforme as diretrizes da franquia.",
+          "order": 3
+        },
+        {
+          "id": "3dm-act-5",
+          "text": "Realiza interlocução com o cliente em conjunto com os coordenadores de projetos.",
+          "order": 4
+        },
+        {
+          "id": "3dm-act-6",
+          "text": "Identifica o contexto em que o projeto está inserido por meio da análise de mapas, imagens, vídeos e outras referências visuais relevantes.",
+          "order": 5
+        },
+        {
+          "id": "3dm-act-7",
+          "text": "Cria ambientes internos e externos em maquetes digitais a partir de conceitos visuais, utilizando softwares especializados como SketchUp, 3DS Max, Blender ou equivalentes.",
+          "order": 6
+        },
+        {
+          "id": "3dm-act-8",
+          "text": "Seleciona e sugere mobiliários, revestimentos, paletas de cores e elementos decorativos de acordo com a proposta criativa e as expectativas do cliente.",
+          "order": 7
+        },
+        {
+          "id": "3dm-act-9",
+          "text": "Projeta espaços em maquetes 3D, definindo mobiliários, revestimentos e paletas de cores que componham ambientes harmônicos e funcionais.",
+          "order": 8
+        },
+        {
+          "id": "3dm-act-10",
+          "text": "Produz imagens e vídeos realistas dos projetos por meio de técnicas avançadas de renderização, com foco em apresentação e impacto visual.",
+          "order": 9
+        },
+        {
+          "id": "3dm-act-11",
+          "text": "Aplica técnicas de pós-produção e edição de imagens para aprimorar a qualidade e a percepção visual dos projetos.",
+          "order": 10
+        },
+        {
+          "id": "3dm-act-12",
+          "text": "Desenvolve apresentações institucionais, materiais gráficos e banners para uso interno e externo, como palestras, eventos e reuniões comerciais.",
+          "order": 11
+        },
+        {
+          "id": "3dm-act-13",
+          "text": "Gerencia integralmente projetos selecionados, atuando de forma integrada com os coordenadores e demais membros da equipe.",
+          "order": 12
+        },
+        {
+          "id": "3dm-act-14",
+          "text": "Garante uniformidade visual e qualidade técnica dos materiais gráficos apresentados pela empresa, respeitando a identidade da marca.",
+          "order": 13
+        },
+        {
+          "id": "3dm-act-15",
+          "text": "Assume a liderança técnica de projetos quando necessário, coordenando o desenvolvimento visual e técnico das entregas.",
+          "order": 14
+        },
+        {
+          "id": "3dm-act-16",
+          "text": "Salva periodicamente os arquivos criados ou modificados na rede do escritório, assegurando organização e segurança das informações.",
+          "order": 15
+        },
+        {
+          "id": "3dm-act-17",
+          "text": "Treina estagiários na execução de projetos, modelagem 3D e demais atividades relacionadas à comunicação visual.",
+          "order": 16
+        },
+        {
+          "id": "3dm-act-18",
+          "text": "Fornece suporte ao desenvolvimento técnico e comportamental dos estagiários, promovendo integração à equipe.",
+          "order": 17
+        },
+        {
+          "id": "3dm-act-19",
+          "text": "Atualiza-se continuamente em inovações tecnológicas, participando de feiras, eventos e workshops da área.",
+          "order": 18
+        }
+      ],
+      "customQuestions": [],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "default-role-administrador",
+      "name": "Administrativo",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-atenc-1",
+        "q-b1-atenc-2",
+        "q-b1-atenc-3",
+        "q-b1-atenc-dial",
+        "q-b1-exec-1",
+        "q-b1-exec-2",
+        "q-b1-exec-3",
+        "q-b1-exec-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-plan-1",
+        "q-b1-plan-2",
+        "q-b1-plan-3",
+        "q-b1-plan-4",
+        "q-b1-plan-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b2-rp-1",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial"
+      ],
+      "activities": [
+        {
+          "id": "adm-act-1",
+          "text": "Gerencia o ambiente organizacional de trabalho, assegurando a limpeza, a conservação da fachada e o funcionamento adequado da infraestrutura física do escritório.",
+          "order": 0
+        },
+        {
+          "id": "adm-act-2",
+          "text": "Administra os processos administrativos gerais, incluindo a segurança patrimonial e a organização dos recursos operacionais.",
+          "order": 1
+        },
+        {
+          "id": "adm-act-3",
+          "text": "Cadastra novos projetos nas plataformas de gestão utilizadas pelo escritório.",
+          "order": 2
+        },
+        {
+          "id": "adm-act-4",
+          "text": "Gere a manutenção corretiva do escritório, acionando fornecedores e prestadores de serviço sempre que necessário.",
+          "order": 3
+        },
+        {
+          "id": "adm-act-5",
+          "text": "Gere a manutenção preventiva do escritório, acionando fornecedores e prestadores de serviço conforme cronogramas e necessidades identificadas.",
+          "order": 4
+        },
+        {
+          "id": "adm-act-6",
+          "text": "Organiza a agenda de eventos e atividades internas, como almoços, festas comemorativas, uso da sala de reuniões e envio de informes à equipe.",
+          "order": 5
+        },
+        {
+          "id": "adm-act-7",
+          "text": "Administra os contratos dos colaboradores CLT, monitorando prazos, cláusulas e obrigações legais.",
+          "order": 6
+        },
+        {
+          "id": "adm-act-8",
+          "text": "Realiza pesquisas internas voltadas ao bem-estar organizacional.",
+          "order": 7
+        },
+        {
+          "id": "adm-act-9",
+          "text": "Conduz rodas de conversa no ambiente de trabalho, promovendo diálogo e escuta entre os colaboradores.",
+          "order": 8
+        },
+        {
+          "id": "adm-act-10",
+          "text": "Promove eventos de integração entre os integrantes da equipe.",
+          "order": 9
+        },
+        {
+          "id": "adm-act-11",
+          "text": "Conduz os processos de admissão de funcionários, conforme as diretrizes internas e a legislação trabalhista vigente.",
+          "order": 10
+        },
+        {
+          "id": "adm-act-12",
+          "text": "Conduz os processos de desligamento de funcionários, conforme as diretrizes internas e a legislação trabalhista vigente.",
+          "order": 11
+        },
+        {
+          "id": "adm-act-13",
+          "text": "Elabora contratos de trabalho e de prestação de serviços, conforme orientações e normas estabelecidas.",
+          "order": 12
+        }
+      ],
+      "customQuestions": [],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "default-role-desenvolvedor-projetos",
+      "name": "Desenvolvedor(a) de Projetos",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-atenc-1",
+        "q-b1-atenc-2",
+        "q-b1-atenc-3",
+        "q-b1-atenc-dial",
+        "q-b6-ad-1",
+        "q-b6-ad-2",
+        "q-b6-ad-dial",
+        "q-b1-exec-1",
+        "q-b1-exec-2",
+        "q-b1-exec-3",
+        "q-b1-exec-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-plan-1",
+        "q-b1-plan-2",
+        "q-b1-plan-3",
+        "q-b1-plan-4",
+        "q-b1-plan-dial",
+        "q-b2-ra-1",
+        "q-b2-ra-2",
+        "q-b2-ra-dial",
+        "q-b2-rl-1",
+        "q-b2-rl-2",
+        "q-b2-rl-3",
+        "q-b2-rl-dial",
+        "q-b2-rp-1",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial"
+      ],
+      "activities": [
+        {
+          "id": "dev-act-1",
+          "text": "Colabora na elaboração e nos ajustes de layout em conjunto com franqueadoras e franqueados, contribuindo para soluções arquitetônicas alinhadas às diretrizes da marca.",
+          "order": 0
+        },
+        {
+          "id": "dev-act-2",
+          "text": "Revisa todas as informações prévias do projeto, incluindo estudo preliminar, layout aprovado, imagens, vídeos do local, premissas, normas técnicas e legislação aplicável.",
+          "order": 1
+        },
+        {
+          "id": "dev-act-3",
+          "text": "Participa de visitas técnicas, como levantamentos métricos, vistorias em lojas ou obras, sempre que solicitado.",
+          "order": 2
+        },
+        {
+          "id": "dev-act-4",
+          "text": "Executa os projetos conforme os padrões técnicos e visuais previamente estabelecidos.",
+          "order": 3
+        },
+        {
+          "id": "dev-act-5",
+          "text": "Produz as plantas dos projetos em desenvolvimento, incluindo cotas, níveis, especificações de materiais e indicações de detalhes construtivos.",
+          "order": 4
+        },
+        {
+          "id": "dev-act-6",
+          "text": "Define materiais, acabamentos, esquadrias e mobiliários fixos, especificando marcas, modelos e padrões técnicos compatíveis com o projeto e com o cliente.",
+          "order": 5
+        },
+        {
+          "id": "dev-act-7",
+          "text": "Elabora desenhos técnicos de detalhes construtivos, como paginação de pisos, forros, bancadas, guarda-corpos, sancas, marquises, entre outros.",
+          "order": 6
+        },
+        {
+          "id": "dev-act-8",
+          "text": "Complementa os desenhos técnicos com informações precisas e coerentes com o escopo do projeto.",
+          "order": 7
+        },
+        {
+          "id": "dev-act-9",
+          "text": "Elabora o memorial descritivo do projeto conforme orientações e diretrizes previamente estabelecidas pelo escritório.",
+          "order": 8
+        },
+        {
+          "id": "dev-act-10",
+          "text": "Anexa o memorial descritivo do projeto na pasta específica da loja na rede interna.",
+          "order": 9
+        },
+        {
+          "id": "dev-act-11",
+          "text": "Elabora a lista de compras de materiais e itens de obra, com referências, quantidades e fornecedores sugeridos, quando aplicável ao escopo.",
+          "order": 10
+        },
+        {
+          "id": "dev-act-12",
+          "text": "Desenvolve cadernos técnicos de mobiliário, incluindo modelagem detalhada, especificações de materiais, instruções de montagem e acabamentos conforme exigências da franquia.",
+          "order": 11
+        },
+        {
+          "id": "dev-act-13",
+          "text": "Desenvolve maquetes eletrônicas 3D com renderizações realistas, utilizando softwares compatíveis e atualizados.",
+          "order": 12
+        },
+        {
+          "id": "dev-act-14",
+          "text": "Elabora apresentações visuais dos projetos para apresentação aos clientes, utilizando recursos gráficos e de modelagem alinhados à identidade visual do escritório.",
+          "order": 13
+        },
+        {
+          "id": "dev-act-15",
+          "text": "Organiza, padroniza e disponibiliza os arquivos e documentos de projeto em formato adequado para obra (digital), incluindo imagens renderizadas e apresentações, conforme critérios internos.",
+          "order": 14
+        },
+        {
+          "id": "dev-act-16",
+          "text": "Confere todas as peças gráficas e documentos do projeto antes da entrega, garantindo qualidade, consistência técnica e padronização visual.",
+          "order": 15
+        },
+        {
+          "id": "dev-act-17",
+          "text": "Participa de reuniões de kickoff, presenciais ou on-line, contribuindo para o alinhamento técnico e a organização das etapas iniciais do projeto.",
+          "order": 16
+        },
+        {
+          "id": "dev-act-18",
+          "text": "Submete o projeto executivo finalizado na rede interna de backup para validação da Coordenação de Projetos, atendendo aos prazos e requisitos estabelecidos.",
+          "order": 17
+        },
+        {
+          "id": "dev-act-19",
+          "text": "Realiza adequações e correções no projeto a partir das devolutivas técnicas recebidas da Coordenação de Projetos.",
+          "order": 18
+        },
+        {
+          "id": "dev-act-20",
+          "text": "Notifica os coordenadores sobre o avanço e a conclusão de cada etapa do desenvolvimento por meio da ferramenta de gestão de projetos.",
+          "order": 19
+        },
+        {
+          "id": "dev-act-21",
+          "text": "Verifica periodicamente as notificações nas plataformas de trabalho utilizadas, garantindo acompanhamento e resposta às demandas em tempo hábil.",
+          "order": 20
+        },
+        {
+          "id": "dev-act-22",
+          "text": "Colabora com as equipes de trabalho e diferentes departamentos, promovendo integração e fluidez na execução das atividades compartilhadas.",
+          "order": 21
+        },
+        {
+          "id": "dev-act-23",
+          "text": "Participa de reuniões on-line e presenciais com foco em integração, feedback e alinhamento técnico.",
+          "order": 22
+        },
+        {
+          "id": "dev-act-24",
+          "text": "Salva periodicamente os arquivos criados ou modificados na nuvem do escritório, garantindo segurança da informação e organização do material.",
+          "order": 23
+        },
+        {
+          "id": "dev-act-25",
+          "text": "Salva e nomeia corretamente todos os arquivos e documentos conforme os padrões de nomenclatura definidos pelo escritório, garantindo uniformidade e rastreabilidade.",
+          "order": 24
+        },
+        {
+          "id": "dev-act-26",
+          "text": "Disponibiliza o projeto completo no servidor do escritório, assegurando acesso da equipe à versão final atualizada e devidamente arquivada.",
+          "order": 25
+        },
+        {
+          "id": "dev-act-27",
+          "text": "Aloca os materiais desenvolvidos nas pastas específicas de cada projeto na rede interna e comunica o status pela plataforma de gestão (ClickUp).",
+          "order": 26
+        },
+        {
+          "id": "dev-act-28",
+          "text": "Atualiza-se continuamente em inovações tecnológicas, participando de feiras, eventos e workshops da área.",
+          "order": 27
+        }
+      ],
+      "customQuestions": [],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "default-role-financeiro",
+      "name": "Financeiro",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-atenc-1",
+        "q-b1-atenc-2",
+        "q-b1-atenc-3",
+        "q-b1-atenc-dial",
+        "q-b5-ce-1",
+        "q-b5-ce-2",
+        "q-b5-ce-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b5-conf-1",
+        "q-b5-conf-2",
+        "q-b5-conf-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b3-np-1",
+        "q-b3-np-2",
+        "q-b3-np-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-plan-1",
+        "q-b1-plan-2",
+        "q-b1-plan-3",
+        "q-b1-plan-4",
+        "q-b1-plan-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b2-rp-1",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b5-sig-1",
+        "q-b5-sig-2",
+        "q-b5-sig-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial"
+      ],
+      "activities": [
+        {
+          "id": "fin-act-1",
+          "text": "Realiza a gestão de recebíveis junto aos clientes, acompanhando prazos e valores.",
+          "order": 0
+        },
+        {
+          "id": "fin-act-2",
+          "text": "Administra as despesas fixas do condomínio e do escritório, como aluguel, água, energia, IPTU, internet, entre outras, respeitando prioridades e datas de vencimento.",
+          "order": 1
+        },
+        {
+          "id": "fin-act-3",
+          "text": "Realiza os pagamentos de fornecedores e parceiros nas datas previstas, conforme os acordos estabelecidos.",
+          "order": 2
+        },
+        {
+          "id": "fin-act-4",
+          "text": "Identifica inadimplências de clientes e parceiros, adotando medidas para regularização e manutenção da saúde financeira do escritório.",
+          "order": 3
+        },
+        {
+          "id": "fin-act-5",
+          "text": "Garante o cumprimento das obrigações fiscais e tributárias, em conformidade com as exigências legais vigentes.",
+          "order": 4
+        },
+        {
+          "id": "fin-act-6",
+          "text": "Gere o relacionamento com entidades externas, como bancos, contabilidade, prefeitura e advogados, prestando suporte administrativo sempre que necessário.",
+          "order": 5
+        },
+        {
+          "id": "fin-act-7",
+          "text": "Atualiza os dados dos contratos na plataforma de gestão utilizada pelo escritório, mantendo o registro das etapas sempre atualizado.",
+          "order": 6
+        },
+        {
+          "id": "fin-act-8",
+          "text": "Confere o recebimento dos arquivos editáveis dos projetos antes de liberar pagamentos para as equipes envolvidas.",
+          "order": 7
+        },
+        {
+          "id": "fin-act-9",
+          "text": "Acompanha todo o ciclo dos projetos nas plataformas de gestão, desde a formalização do contrato até a entrega final ao cliente.",
+          "order": 8
+        }
+      ],
+      "customQuestions": [],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "default-role-gestor-obra",
+      "name": "Gestor de Obra",
+      "type": "leadership",
+      "questionIds": [
+        "q-b1-atenc-1",
+        "q-b1-atenc-2",
+        "q-b1-atenc-3",
+        "q-b1-atenc-dial",
+        "q-b6-ad-1",
+        "q-b6-ad-2",
+        "q-b6-ad-dial",
+        "q-b1-exec-1",
+        "q-b1-exec-2",
+        "q-b1-exec-3",
+        "q-b1-exec-dial",
+        "q-b3-np-1",
+        "q-b3-np-2",
+        "q-b3-np-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b2-rp-1",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b2-sc-1",
+        "q-b2-sc-2",
+        "q-b2-sc-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial"
+      ],
+      "activities": [
+        {
+          "id": "obra-act-1",
+          "text": "Mantém-se atualizado em relação aos manuais e diretrizes das franquias atendidas, aplicando corretamente suas exigências durante a execução das obras.",
+          "order": 0
+        },
+        {
+          "id": "obra-act-2",
+          "text": "Analisa os projetos antes do início do acompanhamento de obra, verificando diretrizes, premissas e particularidades técnicas.",
+          "order": 1
+        },
+        {
+          "id": "obra-act-3",
+          "text": "Participa de reuniões de kickoff e de alinhamento para adequações de projeto ao longo da execução da obra.",
+          "order": 2
+        },
+        {
+          "id": "obra-act-4",
+          "text": "Intermedeia ajustes e conflitos relacionados ao escopo do projeto, propondo soluções técnicas e viáveis.",
+          "order": 3
+        },
+        {
+          "id": "obra-act-5",
+          "text": "Mede e analisa ajustes e conflitos relacionados ao escopo do projeto, propondo soluções técnicas compatíveis com a execução da obra.",
+          "order": 4
+        },
+        {
+          "id": "obra-act-6",
+          "text": "Fornece feedback técnico aos projetistas para aprimoramento de detalhes de projeto, quando identifica falhas ou informações insuficientes.",
+          "order": 5
+        },
+        {
+          "id": "obra-act-7",
+          "text": "Confere cotações de orçamentos e quantitativos em relação aos projetos, garantindo precisão e aderência nas contratações.",
+          "order": 6
+        },
+        {
+          "id": "obra-act-8",
+          "text": "Solicita ajustes quando identifica incompatibilidades entre o projeto e as condições reais do espaço físico.",
+          "order": 7
+        },
+        {
+          "id": "obra-act-9",
+          "text": "Avalia a necessidade de revisões ou novas aprovações junto aos projetistas ao longo do processo de execução.",
+          "order": 8
+        },
+        {
+          "id": "obra-act-10",
+          "text": "Responde dúvidas técnicas da equipe de obra relacionadas aos projetos e à execução.",
+          "order": 9
+        },
+        {
+          "id": "obra-act-11",
+          "text": "Registra feedbacks na plataforma de gestão de projetos e acompanha o andamento das obras via WhatsApp, garantindo alinhamento com os projetos desenvolvidos.",
+          "order": 10
+        },
+        {
+          "id": "obra-act-12",
+          "text": "Cobra empreiteiros pelo envio de fotos e vídeos do andamento e da conclusão das obras, conforme cronograma estabelecido.",
+          "order": 11
+        },
+        {
+          "id": "obra-act-13",
+          "text": "Gere o relacionamento com fornecedores, franqueadores e franqueados durante o processo de obra.",
+          "order": 12
+        },
+        {
+          "id": "obra-act-14",
+          "text": "Atua como ponto de contato entre a equipe interna, franqueadora, franqueado e fornecedores em todas as etapas do projeto.",
+          "order": 13
+        },
+        {
+          "id": "obra-act-15",
+          "text": "Comunica-se de forma contínua com os responsáveis pelo projeto e com a equipe de obra, assegurando alinhamento técnico e operacional.",
+          "order": 14
+        },
+        {
+          "id": "obra-act-16",
+          "text": "Preenche o checklist final de conformidades conforme os padrões da franqueadora e do projeto antes da conclusão da obra.",
+          "order": 15
+        }
+      ],
+      "customQuestions": [],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "default-role-gerente-comercial",
+      "name": "Gerente Comercial",
+      "type": "leadership",
+      "questionIds": [
+        "q-b3-ac-1",
+        "q-b3-ac-2",
+        "q-b3-ac-dial",
+        "q-b6-ad-1",
+        "q-b6-ad-2",
+        "q-b6-ad-dial",
+        "q-b4-cor-1",
+        "q-b4-cor-2",
+        "q-b4-cor-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-plan-1",
+        "q-b1-plan-2",
+        "q-b1-plan-3",
+        "q-b1-plan-4",
+        "q-b1-plan-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b5-resp-1",
+        "q-b5-resp-2",
+        "q-b5-resp-dial",
+        "q-b2-rp-1",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial"
+      ],
+      "activities": [
+        {
+          "id": "com-act-1",
+          "text": "Prospecta ativamente novos clientes e contratos por meio de networking, visitas comerciais e ligações telefônicas estratégicas.",
+          "order": 0
+        },
+        {
+          "id": "com-act-2",
+          "text": "Mantém contato com stakeholders em nível nacional e internacional, identificando oportunidades comerciais e tendências de mercado.",
+          "order": 1
+        },
+        {
+          "id": "com-act-3",
+          "text": "Presta suporte aos clientes (franqueador e franqueado) por telefone, e-mail e demais canais de comunicação.",
+          "order": 2
+        },
+        {
+          "id": "com-act-4",
+          "text": "Negocia com os clientes novos contratos, prazos, entregas, orçamentos e o funcionamento do modelo de trabalho, assegurando alinhamento entre as partes.",
+          "order": 3
+        },
+        {
+          "id": "com-act-5",
+          "text": "Conduz reuniões iniciais de alinhamento com os clientes e a equipe de projeto, garantindo compatibilidade entre as expectativas comerciais e o escopo técnico do projeto.",
+          "order": 4
+        },
+        {
+          "id": "com-act-6",
+          "text": "Desenvolve propostas comerciais personalizadas em conjunto com a equipe de gestão.",
+          "order": 5
+        },
+        {
+          "id": "com-act-7",
+          "text": "Acompanha as aprovações de propostas e contratos de prestação de serviço por meio da plataforma de gestão, assegurando o fluxo correto do processo comercial.",
+          "order": 6
+        },
+        {
+          "id": "com-act-8",
+          "text": "Define a composição de preços, estimando custos por projeto, consultorias e honorários, garantindo equilíbrio entre competitividade e rentabilidade.",
+          "order": 7
+        },
+        {
+          "id": "com-act-9",
+          "text": "Filtra clientes em potencial por meio de reuniões e pesquisas de mercado, assegurando alinhamento estratégico, rentabilidade e compatibilidade com os valores do escritório.",
+          "order": 8
+        },
+        {
+          "id": "com-act-10",
+          "text": "Desenvolve e aprimora continuamente os processos comerciais a partir do mapeamento das etapas de atendimento e vendas, identificando gargalos e oportunidades de melhoria.",
+          "order": 9
+        },
+        {
+          "id": "com-act-11",
+          "text": "Realiza análises periódicas de mercado e concorrência (mensais e trimestrais), ajustando campanhas, posicionamento e ofertas com base nos dados coletados.",
+          "order": 10
+        },
+        {
+          "id": "com-act-12",
+          "text": "Propõe melhorias contínuas nos processos, estratégias e desempenho financeiro a partir dos resultados comerciais obtidos.",
+          "order": 11
+        },
+        {
+          "id": "com-act-13",
+          "text": "Participa de, no mínimo, dois eventos por ano (como Expo Revestir, ABF, Casa Cor SP, NFR, NRA e convenções), com foco em atualização profissional e ampliação de networking estratégico.",
+          "order": 12
+        },
+        {
+          "id": "com-act-14",
+          "text": "Avalia a satisfação dos clientes por meio do formulário NPS (Net Promoter Score).",
+          "order": 13
+        },
+        {
+          "id": "com-act-15",
+          "text": "Envia formulário cadastral aos clientes para coleta de dados essenciais à formalização e à execução dos projetos.",
+          "order": 14
+        }
+      ],
+      "customQuestions": [],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "default-role-coordenadora-projetos",
+      "name": "Coordenador(a) de Projetos",
+      "type": "leadership",
+      "questionIds": [
+        "q-b6-ad-1",
+        "q-b6-ad-2",
+        "q-b6-ad-dial",
+        "q-b2-ci-1",
+        "q-b2-ci-2",
+        "q-b2-ci-3",
+        "q-b2-ci-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b3-fc-1",
+        "q-b3-fc-2",
+        "q-b3-fc-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial",
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-dial",
+        "q-b1-result-1",
+        "q-b1-result-2",
+        "q-b1-result-3",
+        "q-b1-result-4",
+        "q-b1-result-5",
+        "q-b1-result-dial",
+        "q-b2-rl-1",
+        "q-b2-rl-2",
+        "q-b2-rl-3",
+        "q-b2-rl-dial",
+        "q-b2-sc-1",
+        "q-b2-sc-2",
+        "q-b2-sc-dial",
+        "q-b3-ac-1",
+        "q-b3-ac-2",
+        "q-b3-ac-dial",
+        "q-b3-np-1",
+        "q-b3-np-2",
+        "q-b3-np-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b4-di-dial",
+        "q-b4-di-1",
+        "q-b5-ce-1",
+        "q-b5-ce-2",
+        "q-b5-ce-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b6-ac-1",
+        "q-b6-ac-2",
+        "q-b6-ac-dial"
+      ],
+      "activities": [
+        {
+          "id": "coord-act-1",
+          "text": "Realiza o onboarding técnico de estagiários e profissionais recém-contratados.",
+          "order": 0
+        },
+        {
+          "id": "coord-act-2",
+          "text": "Delega tarefas compatíveis com o nível de experiência de cada integrante da equipe, supervisionando prazos e qualidade das entregas.",
+          "order": 1
+        },
+        {
+          "id": "coord-act-3",
+          "text": "Fornece feedbacks técnicos e comportamentais periódicos aos integrantes da equipe.",
+          "order": 2
+        },
+        {
+          "id": "coord-act-4",
+          "text": "Apoia decisões internas relacionadas à gestão da equipe, organização de demandas e melhoria de processos.",
+          "order": 3
+        },
+        {
+          "id": "coord-act-5",
+          "text": "Registra as necessidades específicas de cada projeto e as expectativas do cliente durante as reuniões de kickoff na plataforma de gestão ClickUp.",
+          "order": 4
+        },
+        {
+          "id": "coord-act-6",
+          "text": "Realiza o primeiro contato com o cliente franqueado.",
+          "order": 5
+        },
+        {
+          "id": "coord-act-7",
+          "text": "Garante disponibilidade para comunicação com o cliente via WhatsApp em todas as fases do projeto, assegurando o esclarecimento de dúvidas.",
+          "order": 6
+        },
+        {
+          "id": "coord-act-8",
+          "text": "Coordena as tarefas executadas pelos integrantes dos projetos.",
+          "order": 7
+        },
+        {
+          "id": "coord-act-9",
+          "text": "Supervisiona o envio dos arquivos em formato XLS dos projetos aprovados pela franqueadora.",
+          "order": 8
+        },
+        {
+          "id": "coord-act-10",
+          "text": "Recebe os projetos aprovados, organiza e preenche a planilha de controle de projetos.",
+          "order": 9
+        },
+        {
+          "id": "coord-act-11",
+          "text": "Colabora com engenheiros, construtores e fornecedores para garantir a viabilidade técnica dos projetos, assegurando a compatibilização adequada das informações.",
+          "order": 10
+        },
+        {
+          "id": "coord-act-12",
+          "text": "Aloca as demandas dos projetos aprovados aos integrantes da equipe de desenvolvedores de projetos.",
+          "order": 11
+        },
+        {
+          "id": "coord-act-13",
+          "text": "Gera e gerencia os cronogramas dos projetos no ClickUp, controlando prazos e demandas.",
+          "order": 12
+        },
+        {
+          "id": "coord-act-14",
+          "text": "Registra e devolve as modificações necessárias aos desenvolvedores responsáveis pelos projetos.",
+          "order": 13
+        },
+        {
+          "id": "coord-act-15",
+          "text": "Revisa e orienta as correções dos projetos em desenvolvimento junto aos arquitetos responsáveis até que atinjam o padrão adequado.",
+          "order": 14
+        },
+        {
+          "id": "coord-act-16",
+          "text": "Realiza interlocuções técnicas com franqueadoras e franqueados para garantir alinhamento técnico e conceitual dos projetos, assegurando conformidade com os padrões exigidos.",
+          "order": 15
+        },
+        {
+          "id": "coord-act-17",
+          "text": "Levanta as necessidades específicas de cada projeto e as expectativas de cada cliente a partir das reuniões de kickoff.",
+          "order": 16
+        },
+        {
+          "id": "coord-act-18",
+          "text": "Computa e organiza todos os dados de entrada dos projetos, incluindo manual de franquia, caderno de normas técnicas e diretrizes de layout padrão.",
+          "order": 17
+        },
+        {
+          "id": "coord-act-19",
+          "text": "Mantém o cliente atualizado sobre o andamento dos projetos.",
+          "order": 18
+        },
+        {
+          "id": "coord-act-20",
+          "text": "Realiza contato com fornecedores para esclarecimento de dúvidas técnicas ou projetuais quando necessário (elétrica, hidráulica, entre outras).",
+          "order": 19
+        },
+        {
+          "id": "coord-act-21",
+          "text": "Envia e acompanha os projetos junto ao franqueado, franqueadora ou concessionárias (aeroportos, shoppings, galerias, entre outros).",
+          "order": 20
+        },
+        {
+          "id": "coord-act-22",
+          "text": "Desenvolve o layout inicial dos projetos propostos, considerando possíveis dificuldades e detalhes construtivos.",
+          "order": 21
+        },
+        {
+          "id": "coord-act-23",
+          "text": "Envia o layout do projeto proposto para aprovação do cliente.",
+          "order": 22
+        },
+        {
+          "id": "coord-act-24",
+          "text": "Participa do comitê de projetos com a ZAMP, responsável pela marca Subway no Brasil.",
+          "order": 23
+        },
+        {
+          "id": "coord-act-25",
+          "text": "Confere dimensões, itens da lista de compras, Memorial Descritivo e RRT dos projetos antes da entrega final.",
+          "order": 24
+        }
+      ],
+      "customQuestions": [],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "default-role-auxiliar-servicos-gerais",
+      "name": "Auxiliar de Serviços Gerais",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b5-resp-1",
+        "q-b5-resp-2",
+        "q-b5-resp-dial",
+        "q-b5-ce-1",
+        "q-b5-ce-2",
+        "q-b5-ce-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-4",
+        "q-b1-agilidade-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial"
+      ],
+      "activities": [
+        {
+          "id": "asg-act-1",
+          "text": "Executa a limpeza seguindo uma rotina definida, garantindo padrão de higiene em todos os ambientes, incluindo o depósito de materiais de limpeza e as superfícies.",
+          "order": 0
+        },
+        {
+          "id": "asg-act-2",
+          "text": "Manuseia adequadamente equipamentos, móveis, cortinas e utensílios do escritório durante a limpeza.",
+          "order": 1
+        },
+        {
+          "id": "asg-act-3",
+          "text": "Mantém a copa e a cozinha limpas e organizadas, garantindo que pia, bancadas, armários, geladeiras, eletrodomésticos e resíduos estejam em seus locais corretos.",
+          "order": 2
+        },
+        {
+          "id": "asg-act-4",
+          "text": "Realiza a limpeza e a manutenção básica do quintal e das áreas externas, incluindo varrição, retirada de folhas, limpeza de áreas pavimentadas, rega de plantas e retirada de galhos secos.",
+          "order": 3
+        },
+        {
+          "id": "asg-act-5",
+          "text": "Realiza a coleta e o descarte correto do lixo, seguindo as orientações de separação e reciclagem.",
+          "order": 4
+        },
+        {
+          "id": "asg-act-6",
+          "text": "Informa com antecedência à administração sobre a necessidade de reposição dos materiais de limpeza.",
+          "order": 5
+        },
+        {
+          "id": "asg-act-7",
+          "text": "Reposição materiais de higiene, como papel higiênico, papel toalha, sabonete, entre outros, sempre que necessário.",
+          "order": 6
+        },
+        {
+          "id": "asg-act-8",
+          "text": "Utiliza produtos e materiais adequados para cada tipo de superfície, preservando sua conservação.",
+          "order": 7
+        },
+        {
+          "id": "asg-act-9",
+          "text": "Troca e lava copos e xícaras das salas sempre que necessário.",
+          "order": 8
+        },
+        {
+          "id": "asg-act-10",
+          "text": "Lava adequadamente e diariamente as vasilhas de água das cachorras.",
+          "order": 9
+        },
+        {
+          "id": "asg-act-11",
+          "text": "Troca a água das cachorras com frequência, garantindo que esteja sempre limpa e fresca.",
+          "order": 10
+        },
+        {
+          "id": "asg-act-12",
+          "text": "Verifica a presença de fezes das cachorras nas áreas internas ou externas do escritório, avisando imediatamente a pessoa responsável (Camila ou Luís) e realizando o descarte quando necessário.",
+          "order": 11
+        },
+        {
+          "id": "asg-act-13",
+          "text": "Apoia na preparação de ambientes para reuniões ou eventos internos, conforme orientações recebidas.",
+          "order": 12
+        },
+        {
+          "id": "asg-act-14",
+          "text": "Lava itens seguindo os procedimentos e rotinas estabelecidas.",
+          "order": 13
+        },
+        {
+          "id": "asg-act-15",
+          "text": "Apoia no preparo de refeições simples, realizando tarefas básicas sob orientação.",
+          "order": 14
+        }
+      ],
+      "customQuestions": [],
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "role-1786309695980",
+      "name": "Analista de Projetos",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-4",
+        "q-b1-agilidade-dial",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b2-rp-1",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b4-cor-1",
+        "q-b4-cor-2",
+        "q-b4-cor-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b6-pd-1",
+        "q-b6-pd-2",
+        "q-b6-pd-dial",
+        "q-b1-org-1",
+        "q-b1-org-2"
+      ],
+      "activities": [
+        {
+          "id": "activity-1786309275532",
+          "text": "Realizar a análise técnica dos projetos desenvolvidos, com base nos critérios, padrões e diretrizes definidos para cada entrega",
+          "order": 0
+        },
+        {
+          "id": "activity-1786309316408",
+          "text": "Aplicar check-list técnico de conferência, em formato on-line e/ou físico, para verificar a conformidade dos projetos antes da liberação",
+          "order": 1
+        },
+        {
+          "id": "activity-1786309321950",
+          "text": "Identificar inconsistências, não conformidades e necessidades de ajuste nos projetos analisados",
+          "order": 2
+        },
+        {
+          "id": "activity-1786309324007",
+          "text": "Encaminhar solicitações de correção e adequação aos responsáveis pelos projetos, com base nos apontamentos identificados durante a análise",
+          "order": 3
+        },
+        {
+          "id": "activity-1786309329645",
+          "text": "Contribuir para o alinhamento técnico entre projetistas, gestão de projetos e demais envolvidos, sempre que necessário ao andamento das análises",
+          "order": 4
+        },
+        {
+          "id": "activity-1786309333943",
+          "text": "Manter atualizadas no Click Up as informações relacionadas ao andamento das análises, revisões e liberações para desenvolvedor e coordenador de projetos",
+          "order": 5
+        },
+        {
+          "id": "activity-1786309339740",
+          "text": "Participar, quando houver convite ou necessidade vinculada às demandas em andamento, de reuniões de alinhamento ou treinamento com a equipe",
+          "order": 6
+        },
+        {
+          "id": "activity-1786309345395",
+          "text": "Acompanhar e estudar os guides, padrões e materiais de referência das franquias, com o objetivo de manter a qualidade técnica das análises e a atualização dos critérios aplicáveis",
+          "order": 7
+        },
+        {
+          "id": "activity-1786309353390",
+          "text": "Fornecer feedbacks técnicos e comportamentais periódicos aos integrantes envolvidos nos projetos",
+          "order": 8
+        }
+      ],
+      "createdAt": "2026-08-09T21:01:03.270Z"
+    },
+    {
+      "id": "role-1786310458988",
+      "name": "Administrativo/ Financeiro / Gestão de Obras",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-4",
+        "q-b1-agilidade-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-prior-1",
+        "q-b1-prior-2",
+        "q-b1-prior-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b2-rp-1",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial",
+        "q-b3-fc-1",
+        "q-b3-fc-2",
+        "q-b3-fc-dial",
+        "q-b3-np-1",
+        "q-b3-np-2",
+        "q-b3-np-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b5-ce-1",
+        "q-b5-ce-2",
+        "q-b5-ce-dial",
+        "q-b5-conf-1",
+        "q-b5-conf-2",
+        "q-b5-conf-dial",
+        "q-b6-af-1",
+        "q-b6-af-2",
+        "q-b6-af-dial",
+        "q-b6-pd-1",
+        "q-b6-pd-2",
+        "q-b6-pd-dial"
+      ],
+      "activities": [
+        {
+          "id": "activity-1786309737456",
+          "text": "Gerenciar o ambiente organizacional de trabalho, assegurando a manutenção da limpeza, conservação da fachada e funcionamento adequado da infraestrutura física do escritório.",
+          "order": 0
+        },
+        {
+          "id": "activity-1786309759551",
+          "text": "Administrar os processos administrativos gerais, incluindo a segurança patrimonial e a organização dos recursos operacionais.",
+          "order": 1
+        },
+        {
+          "id": "activity-1786309764658",
+          "text": "Gerir a manutenção corretiva do escritório, acionando fornecedores e prestadores de serviço quando necessário.",
+          "order": 2
+        },
+        {
+          "id": "activity-1786309769977",
+          "text": "Gerir a manutenção preventiva do escritório, acionando fornecedores e prestadores de serviço quando necessário.",
+          "order": 3
+        },
+        {
+          "id": "activity-1786309773104",
+          "text": "Organizar a agenda de eventos e atividades internas, como almoços, festas comemorativas, uso da sala de reunião e envio de informes à equipe.",
+          "order": 4
+        },
+        {
+          "id": "activity-1786309778992",
+          "text": "Administrar os contratos dos colaboradores CLT, monitorando prazos, cláusulas e obrigações legais.",
+          "order": 5
+        },
+        {
+          "id": "activity-1786309784881",
+          "text": "Promover eventos de integração da equipe.",
+          "order": 6
+        },
+        {
+          "id": "activity-1786309790429",
+          "text": "Realizar os processos de admissão de funcionários, conforme as diretrizes internas e a legislação trabalhista vigente.",
+          "order": 7
+        },
+        {
+          "id": "activity-1786309809284",
+          "text": "Conduzir os processos de desligamento de funcionários e parceiros, conforme as diretrizes internas e a legislação trabalhista vigente.",
+          "order": 8
+        },
+        {
+          "id": "activity-1786309825101",
+          "text": "Elaborar contratos de trabalho e prestação de serviços.",
+          "order": 9
+        },
+        {
+          "id": "activity-1786309829414",
+          "text": "Coordenar o fluxo das atividades prestadas no apoio administrativo, financeiro e operacional, acompanhando a qualidade das entregas, a atualização das informações e o andamento das demandas relacionadas aos serviços contratados",
+          "order": 10
+        },
+        {
+          "id": "activity-1786309841332",
+          "text": "Realizar a gestão dos recebíveis junto aos clientes, acompanhando os valores a receber e o andamento das cobranças",
+          "order": 11
+        },
+        {
+          "id": "activity-1786309869526",
+          "text": "Administrar as despesas fixas do condomínio e do escritório, observando prioridades, vencimentos e necessidades de pagamento",
+          "order": 12
+        },
+        {
+          "id": "activity-1786309874883",
+          "text": "Executar os pagamentos de fornecedores e parceiros conforme os acordos estabelecidos e os prazos aplicáveis",
+          "order": 13
+        },
+        {
+          "id": "activity-1786309880513",
+          "text": "Identificar situações de inadimplência de clientes e parceiros, adotando as medidas cabíveis para regularização e acompanhamento financeiro",
+          "order": 14
+        },
+        {
+          "id": "activity-1786309883169",
+          "text": "Acompanhar o cumprimento das obrigações fiscais e tributárias aplicáveis, em alinhamento com as exigências legais e com os prestadores responsáveis",
+          "order": 15
+        },
+        {
+          "id": "activity-1786309887901",
+          "text": "Conduzir o relacionamento com entidades externas, como bancos, contabilidade, prefeitura, assessorias e demais parceiros relacionados às demandas financeiras e administrativas",
+          "order": 16
+        },
+        {
+          "id": "activity-1786309891815",
+          "text": "Inserir os dados contratuais e registros das etapas dos projetos na plataforma click-up",
+          "order": 17
+        },
+        {
+          "id": "activity-1786309899218",
+          "text": "Coordenar o fluxo das atividades prestadas no apoio financeiro e operacional, acompanhando a qualidade das entregas, a atualização das informações e o andamento das demandas relacionadas aos serviços contratados",
+          "order": 18
+        },
+        {
+          "id": "activity-1786310340666",
+          "text": "Manter-se atualizado em relação aos manuais e diretrizes das franquias atendidas, aplicando corretamente suas exigências",
+          "order": 19
+        },
+        {
+          "id": "activity-1786310365034",
+          "text": "Analisar os projetos antes do início do acompanhamento da obra, verificando suas diretrizes e particularidades",
+          "order": 20
+        },
+        {
+          "id": "activity-1786310370539",
+          "text": "Participar de reuniões de kickoff e de alinhamento para adaptações de projeto ao longo da execução da obra",
+          "order": 21
+        },
+        {
+          "id": "activity-1786310376871",
+          "text": "Intermediar ajustes e conflitos relacionados ao escopo do projeto, buscando soluções técnicas e viáveis",
+          "order": 22
+        },
+        {
+          "id": "activity-1786310379367",
+          "text": "Fornecer feedback técnico ao projetista para melhorias em detalhes de projeto, quando identificar falhas ou informações insuficientes",
+          "order": 23
+        },
+        {
+          "id": "activity-1786310396056",
+          "text": "Conferir as cotações de orçamentos e quantitativos em relação aos projetos, garantindo precisão nas contratações",
+          "order": 24
+        },
+        {
+          "id": "activity-1786310409817",
+          "text": "Solicitar ajustes de incompatibilidades entre o projeto e as condições reais do espaço físico, quando necessário",
+          "order": 25
+        },
+        {
+          "id": "activity-1786310411407",
+          "text": "Avaliar a necessidade de revisões ou aprovações com os projetistas ao longo do processo de execução",
+          "order": 26
+        },
+        {
+          "id": "activity-1786310420738",
+          "text": "Responder dúvidas técnicas da equipe de obra relacionadas aos projetos e à execução da obra",
+          "order": 27
+        },
+        {
+          "id": "activity-1786310428043",
+          "text": "Registrar feedbacks no PNR e acompanhar o andamento das obras via WhatsApp, garantindo alinhamento com os projetos desenvolvidos",
+          "order": 28
+        },
+        {
+          "id": "activity-1786310433247",
+          "text": "Gerir o relacionamento com fornecedores e franqueados",
+          "order": 29
+        },
+        {
+          "id": "activity-1786310433916",
+          "text": "Atuar como ponto de contato entre a equipe interna, o franqueado e os fornecedores durante todas as etapas do projeto",
+          "order": 30
+        },
+        {
+          "id": "activity-1786310441295",
+          "text": "Preencher o checklist de conformidades conforme a execução do projeto",
+          "order": 31
+        }
+      ],
+      "createdAt": "2026-08-09T21:08:44.323Z"
+    },
+    {
+      "id": "role-1786310793425",
+      "name": "Digitalização",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-exec-1",
+        "q-b1-exec-2",
+        "q-b1-exec-3",
+        "q-b1-exec-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b2-ra-1",
+        "q-b2-ra-2",
+        "q-b2-ra-dial",
+        "q-b2-sc-1",
+        "q-b2-sc-2",
+        "q-b2-sc-dial",
+        "q-b3-fc-1",
+        "q-b3-fc-2",
+        "q-b3-fc-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial",
+        "q-b3-np-1",
+        "q-b3-np-2",
+        "q-b3-np-dial"
+      ],
+      "activities": [
+        {
+          "id": "activity-1786310495386",
+          "text": "Receber e analisar as informações iniciais da unidade franqueada incluindo dados da loja, padrão atual de decoração, plantas existentes, fotos, documentos técnicos e demais materiais disponíveis.",
+          "order": 0
+        },
+        {
+          "id": "activity-1786310502369",
+          "text": "Comparar o projeto existente com as diretrizes atualizadas da franqueadora.",
+          "order": 1
+        },
+        {
+          "id": "activity-1786310506486",
+          "text": "Mapear os ajustes necessários para enquadramento no plano de remodelação.",
+          "order": 2
+        },
+        {
+          "id": "activity-1786310510409",
+          "text": "Organizar as informações do projeto em software técnico adequado.",
+          "order": 3
+        },
+        {
+          "id": "activity-1786310514128",
+          "text": "Propor soluções de adequação compatíveis com o padrão da marca e a realidade da loja.",
+          "order": 4
+        },
+        {
+          "id": "activity-1786310517526",
+          "text": "Preparar materiais para apresentação em reunião de comitê.",
+          "order": 5
+        },
+        {
+          "id": "activity-1786310520917",
+          "text": "Apresentar a proposta de adequação para análise e aprovação.",
+          "order": 6
+        },
+        {
+          "id": "activity-1786310524472",
+          "text": "Revisar e ajustar o projeto conforme apontamentos recebidos.",
+          "order": 7
+        },
+        {
+          "id": "activity-1786310527561",
+          "text": "Colaborar com as equipes de trabalho e diferentes departamentos, promovendo integração e fluidez na execução das atividades compartilhadas",
+          "order": 8
+        },
+        {
+          "id": "activity-1786310531686",
+          "text": "Participar de reuniões on-line e presenciais com o objetivo de integração, feedback e alinhamento",
+          "order": 9
+        },
+        {
+          "id": "activity-1786310536269",
+          "text": "Salvar periodicamente os arquivos criados ou modificados na nuvem de arquivos do escritório, garantindo segurança da informação e organização do material",
+          "order": 10
+        },
+        {
+          "id": "activity-1786310560802",
+          "text": "Atualizar-se constantemente em inovações tecnológicas, com participação em feiras, eventos e workshops da área",
+          "order": 11
+        },
+        {
+          "id": "activity-1786310573612",
+          "text": "Gerir o relacionamento com franqueados, respondendo dúvidas e se colocando à disposição.",
+          "order": 12
+        }
+      ],
+      "createdAt": "2026-08-09T21:21:27.672Z"
+    },
+    {
+      "id": "role-1786312019898",
+      "name": "Auxiliar Administrativo Financeiro / Gestão de Obras",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-4",
+        "q-b1-agilidade-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b3-fc-1",
+        "q-b3-fc-2",
+        "q-b3-fc-dial",
+        "q-b3-np-1",
+        "q-b3-np-2",
+        "q-b3-np-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b5-ce-1",
+        "q-b5-ce-2",
+        "q-b5-ce-dial",
+        "q-b6-pd-1",
+        "q-b6-pd-2",
+        "q-b6-pd-dial",
+        "q-b4-di-1",
+        "q-b4-di-2",
+        "q-b4-di-dial",
+        "q-b6-ac-1",
+        "q-b6-ac-2",
+        "q-b6-ac-dial"
+      ],
+      "activities": [
+        {
+          "id": "activity-1786311573134",
+          "text": "Prestar apoio às demandas administrativas, financeiras e de organização de informações relacionadas às atividades do escritório",
+          "order": 0
+        },
+        {
+          "id": "activity-1786311574596",
+          "text": "Organizar documentos físicos e digitais vinculados a processos administrativos, financeiros, contratuais e de apoio à operação",
+          "order": 1
+        },
+        {
+          "id": "activity-1786311575596",
+          "text": "Atualizar planilhas, sistemas e plataformas de gestão com informações administrativas, financeiras e operacionais",
+          "order": 2
+        },
+        {
+          "id": "activity-1786311594427",
+          "text": "Acompanhar prazos, pendências e vencimentos relacionados às demandas sob sua atuação, comunicando necessidades de andamento aos pontos de contato definidos",
+          "order": 3
+        },
+        {
+          "id": "activity-1786311598260",
+          "text": "Solicitar documentos, comprovantes e informações complementares a colaboradores, fornecedores, parceiros, prestadores e demais envolvidos, sempre que necessário ao andamento das atividades",
+          "order": 4
+        },
+        {
+          "id": "activity-1786311601627",
+          "text": "Contribuir para o controle de pagamentos, recebimentos e despesas por meio da organização das informações e da conferência dos dados lançados",
+          "order": 5
+        },
+        {
+          "id": "activity-1786311606172",
+          "text": "Atualizar dados contratuais, operacionais e de andamento dos projetos nas plataformas de gestão utilizadas pelo escritório",
+          "order": 6
+        },
+        {
+          "id": "activity-1786311608925",
+          "text": "Prestar apoio à organização de entrevistas, reuniões, comunicações e demais ações relacionadas à dinâmica interna e à gestão de pessoas",
+          "order": 7
+        },
+        {
+          "id": "activity-1786311614699",
+          "text": "Realizar atendimento a franqueados, prestando informações, encaminhando solicitações e direcionando dúvidas relacionadas ao ciclo dos projetos",
+          "order": 8
+        },
+        {
+          "id": "activity-1786311622117",
+          "text": "Realizar contatos, repasses de informações e acompanhamentos com fornecedores, conforme a necessidade das demandas em andamento",
+          "order": 9
+        },
+        {
+          "id": "activity-1786311626865",
+          "text": "Encaminhar dúvidas técnicas da equipe de obras aos responsáveis pelos projetos, acompanhando o retorno necessário para continuidade do fluxo",
+          "order": 10
+        },
+        {
+          "id": "activity-1786311631890",
+          "text": "Realizar cotações de orçamentos e levantamentos quantitativos relacionados aos projetos, conforme a demanda de cada etapa",
+          "order": 11
+        },
+        {
+          "id": "activity-1786311635580",
+          "text": "Organizar e enviar aos franqueados cotações, orçamentos e informações sobre fornecedores de materiais, conforme os alinhamentos definidos para cada projeto",
+          "order": 12
+        },
+        {
+          "id": "activity-1786311639772",
+          "text": "Prestar apoio à organização de eventos, confraternizações e ações internas promovidas pelo escritório",
+          "order": 13
+        }
+      ],
+      "createdAt": "2026-08-09T21:39:19.048Z"
+    },
+    {
+      "id": "role-1786312372107",
+      "name": "Estagiário(a) Desenvolvimento de Projetos",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-4",
+        "q-b1-agilidade-dial",
+        "q-b1-exec-1",
+        "q-b1-exec-2",
+        "q-b1-exec-3",
+        "q-b1-exec-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b2-rl-1",
+        "q-b2-rl-2",
+        "q-b2-rl-3",
+        "q-b2-rl-dial",
+        "q-b2-ra-1",
+        "q-b2-ra-2",
+        "q-b2-ra-dial",
+        "q-b2-sc-1",
+        "q-b2-sc-2",
+        "q-b2-sc-dial",
+        "q-b2-rp-1",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b3-fc-1",
+        "q-b3-fc-2",
+        "q-b3-fc-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b5-resp-1",
+        "q-b5-resp-2",
+        "q-b5-resp-dial",
+        "q-b5-conf-1",
+        "q-b5-conf-2",
+        "q-b5-conf-dial",
+        "q-b5-trans-1",
+        "q-b5-trans-2",
+        "q-b5-trans-dial",
+        "q-b6-ac-1",
+        "q-b6-ac-2",
+        "q-b6-ac-dial",
+        "q-b6-af-1",
+        "q-b6-af-2",
+        "q-b6-af-dial",
+        "q-b6-ad-1",
+        "q-b6-ad-2",
+        "q-b6-ad-dial",
+        "q-b6-vf-1",
+        "q-b6-vf-2",
+        "q-b6-vf-dial",
+        "q-b6-pd-1",
+        "q-b6-pd-2",
+        "q-b6-pd-dial",
+        "q-b4-di-1",
+        "q-b4-di-2",
+        "q-b4-di-dial"
+      ],
+      "activities": [
+        {
+          "id": "activity-1786312036102",
+          "text": "Aplicar as diretrizes da franquia nos projetos, assegurando coerência técnica e estética com os padrões exigidos pela marca.",
+          "order": 0
+        },
+        {
+          "id": "activity-1786312051087",
+          "text": "Criar imagens realistas (renders) das fachadas e ambientes internos dos projetos utilizando softwares específicos como SketchUp, IA e similares.",
+          "order": 1
+        },
+        {
+          "id": "activity-1786312074622",
+          "text": "Pesquisar e se atualizar constantemente sobre arquitetura para varejo, franquias e outras áreas correlatas, visando a inovação e o aprimoramento técnico.",
+          "order": 2
+        },
+        {
+          "id": "activity-1786312085272",
+          "text": "Aplicar as exigências técnicas de cada franquia nos projetos desenvolvidos.",
+          "order": 3
+        },
+        {
+          "id": "activity-1786312088498",
+          "text": "Desenvolver projetos que possuam padrões repetitivos de detalhes construtivos e acabamentos, apresentando-os ao supervisor para validação.",
+          "order": 4
+        },
+        {
+          "id": "activity-1786312093703",
+          "text": "Executar os projetos com boa diagramação e conforme os padrões gráficos definidos pelo escritório.                                ",
+          "order": 5
+        },
+        {
+          "id": "activity-1786312098712",
+          "text": "Salvar periodicamente os arquivos criados ou modificados na rede do escritório, assegurando backup.",
+          "order": 6
+        },
+        {
+          "id": "activity-1786312102050",
+          "text": "Responder comunicação via WhatsApp e plataforma interna.",
+          "order": 7
+        },
+        {
+          "id": "activity-1786312107000",
+          "text": "Manter atualizadas as informações nas plataformas de gerenciamento de projetos.",
+          "order": 8
+        },
+        {
+          "id": "activity-1786312124131",
+          "text": "Participar de reuniões internas de planejamento e avaliação quando necessário.",
+          "order": 9
+        },
+        {
+          "id": "activity-1786312127970",
+          "text": "Contribuir com informações técnicas sempre que necessário.",
+          "order": 10
+        }
+      ],
+      "createdAt": "2026-08-09T21:47:07.867Z"
+    },
+    {
+      "id": "role-1786478528791",
+      "name": "Estagiário(a) - Gestão de Projetos",
+      "type": "collaborator",
+      "questionIds": [
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b2-ci-1",
+        "q-b2-ci-2",
+        "q-b2-ci-3",
+        "q-b2-ci-dial",
+        "q-b3-fc-1",
+        "q-b3-fc-2",
+        "q-b3-fc-dial",
+        "q-b3-ac-1",
+        "q-b3-ac-2",
+        "q-b3-ac-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b4-cor-1",
+        "q-b4-cor-2",
+        "q-b4-cor-dial",
+        "q-b4-di-1",
+        "q-b4-di-2",
+        "q-b4-di-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b5-ce-1",
+        "q-b5-ce-2",
+        "q-b5-ce-dial",
+        "q-b5-sig-1",
+        "q-b5-sig-2",
+        "q-b5-sig-dial",
+        "q-b6-ac-1",
+        "q-b6-ac-2",
+        "q-b6-ac-dial",
+        "q-b6-pd-1",
+        "q-b6-pd-2",
+        "q-b6-pd-dial"
+      ],
+      "activities": [
+        {
+          "id": "activity-1786477113096",
+          "text": "Receber as demandas iniciais de projetos já contratados e organizar as informações recebidas para início do fluxo interno.",
+          "order": 0
+        },
+        {
+          "id": "activity-1786477125614",
+          "text": "Realizar contatos iniciais com clientes, conforme orientação da PMO, para solicitar, confirmar e registrar informações, documentos e materiais necessários ao início do projeto.",
+          "order": 1
+        },
+        {
+          "id": "activity-1786477133760",
+          "text": "Conferir se a documentação, os dados e os materiais de entrada do projeto estão completos para continuidade do processo.",
+          "order": 2
+        },
+        {
+          "id": "activity-1786477136518",
+          "text": "Identificar e solicitar pendências de informações, documentos ou definições necessárias para abertura e andamento do projeto.",
+          "order": 3
+        },
+        {
+          "id": "activity-1786477143750",
+          "text": "Apoiar na atualização do status dos projetos no ClickUp, garantindo visibilidade sobre etapa, responsável e pendências.",
+          "order": 4
+        },
+        {
+          "id": "activity-1786477148452",
+          "text": "Alocar os documentos e materiais dos projetos nos locais corretos, garantindo organização e fácil rastreabilidade.",
+          "order": 5
+        },
+        {
+          "id": "activity-1786477151903",
+          "text": "Cumprir os padrões internos de organização, nomenclatura, registro e controle de projetos adotados pelo escritório.",
+          "order": 6
+        },
+        {
+          "id": "activity-1786477153907",
+          "text": "Compatibilizar imagens com levantamento recebidos;",
+          "order": 7
+        },
+        {
+          "id": "activity-1786477159146",
+          "text": "Estudar os cadernos técnicos da franquia e dos fornecedores, a fim de realizar análises de levantamento conforme os padrões da marca.",
+          "order": 8
+        },
+        {
+          "id": "activity-1786477163354",
+          "text": "Analisar e aprovar os checklists de levantamento das lojas no PNR.",
+          "order": 9
+        },
+        {
+          "id": "activity-1786477166631",
+          "text": "Baixar os arquivos necessários no PNR para executar a análise do material enviado, comparando desenhos com fotos e vídeos para verificar a coerência do levantamento com a realidade da loja.",
+          "order": 10
+        },
+        {
+          "id": "activity-1786477170389",
+          "text": "Realizar contato com o cliente via WhatsApp, quando houver reprovação do levantamento, para esclarecer dúvidas, orientar o franqueado e solicitar o reenvio correto das informações, conforme o fluxo definido.",
+          "order": 11
+        },
+        {
+          "id": "activity-1786477173909",
+          "text": "Responder às dúvidas da equipe sobre o status dos projetos, quando solicitado, por meio do ClickUp.",
+          "order": 12
+        },
+        {
+          "id": "activity-1786477175706",
+          "text": "Criar e organizar as pastas das lojas na rede.",
+          "order": 13
+        },
+        {
+          "id": "activity-1786477178624",
+          "text": "Solicitar, acompanhar, baixar do Drive e salvar os arquivos Fullset nas pastas correspondentes de cada loja na rede.",
+          "order": 14
+        },
+        {
+          "id": "activity-1786477191547",
+          "text": "Gerar arquivos em PDF dos materiais Fullset e armazená-los nas pastas das lojas.",
+          "order": 15
+        },
+        {
+          "id": "activity-1786477195657",
+          "text": "Responder às dúvidas dos franqueados por e-mail e WhatsApp.",
+          "order": 16
+        },
+        {
+          "id": "activity-1786477198593",
+          "text": "Acompanhar os pedidos de correção de levantamento e cobrar os retornos necessários, quando aplicável.",
+          "order": 17
+        }
+      ],
+      "createdAt": "2026-08-11T19:27:00.122Z"
+    }
+  ],
+  "competencies": [
+    {
+      "id": "comp-b1-agilidade",
+      "name": "Agilidade",
+      "description": "",
+      "categoryId": "bloco1",
+      "questions": [
+        {
+          "id": "q-b1-agilidade-1",
+          "categoryId": "bloco1",
+          "text": "Realiza suas tarefas de forma rápida sem prejudicar a qualidade do trabalho.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b1-agilidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-agilidade-2",
+          "categoryId": "bloco1",
+          "text": "Identifica problemas com rapidez.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b1-agilidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-agilidade-3",
+          "categoryId": "bloco1",
+          "text": "Encontra soluções de forma eficaz e ágil.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b1-agilidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-agilidade-4",
+          "categoryId": "bloco1",
+          "text": "Utiliza o tempo necessário para executar suas atividades, sem excessos.",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b1-agilidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-agilidade-dial",
+          "categoryId": "bloco1",
+          "text": "Pensando nos projetos mais recentes, de que forma você conduziu as entregas para cumprir os prazos e como avalia o resultado disso?",
+          "order": 4,
+          "isBonus": false,
+          "competencyId": "comp-b1-agilidade",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 1
+    },
+    {
+      "id": "comp-b1-capacidade-execucao",
+      "name": "Capacidade de Execução",
+      "description": "",
+      "categoryId": "bloco1",
+      "questions": [
+        {
+          "id": "q-b1-exec-1",
+          "categoryId": "bloco1",
+          "text": "Consegue transformar planos em ações concretas.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b1-capacidade-execucao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-exec-2",
+          "categoryId": "bloco1",
+          "text": "Utiliza adequadamente os recursos disponíveis para atingir seus objetivos.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b1-capacidade-execucao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-exec-3",
+          "categoryId": "bloco1",
+          "text": "Atua de forma sistemática para concluir o que foi planejado.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b1-capacidade-execucao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-exec-dial",
+          "categoryId": "bloco1",
+          "text": "Considerando os últimos projetos, como aconteceu a passagem do planejamento para a execução e que efeito isso teve no trabalho realizado?",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b1-capacidade-execucao",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 2
+    },
+    {
+      "id": "comp-b1-organizacao",
+      "name": "Organização",
+      "description": "",
+      "categoryId": "bloco1",
+      "questions": [
+        {
+          "id": "q-b1-org-1",
+          "categoryId": "bloco1",
+          "text": "Organiza previamente seu material e suas atividades de trabalho.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b1-organizacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-org-2",
+          "categoryId": "bloco1",
+          "text": "Administra bem o tempo para realizar suas tarefas.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b1-organizacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-org-3",
+          "categoryId": "bloco1",
+          "text": "Planeja as atividades antes de executá-las.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b1-organizacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-org-4",
+          "categoryId": "bloco1",
+          "text": "Define metas claras alinhadas aos objetivos estabelecidos.",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b1-organizacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-org-dial",
+          "categoryId": "bloco1",
+          "text": "Nos projetos recentes, como você estruturou e organizou seu trabalho para dar andamento às atividades e como isso impactou o processo?",
+          "order": 4,
+          "isBonus": false,
+          "competencyId": "comp-b1-organizacao",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 3
+    },
+    {
+      "id": "comp-b1-planejamento",
+      "name": "Planejamento",
+      "description": "",
+      "categoryId": "bloco1",
+      "questions": [
+        {
+          "id": "q-b1-plan-1",
+          "categoryId": "bloco1",
+          "text": "Estabelece objetivos e metas antes de iniciar suas atividades.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b1-planejamento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-plan-2",
+          "categoryId": "bloco1",
+          "text": "Planeja considerando prioridades e recursos disponíveis.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b1-planejamento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-plan-3",
+          "categoryId": "bloco1",
+          "text": "Ajusta o planejamento quando surgem mudanças.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b1-planejamento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-plan-4",
+          "categoryId": "bloco1",
+          "text": "Antecipa recursos necessários para executar suas demandas.",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b1-planejamento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-plan-dial",
+          "categoryId": "bloco1",
+          "text": "Ao lembrar dos últimos projetos, como você se organizou antes de iniciar as atividades e em que medida isso contribuiu para o desenvolvimento do trabalho?",
+          "order": 4,
+          "isBonus": false,
+          "competencyId": "comp-b1-planejamento",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 4
+    },
+    {
+      "id": "comp-b1-priorizacao",
+      "name": "Priorização",
+      "description": "",
+      "categoryId": "bloco1",
+      "questions": [
+        {
+          "id": "q-b1-prior-1",
+          "categoryId": "bloco1",
+          "text": "Prioriza tarefas de forma eficiente.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b1-priorizacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-prior-2",
+          "categoryId": "bloco1",
+          "text": "Identifica corretamente o que é mais importante e urgente.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b1-priorizacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-prior-dial",
+          "categoryId": "bloco1",
+          "text": "Nos projetos mais recentes, como você definiu o que precisava ser feito primeiro e como avalia os resultados dessa escolha?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b1-priorizacao",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 5
+    },
+    {
+      "id": "comp-b1-orientacao-resultado",
+      "name": "Orientação para Resultado",
+      "description": "",
+      "categoryId": "bloco1",
+      "questions": [
+        {
+          "id": "q-b1-result-1",
+          "categoryId": "bloco1",
+          "text": "Estabelece metas claras e mensuráveis.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b1-orientacao-resultado",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-result-2",
+          "categoryId": "bloco1",
+          "text": "Busca maximizar produtividade e eficiência.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b1-orientacao-resultado",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-result-3",
+          "categoryId": "bloco1",
+          "text": "Monitora o progresso das atividades.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b1-orientacao-resultado",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-result-4",
+          "categoryId": "bloco1",
+          "text": "Corrige desvios que possam comprometer os resultados.",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b1-orientacao-resultado",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-result-5",
+          "categoryId": "bloco1",
+          "text": "Mantém foco nas atividades prioritárias e nos prazos.",
+          "order": 4,
+          "isBonus": false,
+          "competencyId": "comp-b1-orientacao-resultado",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-result-dial",
+          "categoryId": "bloco1",
+          "text": "Pensando nos projetos recentes, de que forma você acompanhou se o trabalho estava caminhando para os resultados esperados e como isso funcionou na prática?",
+          "order": 5,
+          "isBonus": false,
+          "competencyId": "comp-b1-orientacao-resultado",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 6
+    },
+    {
+      "id": "comp-b1-atencao-concentrada",
+      "name": "Atenção Concentrada",
+      "description": "",
+      "categoryId": "bloco1",
+      "questions": [
+        {
+          "id": "q-b1-atenc-1",
+          "categoryId": "bloco1",
+          "text": "Mantém atenção em uma tarefa mesmo em ambientes com interferências.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b1-atencao-concentrada",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-atenc-2",
+          "categoryId": "bloco1",
+          "text": "Demonstra preocupação constante em executar o trabalho sem erros.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b1-atencao-concentrada",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-atenc-3",
+          "categoryId": "bloco1",
+          "text": "Identifica erros ou inconsistências no fluxo de atividades.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b1-atencao-concentrada",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-atenc-dial",
+          "categoryId": "bloco1",
+          "text": "Ao longo dos últimos projetos, como foi sua experiência em manter o foco durante a execução das atividades e quais efeitos isso teve no trabalho?",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b1-atencao-concentrada",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 7
+    },
+    {
+      "id": "comp-b1-detalhista",
+      "name": "Detalhista",
+      "description": "",
+      "categoryId": "bloco1",
+      "questions": [
+        {
+          "id": "q-b1-detal-1",
+          "categoryId": "bloco1",
+          "text": "Garante precisão e qualidade em cada etapa do trabalho.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b1-detalhista",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-detal-2",
+          "categoryId": "bloco1",
+          "text": "Dedica tempo necessário para revisar e corrigir detalhes.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b1-detalhista",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b1-detal-dial",
+          "categoryId": "bloco1",
+          "text": "Considerando as entregas dos últimos projetos, como você lidou com os detalhes e revisões e como isso se refletiu no resultado final?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b1-detalhista",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 8
+    },
+    {
+      "id": "comp-b2-raciocinio-logico",
+      "name": "Raciocínio Lógico",
+      "description": "",
+      "categoryId": "bloco2",
+      "questions": [
+        {
+          "id": "q-b2-rl-1",
+          "categoryId": "bloco2",
+          "text": "Analisa informações de forma objetiva e lógica.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b2-raciocinio-logico",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-rl-2",
+          "categoryId": "bloco2",
+          "text": "Resolve problemas de maneira sistemática.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b2-raciocinio-logico",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-rl-3",
+          "categoryId": "bloco2",
+          "text": "Baseia decisões em evidências.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b2-raciocinio-logico",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-rl-dial",
+          "categoryId": "bloco2",
+          "text": "Pensando nos últimos projetos, como você analisou as informações e chegou às decisões necessárias, e como avalia os resultados disso?",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b2-raciocinio-logico",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 9
+    },
+    {
+      "id": "comp-b2-raciocinio-abstrato",
+      "name": "Raciocínio Abstrato",
+      "description": "",
+      "categoryId": "bloco2",
+      "questions": [
+        {
+          "id": "q-b2-ra-1",
+          "categoryId": "bloco2",
+          "text": "Conecta ideias complexas e identifica padrões não evidentes.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b2-raciocinio-abstrato",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-ra-2",
+          "categoryId": "bloco2",
+          "text": "Visualiza conceitos futuros e relações sistêmicas.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b2-raciocinio-abstrato",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-ra-dial",
+          "categoryId": "bloco2",
+          "text": "Ao olhar para os projetos mais recentes, como você conectou ideias e pensou em cenários possíveis para o trabalho, e quanto isso ajudou no resultado final?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b2-raciocinio-abstrato",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 10
+    },
+    {
+      "id": "comp-b2-capacidade-investigativa",
+      "name": "Capacidade Investigativa",
+      "description": "",
+      "categoryId": "bloco2",
+      "questions": [
+        {
+          "id": "q-b2-ci-1",
+          "categoryId": "bloco2",
+          "text": "Busca ativamente informações para compreender problemas.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b2-capacidade-investigativa",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-ci-2",
+          "categoryId": "bloco2",
+          "text": "Utiliza fontes variadas para aprofundar o entendimento.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b2-capacidade-investigativa",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-ci-3",
+          "categoryId": "bloco2",
+          "text": "Não se contenta com respostas superficiais.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b2-capacidade-investigativa",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-ci-dial",
+          "categoryId": "bloco2",
+          "text": "Nos últimos projetos, quando surgiram dúvidas ou problemas, como você buscou informações para entender melhor a situação e como isso funcionou na prática?",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b2-capacidade-investigativa",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 11
+    },
+    {
+      "id": "comp-b2-senso-critico",
+      "name": "Senso Crítico",
+      "description": "",
+      "categoryId": "bloco2",
+      "questions": [
+        {
+          "id": "q-b2-sc-1",
+          "categoryId": "bloco2",
+          "text": "Questiona suposições e processos estabelecidos.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b2-senso-critico",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-sc-2",
+          "categoryId": "bloco2",
+          "text": "Analisa informações antes de aceitar conclusões.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b2-senso-critico",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-sc-dial",
+          "categoryId": "bloco2",
+          "text": "Pensando nos projetos recentes, como você questionou práticas, informações ou conclusões prontas ao longo do trabalho, e como isso impactou os resultados?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b2-senso-critico",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 12
+    },
+    {
+      "id": "comp-b2-resolucao-problemas",
+      "name": "Resolução de Problemas",
+      "description": "",
+      "categoryId": "bloco2",
+      "questions": [
+        {
+          "id": "q-b2-rp-1",
+          "categoryId": "bloco2",
+          "text": "Identifica as causas reais dos problemas.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b2-resolucao-problemas",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-rp-2",
+          "categoryId": "bloco2",
+          "text": "Propõe soluções práticas e eficazes.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b2-resolucao-problemas",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-rp-3",
+          "categoryId": "bloco2",
+          "text": "Direciona esforços para resolver problemas de forma objetiva.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b2-resolucao-problemas",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-rp-dial",
+          "categoryId": "bloco2",
+          "text": "Nos últimos projetos, quando surgiram problemas, como você lidou com eles desde a identificação até a solução e como avalia o efeito disso no trabalho?",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b2-resolucao-problemas",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 13
+    },
+    {
+      "id": "comp-b2-tomada-decisao",
+      "name": "Tomada de Decisão",
+      "description": "",
+      "categoryId": "bloco2",
+      "questions": [
+        {
+          "id": "q-b2-td-1",
+          "categoryId": "bloco2",
+          "text": "Analisa riscos e benefícios antes de agir.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b2-tomada-decisao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-td-2",
+          "categoryId": "bloco2",
+          "text": "Decide com base no alinhamento estratégico da empresa.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b2-tomada-decisao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b2-td-dial",
+          "categoryId": "bloco2",
+          "text": "Nos projetos recentes, como você tomou as decisões mais importantes e de que forma elas contribuíram para o avanço das demandas?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b2-tomada-decisao",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 13.5
+    },
+    {
+      "id": "comp-b3-foco-cliente",
+      "name": "Foco no Cliente",
+      "description": "",
+      "categoryId": "bloco3",
+      "questions": [
+        {
+          "id": "q-b3-fc-1",
+          "categoryId": "bloco3",
+          "text": "Prioriza as necessidades e a satisfação do cliente em suas ações.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b3-foco-cliente",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b3-fc-2",
+          "categoryId": "bloco3",
+          "text": "Antecipa-se aos problemas que podem afetar a experiência do cliente.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b3-foco-cliente",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b3-fc-dial",
+          "categoryId": "bloco3",
+          "text": "Considerando os projetos recentes, como você buscou entender e atender às expectativas do cliente e qual foi o impacto disso no resultado?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b3-foco-cliente",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 14
+    },
+    {
+      "id": "comp-b3-atencao-cliente",
+      "name": "Atenção ao Cliente",
+      "description": "",
+      "categoryId": "bloco3",
+      "questions": [
+        {
+          "id": "q-b3-ac-1",
+          "categoryId": "bloco3",
+          "text": "Demonstra cuidado e dedicação no atendimento às demandas dos clientes.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b3-atencao-cliente",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b3-ac-2",
+          "categoryId": "bloco3",
+          "text": "Responde com clareza e agilidade às solicitações dos clientes.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b3-atencao-cliente",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b3-ac-dial",
+          "categoryId": "bloco3",
+          "text": "Pensando nas interações recentes, como você conduziu a comunicação e o suporte ao cliente e como avalia a percepção dele sobre o seu trabalho?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b3-atencao-cliente",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 15
+    },
+    {
+      "id": "comp-b3-negociacao",
+      "name": "Negociação / Persuasão",
+      "description": "",
+      "categoryId": "bloco3",
+      "questions": [
+        {
+          "id": "q-b3-np-1",
+          "categoryId": "bloco3",
+          "text": "Apresenta argumentos convincentes para defender ideias e soluções.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b3-negociacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b3-np-2",
+          "categoryId": "bloco3",
+          "text": "Busca o equilíbrio entre os interesses da empresa e do cliente.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b3-negociacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b3-np-dial",
+          "categoryId": "bloco3",
+          "text": "Nos projetos recentes, em quais situações você precisou negociar prazos ou soluções e como você conduziu esse processo para chegar a um acordo?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b3-negociacao",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 16
+    },
+    {
+      "id": "comp-b4-comunicacao",
+      "name": "Comunicação",
+      "description": "",
+      "categoryId": "bloco4",
+      "questions": [
+        {
+          "id": "q-b4-com-1",
+          "categoryId": "bloco4",
+          "text": "Expressa suas ideias de forma clara, objetiva e estruturada.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b4-comunicacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-com-2",
+          "categoryId": "bloco4",
+          "text": "Ouve ativamente e demonstra compreensão sobre o que foi comunicado.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b4-comunicacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-com-3",
+          "categoryId": "bloco4",
+          "text": "Utiliza canais adequados para cada tipo de mensagem.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b4-comunicacao",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-com-dial",
+          "categoryId": "bloco4",
+          "text": "Considerando as interações recentes, como você avalia sua clareza ao passar informações e como garante que o que foi dito foi realmente compreendido?",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b4-comunicacao",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 18
+    },
+    {
+      "id": "comp-b4-trabalho-equipe",
+      "name": "Trabalho em Equipe",
+      "description": "",
+      "categoryId": "bloco4",
+      "questions": [
+        {
+          "id": "q-b4-te-1",
+          "categoryId": "bloco4",
+          "text": "Colabora ativamente com os membros da equipe para atingir objetivos comuns.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b4-trabalho-equipe",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-te-2",
+          "categoryId": "bloco4",
+          "text": "Adapta-se às diferentes necessidades e estilos de trabalho dos membros da equipe.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b4-trabalho-equipe",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-te-3",
+          "categoryId": "bloco4",
+          "text": "Oferece ajuda aos colegas quando percebe a oportunidade.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b4-trabalho-equipe",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-te-4",
+          "categoryId": "bloco4",
+          "text": "Recebe feedbacks com abertura e positividade.",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b4-trabalho-equipe",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-te-dial",
+          "categoryId": "bloco4",
+          "text": "Pensando nos projetos mais recentes, como foi sua atuação em conjunto com o time e como isso funcionou no andamento do trabalho?",
+          "order": 4,
+          "isBonus": false,
+          "competencyId": "comp-b4-trabalho-equipe",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 19
+    },
+    {
+      "id": "comp-b4-relacionamento-interpessoal",
+      "name": "Relacionamento Interpessoal",
+      "description": "",
+      "categoryId": "bloco4",
+      "questions": [
+        {
+          "id": "q-b4-ri-1",
+          "categoryId": "bloco4",
+          "text": "Estabelece e mantém relações cordiais com colegas, líderes e clientes.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b4-relacionamento-interpessoal",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-ri-2",
+          "categoryId": "bloco4",
+          "text": "Demonstra aceitação e respeito pelas diferenças.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b4-relacionamento-interpessoal",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-ri-3",
+          "categoryId": "bloco4",
+          "text": "Contribui para a construção de um clima organizacional favorável.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b4-relacionamento-interpessoal",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-ri-dial",
+          "categoryId": "bloco4",
+          "text": "Considerando as interações mais recentes no trabalho, como você se relacionou com colegas, líderes e clientes de diferentes perfis e como avalia o impacto disso no ambiente?",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b4-relacionamento-interpessoal",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 20
+    },
+    {
+      "id": "comp-b4-cordialidade",
+      "name": "Cordialidade",
+      "description": "",
+      "categoryId": "bloco4",
+      "questions": [
+        {
+          "id": "q-b4-cor-1",
+          "categoryId": "bloco4",
+          "text": "Estabelece relacionamento gentil e cuidadoso com todas as pessoas.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b4-cordialidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-cor-2",
+          "categoryId": "bloco4",
+          "text": "Pratica tolerância ao lidar com diferenças de opinião.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b4-cordialidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-cor-dial",
+          "categoryId": "bloco4",
+          "text": "Pensando nas situações recentes do trabalho, como foi sua postura no trato diário com as pessoas e como isso funcionou na prática?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b4-cordialidade",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 21
+    },
+    {
+      "id": "comp-b4-empatia",
+      "name": "Empatia",
+      "description": "",
+      "categoryId": "bloco4",
+      "questions": [
+        {
+          "id": "q-b4-emp-1",
+          "categoryId": "bloco4",
+          "text": "Ajusta sua comunicação ao contexto emocional da outra pessoa.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b4-empatia",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-emp-2",
+          "categoryId": "bloco4",
+          "text": "Demonstra sensibilidade diante das necessidades e dificuldades dos colegas.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b4-empatia",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-emp-3",
+          "categoryId": "bloco4",
+          "text": "Ouve o outro com atenção genuína.",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b4-empatia",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-emp-dial",
+          "categoryId": "bloco4",
+          "text": "Nos projetos e interações mais recentes, como você lidou com as necessidades dos colegas e como isso influenciou as relações?",
+          "order": 3,
+          "isBonus": false,
+          "competencyId": "comp-b4-empatia",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 22
+    },
+    {
+      "id": "comp-b4-resolucao-conflitos",
+      "name": "Resolução de Conflitos",
+      "description": "",
+      "categoryId": "bloco4",
+      "questions": [
+        {
+          "id": "q-b4-rc-1",
+          "categoryId": "bloco4",
+          "text": "Escuta ativamente as perspectivas das pessoas envolvidas em conflitos.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b4-resolucao-conflitos",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-rc-2",
+          "categoryId": "bloco4",
+          "text": "Busca soluções práticas e eficazes para resolver conflitos.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b4-resolucao-conflitos",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-rc-dial",
+          "categoryId": "bloco4",
+          "text": "Pensando em conflitos recentes, como você atuou para lidar com essas situações e como avalia os resultados?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b4-resolucao-conflitos",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 23
+    },
+    {
+      "id": "comp-b4-disponibilidade-interna",
+      "name": "Disponibilidade (Interna)",
+      "description": "",
+      "categoryId": "bloco4",
+      "questions": [
+        {
+          "id": "q-b4-di-1",
+          "categoryId": "bloco4",
+          "text": "Demonstra prontidão para ajudar e oferecer suporte quando necessário.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b4-disponibilidade-interna",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-di-2",
+          "categoryId": "bloco4",
+          "text": "Responde prontamente às solicitações e pedidos de apoio da equipe.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b4-disponibilidade-interna",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b4-di-dial",
+          "categoryId": "bloco4",
+          "text": "Considerando as demandas internas mais recentes, como você se mostrou disponível para apoiar a equipe?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b4-disponibilidade-interna",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 24
+    },
+    {
+      "id": "comp-b5-comprometimento",
+      "name": "Comprometimento",
+      "description": "",
+      "categoryId": "bloco5",
+      "questions": [
+        {
+          "id": "q-b5-comp-1",
+          "categoryId": "bloco5",
+          "text": "Cumpre as atividades, responsabilidades e objetivos do trabalho de forma empenhada.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b5-comprometimento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-comp-2",
+          "categoryId": "bloco5",
+          "text": "Entrega tarefas e combinados no prazo respeitando as regras e princípios da organização.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b5-comprometimento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-comp-dial",
+          "categoryId": "bloco5",
+          "text": "Pensando nas atividades e projetos mais recentes, como você administrou suas responsabilidades, prazos e possíveis imprevistos? Quando ocorreram dificuldades ou erros, como você os comunicou e conduziu a solução?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b5-comprometimento",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 25
+    },
+    {
+      "id": "comp-b5-responsabilidade",
+      "name": "Responsabilidade",
+      "description": "",
+      "categoryId": "bloco5",
+      "questions": [
+        {
+          "id": "q-b5-resp-1",
+          "categoryId": "bloco5",
+          "text": "Demonstra segurança ao exercer suas funções.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b5-responsabilidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-resp-2",
+          "categoryId": "bloco5",
+          "text": "Assume erros e falhas com transparência.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b5-responsabilidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-resp-dial",
+          "categoryId": "bloco5",
+          "text": "Considerando situações recentes de trabalho, como você lidou com erros, imprevistos ou falhas quando eles aconteceram, e como isso funcionou na prática?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b5-responsabilidade",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 26
+    },
+    {
+      "id": "comp-b5-comportamento-etico",
+      "name": "Comportamento Ético",
+      "description": "",
+      "categoryId": "bloco5",
+      "questions": [
+        {
+          "id": "q-b5-ce-1",
+          "categoryId": "bloco5",
+          "text": "Age de acordo com princípios éticos e valores morais.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b5-comportamento-etico",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-ce-2",
+          "categoryId": "bloco5",
+          "text": "Adota postura de discrição em relação aos assuntos da empresa.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b5-comportamento-etico",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-ce-dial",
+          "categoryId": "bloco5",
+          "text": "Pensando nas decisões e situações recentes do trabalho, como você considerou aspectos éticos no dia a dia e como avalia os efeitos dessas escolhas?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b5-comportamento-etico",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 27
+    },
+    {
+      "id": "comp-b5-confiabilidade",
+      "name": "Confiabilidade",
+      "description": "",
+      "categoryId": "bloco5",
+      "questions": [
+        {
+          "id": "q-b5-conf-1",
+          "categoryId": "bloco5",
+          "text": "Cumpre o que promete.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b5-confiabilidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-conf-2",
+          "categoryId": "bloco5",
+          "text": "Demonstra coerência entre discurso e prática.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b5-confiabilidade",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-conf-dial",
+          "categoryId": "bloco5",
+          "text": "Nos projetos mais recentes, como foi a relação entre o que você combinou ou prometeu e o que de fato entregou, e como isso funcionou para o trabalho?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b5-confiabilidade",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 28
+    },
+    {
+      "id": "comp-b5-transparencia",
+      "name": "Transparência",
+      "description": "",
+      "categoryId": "bloco5",
+      "questions": [
+        {
+          "id": "q-b5-trans-1",
+          "categoryId": "bloco5",
+          "text": "Compartilha informações relevantes de forma clara e no tempo adequado.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b5-transparencia",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-trans-2",
+          "categoryId": "bloco5",
+          "text": "Expõe suas intenções, limites e dificuldades com honestidade.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b5-transparencia",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-trans-dial",
+          "categoryId": "bloco5",
+          "text": "Pensando nas situações recentes do trabalho, como você compartilhou informações, limites ou dificuldades com as pessoas envolvidas, e como isso impactou o andamento das atividades?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b5-transparencia",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 29
+    },
+    {
+      "id": "comp-b5-sigilo",
+      "name": "Sigilo",
+      "description": "",
+      "categoryId": "bloco5",
+      "questions": [
+        {
+          "id": "q-b5-sig-1",
+          "categoryId": "bloco5",
+          "text": "Mantém informações confidenciais em absoluto sigilo.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b5-sigilo",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-sig-2",
+          "categoryId": "bloco5",
+          "text": "Age com discrição em assuntos sensíveis.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b5-sigilo",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b5-sig-dial",
+          "categoryId": "bloco5",
+          "text": "Considerando situações recentes que envolveram informações sensíveis ou assuntos delicados, como você lidou com essas informações e como avalia os resultados dessa postura?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b5-sigilo",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 30
+    },
+    {
+      "id": "comp-b6-aprendizado-continuo",
+      "name": "Aprendizado Contínuo",
+      "description": "",
+      "categoryId": "bloco6",
+      "questions": [
+        {
+          "id": "q-b6-ac-1",
+          "categoryId": "bloco6",
+          "text": "Busca aprendizado contínuo para aprimorar sua atuação.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b6-aprendizado-continuo",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-ac-2",
+          "categoryId": "bloco6",
+          "text": "Demonstra interesse em desenvolver novas habilidades.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b6-aprendizado-continuo",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-ac-dial",
+          "categoryId": "bloco6",
+          "text": "Pensando nas experiências de trabalho mais recentes, como você buscou aprender coisas novas e como avalia os efeitos disso?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b6-aprendizado-continuo",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 31
+    },
+    {
+      "id": "comp-b6-adaptacao-mudancas",
+      "name": "Adaptação às Mudanças",
+      "description": "",
+      "categoryId": "bloco6",
+      "questions": [
+        {
+          "id": "q-b6-am-1",
+          "categoryId": "bloco6",
+          "text": "Adapta-se a mudanças com flexibilidade.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b6-adaptacao-mudancas",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-am-2",
+          "categoryId": "bloco6",
+          "text": "Mantém desempenho mesmo diante de cenários novos ou incertos.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b6-adaptacao-mudancas",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-am-dial",
+          "categoryId": "bloco6",
+          "text": "Considerando mudanças recentes no trabalho, como você lidou com essas situações e como isso funcionou para dar continuidade às atividades?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b6-adaptacao-mudancas",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 32
+    },
+    {
+      "id": "comp-b6-abertura-feedback",
+      "name": "Abertura ao Feedback",
+      "description": "",
+      "categoryId": "bloco6",
+      "questions": [
+        {
+          "id": "q-b6-af-1",
+          "categoryId": "bloco6",
+          "text": "Utiliza feedbacks como oportunidade de desenvolvimento.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b6-abertura-feedback",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-af-2",
+          "categoryId": "bloco6",
+          "text": "Solicita feedbacks para aprimorar sua atuação.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b6-abertura-feedback",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-af-dial",
+          "categoryId": "bloco6",
+          "text": "Pensando em situações recentes, como você lidou com feedbacks recebidos e como isso contribuiu para seu desenvolvimento?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b6-abertura-feedback",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 33
+    },
+    {
+      "id": "comp-b6-autodesenvolvimento",
+      "name": "Autodesenvolvimento",
+      "description": "",
+      "categoryId": "bloco6",
+      "questions": [
+        {
+          "id": "q-b6-ad-1",
+          "categoryId": "bloco6",
+          "text": "Reflete sobre sua própria atuação.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b6-autodesenvolvimento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-ad-2",
+          "categoryId": "bloco6",
+          "text": "Busca evolução pessoal e profissional.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b6-autodesenvolvimento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-ad-dial",
+          "categoryId": "bloco6",
+          "text": "Considerando seu trabalho recente, como você refletiu sobre seu próprio desempenho e como isso ajudou a orientar melhorias?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b6-autodesenvolvimento",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 34
+    },
+    {
+      "id": "comp-b6-visao-futuro",
+      "name": "Visão de Futuro",
+      "description": "",
+      "categoryId": "bloco6",
+      "questions": [
+        {
+          "id": "q-b6-vf-1",
+          "categoryId": "bloco6",
+          "text": "Planeja seu desenvolvimento profissional a médio e longo prazo.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b6-visao-futuro",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-vf-2",
+          "categoryId": "bloco6",
+          "text": "Alinha expectativas pessoais aos objetivos da organização.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b6-visao-futuro",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-vf-dial",
+          "categoryId": "bloco6",
+          "text": "Pensando no momento atual da sua carreira, como você tem refletido sobre seus próximos passos profissionais?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b6-visao-futuro",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 35
+    },
+    {
+      "id": "comp-b6-proatividade-desenvolvimento",
+      "name": "Proatividade no Desenvolvimento",
+      "description": "",
+      "categoryId": "bloco6",
+      "questions": [
+        {
+          "id": "q-b6-pd-1",
+          "categoryId": "bloco6",
+          "text": "Busca oportunidades de crescimento dentro da organização.",
+          "order": 0,
+          "isBonus": false,
+          "competencyId": "comp-b6-proatividade-desenvolvimento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-pd-2",
+          "categoryId": "bloco6",
+          "text": "Age de forma ativa para evoluir profissionalmente.",
+          "order": 1,
+          "isBonus": false,
+          "competencyId": "comp-b6-proatividade-desenvolvimento",
+          "evaluationType": "tradicional",
+          "type": "statement"
+        },
+        {
+          "id": "q-b6-pd-dial",
+          "categoryId": "bloco6",
+          "text": "Considerando as oportunidades recentes no trabalho, como você tomou iniciativas para se desenvolver profissionalmente?",
+          "order": 2,
+          "isBonus": false,
+          "competencyId": "comp-b6-proatividade-desenvolvimento",
+          "evaluationType": "dialogica",
+          "type": "dialogic"
+        }
+      ],
+      "createdAt": "2025-01-24T00:00:00.000Z",
+      "order": 36
+    }
+  ],
+  "evaluations": [
+    {
+      "id": "f527b252-f93f-4314-b2a4-07efacd40d09",
+      "roleId": "default-role-coordenadora-projetos",
+      "roleName": "Coordenador(a) de Projetos",
+      "collaboratorId": "member-1786308246397",
+      "collaboratorName": "Nathália Ribeiro",
+      "leaderId": "member-1786307882627",
+      "leaderName": "Camila Coutinho",
+      "responses": [
+        {
+          "questionId": "q-b1-agilidade-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-agilidade-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-agilidade-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-agilidade-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-4",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-4",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-5",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-detal-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-detal-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-detal-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rl-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rl-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rl-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rl-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-ci-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-ci-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-ci-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-ci-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-sc-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-sc-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-sc-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rp-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rp-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rp-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-td-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-td-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-td-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-fc-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-fc-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-fc-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-ac-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-ac-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-ac-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-np-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-np-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-np-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-com-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-com-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-com-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-com-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-4",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-ri-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-ri-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-ri-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-ri-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-di-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-di-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-comp-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-comp-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-comp-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-ce-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-ce-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-ce-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ac-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ac-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ac-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ad-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ad-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ad-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        }
+      ],
+      "questionIds": [
+        "q-b6-ad-1",
+        "q-b6-ad-2",
+        "q-b6-ad-dial",
+        "q-b2-ci-1",
+        "q-b2-ci-2",
+        "q-b2-ci-3",
+        "q-b2-ci-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b3-fc-1",
+        "q-b3-fc-2",
+        "q-b3-fc-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial",
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-dial",
+        "q-b1-result-1",
+        "q-b1-result-2",
+        "q-b1-result-3",
+        "q-b1-result-4",
+        "q-b1-result-5",
+        "q-b1-result-dial",
+        "q-b2-rl-1",
+        "q-b2-rl-2",
+        "q-b2-rl-3",
+        "q-b2-rl-dial",
+        "q-b2-sc-1",
+        "q-b2-sc-2",
+        "q-b2-sc-dial",
+        "q-b3-ac-1",
+        "q-b3-ac-2",
+        "q-b3-ac-dial",
+        "q-b3-np-1",
+        "q-b3-np-2",
+        "q-b3-np-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b4-di-dial",
+        "q-b4-di-1",
+        "q-b5-ce-1",
+        "q-b5-ce-2",
+        "q-b5-ce-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b6-ac-1",
+        "q-b6-ac-2",
+        "q-b6-ac-dial"
+      ],
+      "sectionObservations": {},
+      "categoryCommitments": {},
+      "assembledElements": [],
+      "createdAt": "2026-08-13T15:58:29.847Z",
+      "completed": true,
+      "evaluationType": "dialogica"
+    },
+    {
+      "id": "31e71824-ddf3-4603-acd8-e873f93ba1ca",
+      "roleId": "default-role-coordenadora-projetos",
+      "roleName": "Coordenador(a) de Projetos",
+      "collaboratorId": "member-1786308289582",
+      "collaboratorName": "Ingrid Freire",
+      "leaderId": "member-1786307882627",
+      "leaderName": "Camila Coutinho",
+      "responses": [
+        {
+          "questionId": "q-b1-agilidade-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-agilidade-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-agilidade-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-agilidade-dial",
+          "keywords": [
+            "Trabalhei de madrugada",
+            "Fiz home office ",
+            "Planejamento de horários na semana"
+          ],
+          "rating": 4,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-4",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-org-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 3,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-4",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-5",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-result-dial",
+          "keywords": [
+            "Acompanhei o clickup",
+            "Contato com os desenvolvedores",
+            ""
+          ],
+          "rating": 5,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-detal-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-detal-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b1-detal-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "foundation-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rl-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rl-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rl-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rl-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-ci-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-ci-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-ci-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-ci-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-sc-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-sc-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-sc-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rp-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rp-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-rp-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-td-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-td-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b2-td-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "structure-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-fc-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-fc-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-fc-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 4,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-ac-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-ac-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-ac-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 3,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-np-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-np-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b3-np-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 4,
+          "selectedElementId": "wall-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-com-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-com-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-com-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-com-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-4",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-te-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 2,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-ri-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-ri-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-ri-3",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-ri-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 3,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-di-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b4-di-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 5,
+          "selectedElementId": "door-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-comp-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-comp-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-comp-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 3,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-ce-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-ce-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b5-ce-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 3,
+          "selectedElementId": "window-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ac-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ac-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ac-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ad-1",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ad-2",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        },
+        {
+          "questionId": "q-b6-ad-dial",
+          "keywords": [
+            "",
+            "",
+            ""
+          ],
+          "rating": 1,
+          "selectedElementId": "roof-1",
+          "selectedImageIndex": 0
+        }
+      ],
+      "questionIds": [
+        "q-b6-ad-1",
+        "q-b6-ad-2",
+        "q-b6-ad-dial",
+        "q-b2-ci-1",
+        "q-b2-ci-2",
+        "q-b2-ci-3",
+        "q-b2-ci-dial",
+        "q-b1-detal-1",
+        "q-b1-detal-2",
+        "q-b1-detal-dial",
+        "q-b3-fc-1",
+        "q-b3-fc-2",
+        "q-b3-fc-dial",
+        "q-b1-org-1",
+        "q-b1-org-2",
+        "q-b1-org-3",
+        "q-b1-org-4",
+        "q-b1-org-dial",
+        "q-b2-rp-2",
+        "q-b2-rp-3",
+        "q-b2-rp-dial",
+        "q-b2-td-1",
+        "q-b2-td-2",
+        "q-b2-td-dial",
+        "q-b1-agilidade-1",
+        "q-b1-agilidade-2",
+        "q-b1-agilidade-3",
+        "q-b1-agilidade-dial",
+        "q-b1-result-1",
+        "q-b1-result-2",
+        "q-b1-result-3",
+        "q-b1-result-4",
+        "q-b1-result-5",
+        "q-b1-result-dial",
+        "q-b2-rl-1",
+        "q-b2-rl-2",
+        "q-b2-rl-3",
+        "q-b2-rl-dial",
+        "q-b2-sc-1",
+        "q-b2-sc-2",
+        "q-b2-sc-dial",
+        "q-b3-ac-1",
+        "q-b3-ac-2",
+        "q-b3-ac-dial",
+        "q-b3-np-1",
+        "q-b3-np-2",
+        "q-b3-np-dial",
+        "q-b4-com-1",
+        "q-b4-com-2",
+        "q-b4-com-3",
+        "q-b4-com-dial",
+        "q-b4-te-1",
+        "q-b4-te-2",
+        "q-b4-te-3",
+        "q-b4-te-4",
+        "q-b4-te-dial",
+        "q-b4-ri-1",
+        "q-b4-ri-2",
+        "q-b4-ri-3",
+        "q-b4-ri-dial",
+        "q-b4-di-dial",
+        "q-b4-di-1",
+        "q-b5-ce-1",
+        "q-b5-ce-2",
+        "q-b5-ce-dial",
+        "q-b5-comp-1",
+        "q-b5-comp-2",
+        "q-b5-comp-dial",
+        "q-b6-ac-1",
+        "q-b6-ac-2",
+        "q-b6-ac-dial"
+      ],
+      "sectionObservations": {
+        "bloco1": "Não apresentou dificuldade"
+      },
+      "categoryCommitments": {},
+      "assembledElements": [],
+      "createdAt": "2026-08-13T20:26:37.424Z",
+      "completed": true,
+      "evaluationType": "dialogica"
+    }
+  ]
+}

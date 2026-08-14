@@ -1,25 +1,19 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Evaluation, SavedWork } from '../types';
 import { storage } from '../lib/storage';
-import { newBlocks as categories } from '../lib/newBlocks';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
-import { DS, Button, Card } from './DesignSystem';
-import { 
-  ArrowLeft, 
-  Download, 
-  Save, 
-  CheckCircle2, 
-  TrendingUp, 
-  TrendingDown, 
-  Award, 
-  Target, 
+import { computeEvaluationStats } from '../lib/evaluationStats';
+import {
+  Download,
+  Save,
+  Award,
   User,
   BarChart3,
   ChevronUp,
   ChevronDown,
   FileText
 } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
 
 interface EvaluationSummaryProps {
@@ -40,56 +34,41 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
   // State for category commitments
   const [categoryCommitments, setCategoryCommitments] = useState<Record<string, string>>({});
 
-  // Calcular estatísticas por categoria
-  const categoryStats = (evaluation.evaluationType === 'atividades' 
-    ? [{ id: 'activities-block', name: 'Avaliação de Atividades', order: 1, color: '#34d399' }]
-    : categories
-  ).map(category => {
-    const responsesInCategory = evaluation.responses.filter(r => {
-      // Para atividades, a questão vem do role
-      if (evaluation.evaluationType === 'atividades') {
-        const activity = role?.activities?.find(a => a.id === r.questionId);
-        return activity !== undefined && category.id === 'activities-block';
-      }
+  // Evita salvar a mesma avaliação mais de uma vez
+  const [hasSaved, setHasSaved] = useState(false);
 
-      const question = allQuestions.find(q => q.id === r.questionId) ||
-                      role?.customQuestions?.find(q => q.id === r.questionId);
-      
-      if (!question || question.categoryId !== category.id) return false;
+  // crypto.randomUUID não existe em contextos não seguros (http://ip:porta) nem
+  // em navegadores antigos; sem fallback o salvamento lançaria TypeError.
+  const generateId = (): string => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+    return `eval-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  };
 
-      // Filtrar baseado no tipo de avaliação para não misturar notas
-      if (evaluation.evaluationType === 'tradicional' && question.type === 'dialogic') {
-        return false;
-      }
-      if (evaluation.evaluationType === 'dialogica' && question.type === 'statement') {
-        return false;
-      }
+  // A avaliação em andamento pode ser restaurada do localStorage sem respostas:
+  // normalizamos para não estourar em .filter/.flatMap de undefined.
+  const responses = Array.isArray(evaluation.responses) ? evaluation.responses : [];
 
-      return true;
-    });
-    
-    const totalRating = responsesInCategory.reduce((sum, r) => sum + (r.rating || 0), 0);
-    const averageRating = responsesInCategory.length > 0 ? totalRating / responsesInCategory.length : 0;
-    const totalQuestions = responsesInCategory.length;
-    
-    return {
-      category,
-      totalQuestions,
-      averageRating: parseFloat(averageRating.toFixed(2)),
-      responses: responsesInCategory,
-    };
-  }).filter(stat => stat.totalQuestions > 0);
+  // Palavras-chave também podem faltar em avaliações restauradas de versões antigas.
+  const safeKeywords = (r: { keywords?: string[] }): string[] =>
+    Array.isArray(r.keywords) ? r.keywords.filter(k => k && k.trim() !== '') : [];
 
-  // Média geral
-  const overallAverage = categoryStats.length > 0 
-    ? parseFloat((categoryStats.reduce((sum, stat) => sum + stat.averageRating, 0) / categoryStats.length).toFixed(2))
-    : 0;
-
-  // Total de perguntas respondidas (filtradas pelo tipo)
-  const totalQuestions = categoryStats.reduce((sum, stat) => sum + stat.totalQuestions, 0);
+  // Mesmo cálculo da galeria e do detalhe salvo (lib/evaluationStats).
+  // Aqui, ao contrário do WorkDetail, a avaliação ainda está em andamento e as
+  // atividades do cargo existem: passamos `activityIds` para não contar
+  // respostas órfãs de atividades já removidas do cargo durante o preenchimento.
+  const { categoryStats, overallAverage, totalQuestions } = computeEvaluationStats({
+    responses,
+    evaluationType: evaluation.evaluationType,
+    questions: [...allQuestions, ...(role?.customQuestions || [])],
+    activityIds: evaluation.evaluationType === 'atividades'
+      ? (role?.activities || []).map(a => a.id)
+      : null,
+  });
 
   // Palavras-chave mais mencionadas (filtradas pelo tipo)
-  const allKeywords = evaluation.responses.flatMap(r => {
+  const allKeywords = responses.flatMap(r => {
     // Buscar tipo da pergunta
     const allQs = [...(role?.customQuestions || []), ...allQuestions];
     const question = allQs.find(q => q.id === r.questionId);
@@ -101,7 +80,7 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
     if (evaluation.evaluationType === 'atividades') {
       const activity = role?.activities?.find(a => a.id === r.questionId);
       if (!activity) return [];
-      return r.keywords.filter(k => k && k.trim() !== '');
+      return safeKeywords(r);
     }
 
     if (!question) return [];
@@ -114,7 +93,7 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
       return [];
     }
 
-    return r.keywords.filter(k => k && k.trim() !== '');
+    return safeKeywords(r);
   });
   const keywordCount: Record<string, number> = {};
   allKeywords.forEach(keyword => {
@@ -127,15 +106,20 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
     .map(([keyword, count]) => ({ keyword, count }));
 
   const handleSave = () => {
+    // Sem trava, clicar em "Salvar" duas vezes (ou salvar e confirmar no modal)
+    // grava a mesma avaliação várias vezes com IDs diferentes na galeria.
+    if (hasSaved) return;
+    setHasSaved(true);
+
     const work: SavedWork = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       roleId: evaluation.roleId,
       roleName: evaluation.roleName,
       collaboratorId: evaluation.collaboratorId,
       collaboratorName: evaluation.collaboratorName,
       leaderId: evaluation.leaderId,
       leaderName: evaluation.leaderName,
-      responses: evaluation.responses,
+      responses: responses,
       questionIds: evaluation.questionIds || [],
       sectionObservations: evaluation.sectionObservations || {},
       categoryCommitments: categoryCommitments, // Salvar comprometimentos
@@ -314,15 +298,15 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-slate-500">Associado(a)</p>
-                  <p className="font-semibold text-slate-900">{evaluation.collaboratorName}</p>
+                  <p className="font-semibold text-slate-900">{evaluation.collaboratorName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Líder</p>
-                  <p className="font-semibold text-slate-900">{evaluation.leaderName}</p>
+                  <p className="font-semibold text-slate-900">{evaluation.leaderName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Cargo</p>
-                  <p className="font-semibold text-slate-900">{evaluation.roleName}</p>
+                  <p className="font-semibold text-slate-900">{evaluation.roleName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Data</p>
@@ -474,13 +458,13 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
                             : (allQuestions.find(q => q.id === response.questionId) ||
                                role?.customQuestions?.find(q => q.id === response.questionId))?.text;
                           
-                          const keywords = response.keywords.filter(k => k && k.trim() !== '');
-                          
+                          const keywords = safeKeywords(response);
+
                           if (!questionText) return null;
                           
                           return (
                             <div 
-                              key={response.questionId}
+                              key={`${response.questionId}-${idx}`}
                               className="p-3 bg-white rounded-lg border border-slate-200"
                             >
                               <div className="flex items-start justify-between gap-3 mb-2">
@@ -585,7 +569,7 @@ export function EvaluationSummary({ evaluation, onBack, onSave, onExportPDF }: E
                       >
                         <h3 
                           className="font-bold mb-2"
-                          style={{ color: stat.category.id === 'cat6' ? '#d97706' : stat.category.color }}
+                          style={{ color: stat.category.id === 'bloco6' ? '#d97706' : stat.category.color }}
                         >
                           {stat.category.name}
                         </h3>

@@ -27,6 +27,10 @@ export function getAllQuestionsFromCompetencies(): Question[] {
  * Busca uma pergunta específica por ID
  */
 export function getQuestionById(questionId: string): Question | undefined {
+  // `storage.getCompetencies()` devolve [] enquanto o seed não roda. Sem
+  // inicializar aqui, esta função retornava `undefined` para IDs válidos no
+  // primeiro acesso (mesmo comportamento de getAllQuestionsFromCompetencies).
+  storage.initializeCompetencies();
   const competencies = storage.getCompetencies();
   
   for (const competency of competencies) {
@@ -50,6 +54,8 @@ export function getQuestionsByCategory(categoryId: string): Question[] {
  * Busca todas as perguntas de uma competência específica
  */
 export function getQuestionsByCompetency(competencyId: string): Question[] {
+  // Idem: sem o seed garantido, uma competência real devolvia lista vazia.
+  storage.initializeCompetencies();
   const competencies = storage.getCompetencies();
   const competency = competencies.find(c => c.id === competencyId);
   return competency?.questions || [];

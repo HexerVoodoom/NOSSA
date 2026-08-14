@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "useDefineForClassFields": true,
+
+    /* Vite owns emit; tsc is a typechecker only. */
+    "noEmit": true,
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
+
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    /* Deliberately NOT strict: the existing Figma-exported code is not
+       strict-clean. Turning this on today buries real bugs in noise.
+       Ratchet: strict -> noImplicitAny -> strictNullChecks, file by file. */
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+
+      /* TECH DEBT: mirrors the versioned-specifier aliases in vite.config.ts,
+         Delete BOTH blocks once src/ is codemodded to plain package names. */
+    },
+    "types": ["vite/client", "node"]
+  },
+  "include": ["src", "vite.config.ts"]
+}

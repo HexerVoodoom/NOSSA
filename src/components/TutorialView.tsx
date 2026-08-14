@@ -60,7 +60,7 @@ export function TutorialView({ onBack }: TutorialViewProps) {
                 <ul className="space-y-2 text-slate-700">
                   <li className="flex items-start gap-2">
                     <span className="text-[#6155f5] font-bold mt-0.5">•</span>
-                    <span><strong>Nova Avaliaç��o:</strong> Inicia o processo de avaliação de desempenho de um associado(a)</span>
+                    <span><strong>Nova Avaliação:</strong> Inicia o processo de avaliação de desempenho de um associado(a)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[#6155f5] font-bold mt-0.5">•</span>
@@ -134,19 +134,19 @@ export function TutorialView({ onBack }: TutorialViewProps) {
                 <h3 className="font-semibold text-slate-900">Funcionalidades</h3>
                 <ul className="space-y-2 text-slate-700">
                   <li className="flex items-start gap-2">
-                    <span className="text-[#34d399] font-bold mt-0.5">•</span>
+                    <span className="text-[#047857] font-bold mt-0.5">•</span>
                     <span><strong>Filtrar por cargo:</strong> Use o dropdown para filtrar membros por cargo específico</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#34d399] font-bold mt-0.5">•</span>
+                    <span className="text-[#047857] font-bold mt-0.5">•</span>
                     <span><strong>Buscar:</strong> Digite nome ou cargo na barra de busca</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#34d399] font-bold mt-0.5">•</span>
+                    <span className="text-[#047857] font-bold mt-0.5">•</span>
                     <span><strong>Editar:</strong> Clique no card do membro para ver detalhes e editar</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#34d399] font-bold mt-0.5">•</span>
+                    <span className="text-[#047857] font-bold mt-0.5">•</span>
                     <span><strong>Excluir:</strong> Na tela de detalhes, use o botão "Excluir Membro"</span>
                   </li>
                 </ul>
@@ -179,19 +179,19 @@ export function TutorialView({ onBack }: TutorialViewProps) {
                 <h3 className="font-semibold text-slate-900">Personalização de Perguntas</h3>
                 <ul className="space-y-2 text-slate-700">
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span>Cada cargo pode ter perguntas personalizadas diferentes do padrão</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span>Na tela de edição do cargo, navegue até "Perguntas Personalizadas"</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span>Selecione quais perguntas incluir na avaliação deste cargo</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span>Edite o texto das perguntas específicas para este cargo</span>
                   </li>
                 </ul>
@@ -204,27 +204,27 @@ export function TutorialView({ onBack }: TutorialViewProps) {
                 </p>
                 <ul className="space-y-2 text-slate-700">
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span><strong>Botão de Exportar:</strong> Na lista de cargos, clique no ícone de download para gerar o PDF</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span><strong>Cabeçalho de Dados:</strong> O PDF inclui campos para preenchimento manual (Nome do Avaliando, Nome do Avaliador, Data da Avaliação, Número da Avaliação e Data de Entrada na Empresa)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span><strong>Escala Likert Horizontal:</strong> Cada categoria exibe a escala de avaliação (1-5) no cabeçalho, com checkboxes e descrições alinhadas horizontalmente</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span><strong>Checkboxes por Pergunta:</strong> Cada pergunta/afirmação tem 5 checkboxes (1-5) ao lado direito para marcação rápida</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span><strong>Escalas por Tipo de Avaliação:</strong> Perguntas tradicionais/dialógicas usam a escala de desempenho (Não atendeu → Superou expectativas), enquanto atividades usam escala simplificada (Insuficiente → Excepcional)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold mt-0.5">•</span>
+                    <span className="text-[#b45309] font-bold mt-0.5">•</span>
                     <span><strong>Organização por Bloco:</strong> As perguntas são agrupadas pelos 6 blocos temáticos (Base, Estrutura, Fachada, Horizonte, Detalhes, Propósito) com cores identificadoras</span>
                   </li>
                 </ul>
@@ -331,19 +331,19 @@ export function TutorialView({ onBack }: TutorialViewProps) {
                 <h3 className="font-semibold text-slate-900">Visualização de Avaliações</h3>
                 <ul className="space-y-2 text-slate-700">
                   <li className="flex items-start gap-2">
-                    <span className="text-[#06b6d4] font-bold mt-0.5">•</span>
+                    <span className="text-[#0e7490] font-bold mt-0.5">•</span>
                     <span><strong>Cards de Avaliações:</strong> Mostra miniatura, nome do associado, cargo e data</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#06b6d4] font-bold mt-0.5">•</span>
+                    <span className="text-[#0e7490] font-bold mt-0.5">•</span>
                     <span><strong>Filtros:</strong> Filtre por data ou cargo específico</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#06b6d4] font-bold mt-0.5">•</span>
+                    <span className="text-[#0e7490] font-bold mt-0.5">•</span>
                     <span><strong>Detalhes:</strong> Clique em um card para ver a avaliação completa</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#06b6d4] font-bold mt-0.5">•</span>
+                    <span className="text-[#0e7490] font-bold mt-0.5">•</span>
                     <span><strong>Exportar PDF:</strong> Na tela de detalhes, gere um relatório completo em PDF</span>
                   </li>
                 </ul>

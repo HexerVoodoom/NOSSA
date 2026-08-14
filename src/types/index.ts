@@ -28,7 +28,7 @@ export interface Competency {
   description?: string;
   categoryId: string; // Qual seção esta competência pertence
   questions: Question[]; // Perguntas associadas a esta competência
-  createdAt: Date;
+  createdAt: Date | string; // string ISO quando vem do localStorage/JSON
   order: number;
 }
 
@@ -58,7 +58,7 @@ export interface Role {
   questionIds: string[];
   customQuestions?: CustomQuestion[];
   activities?: Activity[]; // Atividades específicas do cargo para Avaliação de Atividades
-  createdAt: Date;
+  createdAt: Date | string; // string ISO quando vem do localStorage/JSON
 }
 
 export interface Member {
@@ -68,7 +68,7 @@ export interface Member {
   birthDate?: Date;
   startDate?: Date;
   position: string;
-  createdAt: Date;
+  createdAt: Date | string; // string ISO quando vem do localStorage/JSON
 }
 
 export interface Evaluation {
@@ -82,7 +82,7 @@ export interface Evaluation {
   responses: QuestionResponse[];
   questionIds: string[];
   activityIds?: string[]; // IDs das atividades avaliadas (se evaluationType === 'atividades')
-  createdAt: Date;
+  createdAt: Date | string; // string ISO quando vem do localStorage/JSON
   completed: boolean;
   sectionObservations?: Record<string, string>; // Observações por categoria/seção
   evaluationType?: EvaluationType; // Tipo de avaliação escolhido

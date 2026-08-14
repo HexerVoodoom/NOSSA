@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Evaluation, Question, QuestionResponse } from '../types';
 import { storage } from '../lib/storage';
 import { newBlocks as categories } from '../lib/newBlocks';
+import { getShapeForIndex } from '../lib/categoryShapes';
 import { DS, Button, Card } from './DesignSystem';
 import { ArrowLeft, ArrowRight, Check, MessageSquare, ClipboardList, ListChecks } from 'lucide-react';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
@@ -12,21 +13,39 @@ interface CategoryQuestionFlowProps {
   onBack: () => void;
 }
 
-const categoryShapes: Record<string, string[]> = {
-  'bloco1': ['foundation-1', 'foundation-2', 'foundation-3', 'foundation-4', 'foundation-5', 'foundation-6', 'foundation-7', 'foundation-8', 'foundation-9', 'foundation-10'],
-  'bloco2': ['structure-1', 'structure-2', 'structure-3', 'structure-4', 'structure-5', 'structure-6', 'structure-7', 'structure-8', 'structure-9', 'structure-10'],
-  'bloco3': ['wall-1', 'wall-2', 'wall-3', 'wall-4', 'wall-5', 'wall-6', 'wall-7', 'wall-8', 'wall-9', 'wall-10'],
-  'bloco4': ['door-1', 'door-2', 'door-3', 'door-4', 'door-5', 'door-6', 'door-7', 'door-8', 'door-9', 'door-10'],
-  'bloco5': ['window-1', 'window-2', 'window-3', 'window-4', 'window-5', 'window-6', 'window-7', 'window-8', 'window-9', 'window-10'],
-  'bloco6': ['roof-1', 'roof-2', 'roof-3', 'roof-4', 'roof-5', 'roof-6', 'roof-7', 'roof-8', 'roof-9', 'roof-10'],
+
+// Quais perguntas pertencem a este tipo de avaliação.
+//
+// Este filtro só existia no render. Como `questionIds` dos cargos traz TODAS as
+// perguntas da competência (statements + dialógicas), o salvamento percorria a
+// lista não filtrada e gravava resposta para pergunta que o líder nunca viu —
+// com a nota inicial 1. Cada avaliação salva carregava dados inventados para
+// cerca de metade das perguntas, e a obra montada a partir de `responses` era
+// construída sobre eles. Filtrar na origem faz salvamento e tela concordarem.
+const isVisibleForQuestionType = (
+  type: Evaluation['evaluationType'],
+  q: Pick<Question, 'type' | 'parentQuestionId'>
+): boolean => {
+  if (type === 'tradicional') return q.type === 'statement' || !q.type;
+  if (type === 'atividades') return q.type === 'activity';
+  if (type === 'dialogica') return q.type === 'dialogic' && !q.parentQuestionId;
+  return true;
 };
 
 export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: CategoryQuestionFlowProps) {
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
-  const [responses, setResponses] = useState<QuestionResponse[]>(evaluation.responses);
+  // Avaliações legadas/importadas podem vir sem `responses`; sem normalizar,
+  // o primeiro `.find` derruba a tela inteira.
+  const [responses, setResponses] = useState<QuestionResponse[]>(
+    Array.isArray(evaluation.responses) ? evaluation.responses : []
+  );
   const [sectionObservations, setSectionObservations] = useState<Record<string, string>>(evaluation.sectionObservations || {});
+  const [questionData, setQuestionData] = useState<Record<string, any>>({});
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
+  const isVisibleForType = (q: Pick<Question, 'type' | 'parentQuestionId'>) =>
+    isVisibleForQuestionType(evaluation.evaluationType, q);
+
   const role = storage.getRoles().find(r => r.id === evaluation.roleId);
 
   useEffect(() => {
@@ -49,20 +68,30 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
     }
 
     const competencies = storage.getCompetencies();
-    const allQuestions: (Question & { competencyName?: string })[] = [];
+    // A competência DONA de cada pergunta viaja junto. Antes o filtro dialógico
+    // reencontrava a competência por NOME
+    // (`competencies.find(c => c.name === q.competencyName)`), e `find` devolve a
+    // PRIMEIRA homônima: duas competências com o mesmo nome se confundiam e a
+    // pergunta dialógica de uma competência que o cargo NÃO usa entrava na
+    // avaliação por carona no nome da outra. Nome não é chave; a referência é.
+    const allQuestions: (Question & { competencyName?: string; ownerQuestionIds?: string[] })[] = [];
     competencies.forEach(comp => {
+      const ownerQuestionIds = comp.questions.map(cq => cq.id);
       comp.questions.forEach(q => {
-        allQuestions.push({ ...q, competencyName: comp.name });
+        allQuestions.push({ ...q, competencyName: comp.name, ownerQuestionIds });
       });
     });
-    
-    return allQuestions.filter(q => {
-      if (evaluation.evaluationType === 'dialogica' && q.type === 'dialogic' && !q.parentQuestionId) {
-        const comp = competencies.find(c => c.name === q.competencyName);
-        return comp ? comp.questions.some(cq => evaluation.questionIds.includes(cq.id)) : false;
-      }
-      return evaluation.questionIds.includes(q.id);
-    });
+
+    return allQuestions
+      .filter(q => {
+        // A dialógica é a pergunta-par da competência: basta o cargo usar
+        // QUALQUER pergunta DESTA competência (não de uma homônima qualquer).
+        if (evaluation.evaluationType === 'dialogica' && q.type === 'dialogic' && !q.parentQuestionId) {
+          return (q.ownerQuestionIds || []).some(id => evaluation.questionIds.includes(id));
+        }
+        return evaluation.questionIds.includes(q.id);
+      })
+      .filter(isVisibleForType);
   };
   
   const questions = getQuestions();
@@ -70,17 +99,13 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
     ? [{ id: 'activities-block', name: 'Avaliação de Atividades', order: 1, color: '#10b981', description: 'Avalie o desempenho técnico em cada uma das atividades específicas.' }]
     : categories.filter(cat => questions.some(q => q.categoryId === cat.id));
   
+  const currentCategory = categoriesWithQuestions[currentCategoryIndex];
+  const categoryQuestions = currentCategory ? questions.filter(q => q.categoryId === currentCategory.id) : [];
+
   useEffect(() => {
     if (categoriesWithQuestions.length === 0) onComplete(evaluation);
   }, [categoriesWithQuestions.length, evaluation, onComplete]);
-  
-  if (categoriesWithQuestions.length === 0) return null;
-  
-  const currentCategory = categoriesWithQuestions[currentCategoryIndex];
-  const categoryQuestions = questions.filter(q => q.categoryId === currentCategory.id);
-  
-  const [questionData, setQuestionData] = useState<Record<string, any>>({});
-  
+
   useEffect(() => {
     const data: any = {};
     categoryQuestions.forEach(q => {
@@ -88,17 +113,32 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
       data[q.id] = {
         keywords: existingResponse?.keywords || ['', '', ''],
         rating: existingResponse?.rating || 1,
-        selectedImageIndex: existingResponse?.selectedImageIndex ?? (existingResponse?.rating ? existingResponse.rating - 1 : 0),
+        // Derivado da nota, NÃO lido do armazenamento: todo registro antigo
+        // guarda `selectedImageIndex: 0` mesmo com nota 4, e `??` não trata 0
+        // como ausente — retomar uma avaliação regravava o elemento errado.
+        selectedImageIndex: Math.max(0, (existingResponse?.rating || 1) - 1),
       };
     });
     setQuestionData(data);
   }, [currentCategoryIndex]);
-  
+
+  if (categoriesWithQuestions.length === 0) return null;
+
   const updateQuestionData = (questionId: string, field: string, value: any) => {
-    setQuestionData(prev => ({
-      ...prev,
-      [questionId]: { ...prev[questionId], [field]: value }
-    }));
+    setQuestionData(prev => {
+      const current = prev[questionId];
+      const next = { ...current, [field]: value };
+
+      // A nota é a única entrada desta tela — não existe seletor de imagem.
+      // `selectedImageIndex` ficava travado em 0, e como `?? ` não trata 0 como
+      // ausente, o elemento gravado era sempre o da nota 1 (nota 4 gravava
+      // 'foundation-1'), corrompendo a obra montada a partir das respostas.
+      if (field === 'rating') {
+        next.selectedImageIndex = Math.max(0, Number(value) - 1);
+      }
+
+      return { ...prev, [questionId]: next };
+    });
   };
   
   const handleSaveAndMove = (direction: 'next' | 'prev') => {
@@ -106,14 +146,15 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
     categoryQuestions.forEach(q => {
       const qd = questionData[q.id];
       const rating = qd?.rating || 1;
-      const shapes = categoryShapes[currentCategory.id] || [];
-      const imageIdx = qd?.selectedImageIndex ?? (rating - 1);
-      
+      // O índice acompanha a nota sempre: era aqui que o `??` sobre um 0
+      // armazenado regravava o elemento da nota 1 para qualquer nota.
+      const imageIdx = Math.max(0, rating - 1);
+
       newResponses.push({
         questionId: q.id,
         keywords: qd?.keywords || ['', '', ''],
         rating: rating,
-        selectedElementId: shapes[imageIdx] || '',
+        selectedElementId: getShapeForIndex(currentCategory.id, imageIdx),
         selectedImageIndex: imageIdx,
       });
     });
@@ -162,12 +203,6 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
       <main className={DS.layout.maxWidth + " py-12"}>
         <div className="space-y-8">
           {categoryQuestions
-            .filter(q => {
-              if (evaluation.evaluationType === 'tradicional') return q.type === 'statement' || !q.type;
-              if (evaluation.evaluationType === 'atividades') return q.type === 'activity';
-              if (evaluation.evaluationType === 'dialogica') return q.type === 'dialogic' && !q.parentQuestionId;
-              return true;
-            })
             .map((question, qIndex) => {
               const qd = questionData[question.id] || { keywords: ['', '', ''], rating: 1 };
               const isDialogic = question.type === 'dialogic';
@@ -201,6 +236,7 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
                               kw[idx] = e.target.value;
                               updateQuestionData(question.id, 'keywords', kw);
                             }}
+                            aria-label={`Palavra-chave ${idx + 1}`}
                             placeholder={`Tópico ${idx + 1}...`}
                             className={DS.inputs.base}
                           />
@@ -210,7 +246,25 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
                   )}
                   
                   <div className="space-y-6">
-                    <div className="flex flex-wrap gap-4">
+                    <div
+                      role="radiogroup"
+                      aria-label={`Avaliação de 1 a 5 para: ${question.text}`}
+                      onKeyDown={(e) => {
+                        const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'];
+                        if (!keys.includes(e.key)) return;
+                        e.preventDefault();
+                        const radios = Array.from(
+                          e.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]')
+                        );
+                        const current = radios.indexOf(document.activeElement as HTMLButtonElement);
+                        const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
+                        const base = current >= 0 ? current : (qd.rating || 1) - 1;
+                        const next = (base + step + radios.length) % radios.length;
+                        radios[next]?.focus();
+                        updateQuestionData(question.id, 'rating', next + 1);
+                      }}
+                      className="flex flex-wrap gap-4"
+                    >
                       {(evaluation.evaluationType === 'tradicional' ? [
                         { val: 1, label: 'Nunca' },
                         { val: 2, label: 'Raramente' },
@@ -232,6 +286,11 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
                       ]).map((item) => (
                         <button
                           key={item.val}
+                          type="button"
+                          role="radio"
+                          aria-checked={qd.rating === item.val}
+                          aria-label={`${item.val} — ${item.label}`}
+                          tabIndex={qd.rating === item.val ? 0 : -1}
                           onClick={() => updateQuestionData(question.id, 'rating', item.val)}
                           className={`flex-1 min-w-[120px] p-4 rounded-2xl border border-slate-200 transition-all flex flex-col items-center gap-2 ${
                             qd.rating === item.val 
@@ -250,8 +309,9 @@ export function CategoryQuestionFlow({ evaluation, onComplete, onBack }: Categor
             })}
           
           <div className="pt-8">
-            <label className={DS.inputs.label + " mb-4"}>Observações da Seção</label>
+            <label htmlFor="section-observations" className={DS.inputs.label + " mb-4"}>Observações da Seção</label>
             <textarea
+              id="section-observations"
               value={sectionObservations[currentCategory.id] || ''}
               onChange={(e) => setSectionObservations(prev => ({ ...prev, [currentCategory.id]: e.target.value }))}
               placeholder="Adicione comentários adicionais sobre este bloco de competências..."

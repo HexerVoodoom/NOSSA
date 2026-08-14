@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Toaster } from './components/ui/sonner';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { HomePage } from './components/HomePage';
 import { TeamGallery } from './components/TeamGallery';
 import { MembersView } from './components/MembersView';
@@ -19,6 +20,7 @@ import { TutorialView } from './components/TutorialView';
 import { Role, Member, Evaluation, SavedWork, EvaluationType } from './types';
 import { ElementUploadView } from './components/ElementUploadView';
 import { storage } from './lib/storage';
+import { toast } from 'sonner';
 
 type AppView = 
   | { type: 'home' }
@@ -39,6 +41,29 @@ type AppView =
   | { type: 'assembly-readonly'; work: SavedWork }
   | { type: 'work-detail'; work: SavedWork };
 
+// A troca de tela é uma SPA: nada no DOM anuncia que a navegação aconteceu.
+// Sem isso, quem usa leitor de tela termina uma avaliação e não recebe nenhuma
+// confirmação de que o resumo carregou. Um aria-live discreto resolve.
+const VIEW_LABELS: Record<AppView['type'], string> = {
+  'home': 'Início',
+  'team-gallery': 'Avaliações salvas',
+  'elements-library': 'Biblioteca de elementos',
+  'element-upload': 'Upload de elementos',
+  'competencies': 'Competências',
+  'tutorial': 'Manual',
+  'role-editor': 'Editor de cargo',
+  'members': 'Equipe',
+  'member-form': 'Cadastro de membro',
+  'member-detail': 'Perfil do membro',
+  'roles': 'Cargos',
+  'evaluation-start': 'Nova avaliação',
+  'evaluation': 'Questionário da avaliação',
+  'construction-preview': 'Prévia da obra',
+  'summary': 'Resumo da avaliação',
+  'assembly-readonly': 'Obra montada',
+  'work-detail': 'Detalhe da avaliação',
+};
+
 export default function App() {
   const [view, setView] = useState<AppView>({ type: 'home' });
   
@@ -56,18 +81,25 @@ export default function App() {
     const leader = members.find(m => m.id === leaderId);
     const collaborator = members.find(m => m.id === collaboratorId);
     
+    // Nome completo tolerante a sobrenome ausente (lastName é opcional e o
+    // import de JSON não valida nada): sem isso o nome vira "Ana undefined".
+    const fullName = (m: Member | undefined) =>
+      m ? `${m.firstName || ''} ${m.lastName || ''}`.trim() : '';
+
     const evaluation: Evaluation = {
-      id: `eval-${Date.now()}`,
+      // Date.now() sozinho colide em dois cliques no mesmo milissegundo
+      id: `eval-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       roleId: role.id,
       roleName: role.name,
       leaderId,
       collaboratorId,
-      leaderName: leader ? `${leader.firstName} ${leader.lastName}` : '',
-      collaboratorName: collaborator ? `${collaborator.firstName} ${collaborator.lastName}` : '',
+      leaderName: fullName(leader),
+      collaboratorName: fullName(collaborator),
       responses: [],
       createdAt: new Date(),
       completed: false,
-      questionIds: role.questionIds,
+      // Cargos vindos do localStorage podem não ter questionIds
+      questionIds: Array.isArray(role.questionIds) ? role.questionIds : [],
       evaluationType,
     };
     
@@ -90,7 +122,14 @@ export default function App() {
     // Cria backup automático antes de salvar nova avaliação
     storage.createBackup();
     
-    storage.saveEvaluation(completedWork);
+    // storage.saveEvaluation retorna false quando o localStorage falha (cota
+    // cheia, modo privado). Sem checar, a tela navegava para a galeria e o
+    // trabalho era perdido em silêncio.
+    if (!storage.saveEvaluation(completedWork)) {
+      toast.error('Não foi possível salvar a avaliação. Libere espaço e tente novamente.');
+      return;
+    }
+
     storage.clearCurrentEvaluation();
     setView({ type: 'team-gallery' });
   };
@@ -111,10 +150,32 @@ export default function App() {
   const handleEditRole = (role: Role) => {
     setView({ type: 'role-editor', role });
   };
-  
+
+  // Foco após troca de tela. Sem isto, o elemento acionado desaparece junto com
+  // a tela antiga e o foco cai em document.body: verificado no browser em TODAS
+  // as navegações (home -> nova avaliação, metodologia -> questionário,
+  // questionário -> resumo, resumo -> galeria, galeria -> avaliação salva).
+  // Quem usa teclado é largado no topo do documento e só volta ao conteúdo
+  // tabulando por tudo de novo. Movemos o foco para a região da tela nova, que
+  // é o começo natural dela. Não movemos na primeira carga — aí o foco já está
+  // no lugar certo e roubá-lo atrapalharia o leitor de tela.
+  const viewRef = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return; }
+    viewRef.current?.focus();
+  }, [view.type]);
+
+
   return (
     <div className="relative min-h-screen">
       <Toaster position="top-center" />
+      {/* Anuncia a tela atual para leitores de tela; invisível para os demais. */}
+      <div aria-live="polite" role="status" className="sr-only">
+        {VIEW_LABELS[view.type]}
+      </div>
+      <div ref={viewRef} tabIndex={-1} className="outline-none">
+      <ErrorBoundary>
       {view.type === 'home' && (
         <HomePage
           onStartEvaluation={handleStartEvaluation}
@@ -267,6 +328,8 @@ export default function App() {
           onBack={handleBackToHome}
         />
       )}
+      </ErrorBoundary>
+      </div>
     </div>
   );
 }

@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import { SavedWork } from '../types';
 import { storage } from '../lib/storage';
-import { newBlocks as categories } from '../lib/newBlocks';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
+import { computeEvaluationStats } from '../lib/evaluationStats';
 import { exportToPDF } from '../lib/pdfExport';
-import { DS, Button } from './DesignSystem';
-import { 
-  ArrowLeft, 
-  Download, 
-  User, 
-  Award, 
-  BarChart3, 
-  ChevronUp, 
-  ChevronDown, 
+import {
+  ArrowLeft,
+  Download,
+  User,
+  Award,
+  BarChart3,
+  ChevronUp,
+  ChevronDown,
   FileText,
-  Calendar 
+  Building2
 } from 'lucide-react';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
 
@@ -24,61 +23,40 @@ interface WorkDetailProps {
   onViewAssembly?: (work: SavedWork) => void;
 }
 
-export function WorkDetail({ work, onBack }: WorkDetailProps) {
+export function WorkDetail({ work, onBack, onViewAssembly }: WorkDetailProps) {
   const roles = storage.getRoles();
   const role = roles.find(r => r.id === work.roleId);
   const allQuestions = getAllQuestionsFromCompetencies();
 
-  // Calcular estatísticas por categoria
-  const categoryStats = (work.evaluationType === 'atividades'
-    ? [{ id: 'activities-block', name: 'Avaliação de Atividades', order: 1, color: '#34d399' }]
-    : categories
-  ).map(category => {
-    const responsesInCategory = work.responses.filter(r => {
-      // Para atividades
-      if (work.evaluationType === 'atividades') {
-        const activity = role?.activities?.find(a => a.id === r.questionId);
-        return activity !== undefined && category.id === 'activities-block';
-      }
+  // Avaliações antigas/importadas podem não ter respostas gravadas: normalizamos
+  // para não estourar em .filter/.flatMap de um valor undefined.
+  const responses = Array.isArray(work.responses) ? work.responses : [];
 
-      const question = allQuestions.find(q => q.id === r.questionId) ||
-                      role?.customQuestions?.find(q => q.id === r.questionId);
-      
-      if (!question || question.categoryId !== category.id) return false;
+  // As palavras-chave também podem faltar em registros legados.
+  const safeKeywords = (r: { keywords?: string[] }): string[] =>
+    Array.isArray(r.keywords) ? r.keywords.filter(k => k && k.trim() !== '') : [];
 
-      // Filtrar baseado no tipo de avaliação para não misturar notas
-      if (work.evaluationType === 'tradicional' && question.type === 'dialogic') {
-        return false;
-      }
-      if (work.evaluationType === 'dialogica' && question.type === 'statement') {
-        return false;
-      }
+  // createdAt é string ISO em runtime; se vier inválida, evita "Invalid Date" na tela.
+  const formatDate = (value: Date | string | undefined, options?: Intl.DateTimeFormatOptions): string => {
+    if (!value) return '---';
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return '---';
+    return d.toLocaleDateString('pt-BR', options);
+  };
 
-      return true;
-    });
-    
-    const totalRating = responsesInCategory.reduce((sum, r) => sum + (r.rating || 0), 0);
-    const averageRating = responsesInCategory.length > 0 ? totalRating / responsesInCategory.length : 0;
-    const totalQuestions = responsesInCategory.length;
-    
-    return {
-      category,
-      totalQuestions,
-      averageRating: parseFloat(averageRating.toFixed(2)),
-      responses: responsesInCategory,
-    };
-  }).filter(stat => stat.totalQuestions > 0);
-
-  // Média geral
-  const overallAverage = categoryStats.length > 0 
-    ? parseFloat((categoryStats.reduce((sum, stat) => sum + stat.averageRating, 0) / categoryStats.length).toFixed(2))
-    : 0;
-
-  // Total de perguntas reais (filtradas pelo tipo)
-  const totalQuestions = categoryStats.reduce((sum, stat) => sum + stat.totalQuestions, 0);
+  // Estatísticas por categoria e média geral vêm de lib/evaluationStats — a
+  // MESMA função usada pela galeria e pelo resumo. Enquanto cada tela tinha sua
+  // conta, a mesma avaliação aparecia com médias diferentes em telas diferentes.
+  // Sem `activityIds`: numa avaliação de atividades TODA resposta conta, mesmo
+  // que o cargo/atividade tenha sido excluído depois da avaliação.
+  const { categoryStats, overallAverage, totalQuestions } = computeEvaluationStats({
+    responses,
+    evaluationType: work.evaluationType,
+    questions: [...allQuestions, ...(role?.customQuestions || [])],
+  });
 
   // Palavras-chave mais mencionadas (filtradas pelo tipo)
-  const allKeywords = work.responses.flatMap(r => {
+  const allKeywords = responses.flatMap(r => {
     // Buscar tipo da pergunta
     const allQs = [...(role?.customQuestions || []), ...allQuestions];
     const question = allQs.find(q => q.id === r.questionId);
@@ -88,9 +66,8 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
 
     // Para atividades (legado/fallback)
     if (work.evaluationType === 'atividades') {
-      const activity = role?.activities?.find(a => a.id === r.questionId);
-      if (!activity) return [];
-      return r.keywords.filter(k => k && k.trim() !== '');
+      // Idem: não descarta as palavras-chave quando o cargo/atividade sumiu.
+      return safeKeywords(r);
     }
 
     if (!question) return [];
@@ -103,7 +80,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
       return [];
     }
 
-    return r.keywords.filter(k => k && k.trim() !== '');
+    return safeKeywords(r);
   });
   const keywordCount: Record<string, number> = {};
   allKeywords.forEach(keyword => {
@@ -216,13 +193,27 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
               <p className="text-sm text-white/80">Análise completa de desempenho</p>
             </div>
             
-            <button
-              onClick={handleExportPDF}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all duration-200"
-            >
-              <Download className="w-5 h-5" />
-              Exportar PDF
-            </button>
+            <div className="flex items-center gap-2">
+              {/* A obra montada (AssemblyViewReadOnly) existia mas era inalcançável:
+                  `onViewAssembly` era declarado na interface, ligado em App.tsx e
+                  nunca renderizado. Todo o motor de desenho ficava morto na UI. */}
+              {onViewAssembly && (
+                <button
+                  onClick={() => onViewAssembly(work)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all duration-200"
+                >
+                  <Building2 className="w-5 h-5" />
+                  Ver Obra Montada
+                </button>
+              )}
+              <button
+                onClick={handleExportPDF}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all duration-200"
+              >
+                <Download className="w-5 h-5" />
+                Exportar PDF
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -245,7 +236,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                 <div>
                   <p className="text-slate-500">Data da Avaliação</p>
                   <p className="font-semibold text-slate-900">
-                    {new Date(work.createdAt).toLocaleDateString('pt-BR', {
+                    {formatDate(work.createdAt, {
                       day: '2-digit',
                       month: 'long',
                       year: 'numeric'
@@ -271,19 +262,19 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-slate-500">Associado(a)</p>
-                  <p className="font-semibold text-slate-900">{work.collaboratorName}</p>
+                  <p className="font-semibold text-slate-900">{work.collaboratorName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Líder</p>
-                  <p className="font-semibold text-slate-900">{work.leaderName}</p>
+                  <p className="font-semibold text-slate-900">{work.leaderName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Cargo</p>
-                  <p className="font-semibold text-slate-900">{work.roleName}</p>
+                  <p className="font-semibold text-slate-900">{work.roleName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Data</p>
-                  <p className="font-semibold text-slate-900">{new Date(work.createdAt).toLocaleDateString('pt-BR')}</p>
+                  <p className="font-semibold text-slate-900">{formatDate(work.createdAt)}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Total de Perguntas</p>
@@ -409,7 +400,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                           .filter((response) => {
                             // Para atividades
                             if (work.evaluationType === 'atividades') {
-                              return role?.activities?.some(a => a.id === response.questionId);
+                              return true;
                             }
 
                             const question = allQuestions.find(q => q.id === response.questionId) ||
@@ -427,17 +418,20 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                           })
                           .map((response, idx) => {
                           const questionText = work.evaluationType === 'atividades'
-                            ? role?.activities?.find(a => a.id === response.questionId)?.text
+                            ? (role?.activities?.find(a => a.id === response.questionId)?.text
+                               // Sem o cargo não há texto: mostra a nota com um
+                               // rótulo neutro em vez de sumir com a linha.
+                               ?? 'Atividade removida do cargo')
                             : (allQuestions.find(q => q.id === response.questionId) ||
                                role?.customQuestions?.find(q => q.id === response.questionId))?.text;
                           
-                          const keywords = response.keywords.filter(k => k && k.trim() !== '');
-                          
+                          const keywords = safeKeywords(response);
+
                           if (!questionText) return null;
                           
                           return (
                             <div 
-                              key={response.questionId}
+                              key={`${response.questionId}-${idx}`}
                               className="p-3 bg-white rounded-lg border border-slate-200"
                             >
                               <div className="flex items-start justify-between gap-3 mb-2">
@@ -533,7 +527,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                       >
                         <h3 
                           className="font-bold mb-2"
-                          style={{ color: stat.category.id === 'cat6' ? '#d97706' : stat.category.color }}
+                          style={{ color: stat.category.id === 'bloco6' ? '#d97706' : stat.category.color }}
                         >
                           {stat.category.name}
                         </h3>

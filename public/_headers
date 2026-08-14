@@ -1,0 +1,13 @@
+# Cabeçalhos de segurança aplicados pelo Cloudflare Pages ao site publicado.
+# Ficam aqui (e não numa meta tag no index.html) para não quebrar o dev server
+# do Vite, que injeta scripts inline de HMR.
+#
+# style-src precisa de 'unsafe-inline': o export de PDF monta HTML com
+# atributos style="..." antes de passar pelo html2canvas.
+# img-src precisa de data:/blob: por causa das imagens em base64 e do canvas.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

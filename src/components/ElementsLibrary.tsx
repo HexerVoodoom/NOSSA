@@ -132,6 +132,8 @@ const colorTemperature = [
   { level: 5, label: 'Muito Quente', description: 'Laranja / Vermelho' }
 ];
 
+const totalElements = libraryCategories.reduce((total, cat) => total + cat.elements.length, 0);
+
 export function ElementsLibrary({ onBack }: ElementsLibraryProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
@@ -147,17 +149,20 @@ export function ElementsLibrary({ onBack }: ElementsLibraryProps) {
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
+              aria-label="Voltar"
               className="p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 text-white" />
+              <ArrowLeft className="w-5 h-5 text-white" aria-hidden="true" />
             </button>
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-[#ffcc00]">
-                <Sparkles className="w-6 h-6 text-[#6155f5]" />
+                <Sparkles className="w-6 h-6 text-[#6155f5]" aria-hidden="true" />
               </div>
               <div>
                 <h1 className="text-white text-3xl">Biblioteca de Elementos</h1>
-                <p className="text-white/80 text-sm">21+ elementos únicos organizados em 6 categorias × 5 níveis de temperatura</p>
+                {/* Contagem derivada da lista: o texto fixo dizia "21+" enquanto a
+                    biblioteca já tem 60 elementos. */}
+                <p className="text-white/80 text-sm">{totalElements} elementos únicos organizados em {libraryCategories.length} categorias × 5 níveis de temperatura</p>
               </div>
             </div>
           </div>
@@ -194,7 +199,7 @@ export function ElementsLibrary({ onBack }: ElementsLibraryProps) {
         </div>
 
         {/* Categorias e Elementos */}
-        {libraryCategories.map((category, idx) => (
+        {libraryCategories.map(category => (
           <div key={category.id} className="bg-white rounded-2xl shadow-md p-6 border border-slate-200">
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -225,7 +230,7 @@ export function ElementsLibrary({ onBack }: ElementsLibraryProps) {
 
             {/* Grid de Elementos */}
             <div className="grid grid-cols-5 gap-4">
-              {category.elements.map((element, i) => {
+              {category.elements.map(element => {
                 // Definir aspect ratio baseado no tipo de elemento
                 let aspectClass = 'aspect-square';
                 
@@ -244,15 +249,7 @@ export function ElementsLibrary({ onBack }: ElementsLibraryProps) {
                 }
                 
                 return (
-                  <div key={i} className="relative group">
-                    {element.isBonus && (
-                      <div className="absolute -top-2 -right-2 z-10">
-                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-lg">
-                          <Sparkles className="w-3 h-3" />
-                          BÔNUS
-                        </div>
-                      </div>
-                    )}
+                  <div key={element.code} className="relative group">
                     <div className="border-2 border-slate-200 rounded-lg p-4 hover:border-[#6155f5] transition-all group-hover:shadow-lg">
                       <div className={`bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-3 mb-3 w-full ${aspectClass} flex items-center justify-center overflow-hidden`}>
                         <ElementRenderer

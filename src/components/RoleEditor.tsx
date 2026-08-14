@@ -21,7 +21,7 @@ import {
   Award,
   Check
 } from 'lucide-react';
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from 'motion/react';
 import svgPaths from "../imports/svg-dp9vj8g4zf";
 import imgHeaderBg from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
@@ -35,9 +35,10 @@ interface RoleEditorProps {
 
 export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
   const isNew = !role.id;
-  const [roleName, setRoleName] = useState(role.name);
-  const [roleType, setRoleType] = useState<'leadership' | 'collaborator'>(role.type);
-  const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>(role.questionIds);
+  // Campos opcionais no tipo Role: sem defaults os inputs viram não-controlados e o .length quebra
+  const [roleName, setRoleName] = useState(role.name || '');
+  const [roleType, setRoleType] = useState<'leadership' | 'collaborator'>(role.type || 'collaborator');
+  const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>(role.questionIds || []);
   const [activities, setActivities] = useState<Activity[]>(role.activities || []);
   const [expandedCompetencies, setExpandedCompetencies] = useState<Set<string>>(new Set());
   const [competencies, setCompetencies] = useState<Competency[]>([]);
@@ -47,13 +48,17 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
 
   useEffect(() => {
     storage.initializeCompetencies();
-    const loadedCompetencies = storage.getCompetencies();
+    // Competências importadas podem vir sem `questions`: normaliza uma vez para o resto da tela
+    const loadedCompetencies = storage.getCompetencies().map(comp => ({
+      ...comp,
+      questions: comp.questions || [],
+    }));
     setCompetencies(loadedCompetencies);
-    
+
     const texts: Record<string, string> = {};
     loadedCompetencies.forEach(comp => {
       comp.questions.forEach(q => {
-        texts[q.id] = q.text;
+        texts[q.id] = q.text || '';
       });
     });
     setOriginalQuestionTexts(texts);
@@ -66,14 +71,14 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
     if (!competency) return;
     
     const competencyQuestionIds = competency.questions.map(q => q.id);
-    const isFullySelected = competencyQuestionIds.every(qId => selectedQuestionIds.includes(qId));
-    
-    if (isFullySelected) {
-      setSelectedQuestionIds(selectedQuestionIds.filter(id => !competencyQuestionIds.includes(id)));
-    } else {
-      const otherIds = selectedQuestionIds.filter(id => !competencyQuestionIds.includes(id));
-      setSelectedQuestionIds([...otherIds, ...competencyQuestionIds]);
-    }
+    if (competencyQuestionIds.length === 0) return;
+
+    // Atualização funcional: evita perder cliques rápidos sobre o estado anterior
+    setSelectedQuestionIds(prev => {
+      const isFullySelected = competencyQuestionIds.every(qId => prev.includes(qId));
+      const otherIds = prev.filter(id => !competencyQuestionIds.includes(id));
+      return isFullySelected ? otherIds : [...otherIds, ...competencyQuestionIds];
+    });
   };
 
   const toggleQuestion = (questionId: string) => {
@@ -110,9 +115,20 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
   };
 
   const handleAddActivity = () => {
-    const newActivity: Activity = { id: `activity-${Date.now()}`, text: '', order: activities.length };
-    setActivities([...activities, newActivity]);
+    setActivities(prev => [
+      ...prev,
+      // Date.now() sozinho duplica id (e key do React) em cliques no mesmo milissegundo
+      { id: `activity-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, text: '', order: prev.length },
+    ]);
     setIsActivitiesExpanded(true);
+  };
+
+  const handleUpdateActivityText = (activityId: string, newText: string) => {
+    setActivities(prev => prev.map(a => (a.id === activityId ? { ...a, text: newText } : a)));
+  };
+
+  const handleRemoveActivity = (activityId: string) => {
+    setActivities(prev => prev.filter(a => a.id !== activityId));
   };
 
   const handleSave = () => {
@@ -120,17 +136,27 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
       toast.error('O nome do cargo é obrigatório');
       return;
     }
-    storage.saveCompetencies(competencies);
+    if (selectedQuestionIds.length === 0) {
+      toast.error('Selecione ao menos um indicador na biblioteca de competências');
+      return;
+    }
     const updatedRole: Role = {
       ...role,
       id: role.id || `role-${Date.now()}`,
       name: roleName.trim(),
       type: roleType,
       questionIds: selectedQuestionIds,
-      activities: activities.filter(a => a.text.trim() !== ''),
+      activities: activities.filter(a => (a.text || '').trim() !== ''),
       createdAt: role.createdAt || new Date(),
     };
-    storage.saveRole(updatedRole);
+    try {
+      storage.saveCompetencies(competencies);
+      storage.saveRole(updatedRole);
+    } catch (error) {
+      console.error(error);
+      toast.error('Não foi possível salvar o cargo. Verifique o espaço de armazenamento do navegador.');
+      return;
+    }
     toast.success('Cargo salvo com sucesso');
     onBack();
   };
@@ -148,8 +174,9 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
         </div>
         <nav className="relative flex items-center justify-between px-6 lg:px-[158.5px] py-[16px] h-[81px] border-b border-white/10 backdrop-blur-md bg-black/20">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={onBack} 
+            <button
+              onClick={onBack}
+              aria-label="Voltar"
               className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/10 transition-all text-white"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -182,9 +209,10 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
 
             <div className="grid md:grid-cols-[1fr_300px] gap-12">
               <div className="space-y-3">
-                <label className="text-[#64748b] text-[14px] font-bold tracking-tight">Nome oficial</label>
-                <input 
-                  type="text" 
+                <label htmlFor="role-name" className="text-[#64748b] text-[14px] font-bold tracking-tight">Nome oficial</label>
+                <input
+                  id="role-name"
+                  type="text"
                   value={roleName}
                   onChange={(e) => setRoleName(e.target.value)}
                   className="w-full text-[28px] font-black text-[#1d293d] bg-transparent border-b border-slate-300 py-4 focus:border-[#6155f5] outline-none transition-all placeholder:text-slate-300"
@@ -193,10 +221,12 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[#64748b] text-[14px] font-bold tracking-tight">Tipo de atuação</label>
-                <div className="flex p-1 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] h-[54px]">
-                  <button 
+                {/* Não é <label> porque o controle é um grupo de botões, não um input */}
+                <span id="role-type-label" className="text-[#64748b] text-[14px] font-bold tracking-tight">Tipo de atuação</span>
+                <div role="group" aria-labelledby="role-type-label" className="flex p-1 bg-[#f1f5f9] rounded-2xl border border-[#e2e8f0] h-[54px]">
+                  <button
                     onClick={() => setRoleType('leadership')}
+                    aria-pressed={roleType === 'leadership'}
                     className={`flex-1 rounded-xl text-sm font-bold transition-all ${
                       roleType === 'leadership' ? 'bg-white shadow-md text-[#1d293d]' : 'text-[#64748b] hover:text-[#45556c]'
                     }`}
@@ -205,6 +235,7 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
                   </button>
                   <button 
                     onClick={() => setRoleType('collaborator')}
+                    aria-pressed={roleType === 'collaborator'}
                     className={`flex-1 rounded-xl text-sm font-bold transition-all ${
                       roleType === 'collaborator' ? 'bg-white shadow-md text-[#1d293d]' : 'text-[#64748b] hover:text-[#45556c]'
                     }`}
@@ -220,6 +251,8 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
           <Card className="p-0 overflow-hidden">
             <button 
               onClick={() => setIsActivitiesExpanded(!isActivitiesExpanded)}
+              aria-expanded={isActivitiesExpanded}
+              aria-controls="activities-panel"
               className="w-full flex items-center justify-between p-12 hover:bg-slate-50 transition-colors"
             >
               <div className="flex items-center gap-4">
@@ -238,7 +271,7 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
 
             <AnimatePresence>
               {isActivitiesExpanded && (
-                <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-slate-100">
+                <motion.div id="activities-panel" initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-slate-100">
                   <div className="p-12 space-y-12 bg-white">
                     <p className="text-[#45556c] text-[14px] leading-relaxed">
                       Descreva as responsabilidades técnicas exclusivas deste cargo.
@@ -246,19 +279,24 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
 
                     <div className="space-y-6">
                       {activities.map((activity, index) => (
-                        <div key={activity.id} className="flex items-start gap-4 group">
+                        <div key={activity.id || `activity-idx-${index}`} className="flex items-start gap-4 group">
                           <span className="mt-4 text-[14px] font-bold text-slate-300 tabular-nums">
                             {String(index + 1).padStart(2, '0')}
                           </span>
                           <div className="flex-1">
-                            <textarea 
-                              value={activity.text}
-                              onChange={(e) => setActivities(activities.map(a => a.id === activity.id ? { ...a, text: e.target.value } : a))}
+                            <textarea
+                              value={activity.text || ''}
+                              onChange={(e) => handleUpdateActivityText(activity.id, e.target.value)}
                               placeholder="Responsabilidade técnica..."
+                              aria-label={`Atividade ${index + 1}`}
                               className="w-full min-h-[80px] bg-[#f8fafc] border border-slate-100 rounded-2xl p-6 outline-none focus:border-[#6155f5] transition-all text-[#1d293d] font-bold resize-none"
                             />
                           </div>
-                          <button onClick={() => setActivities(activities.filter(a => a.id !== activity.id))} className="p-3 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                          <button
+                            onClick={() => handleRemoveActivity(activity.id)}
+                            aria-label={`Remover atividade ${index + 1}`}
+                            className="p-3 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all"
+                          >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -293,9 +331,17 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
               </div>
             </div>
 
+            {competencies.length === 0 && (
+              <p className="text-[#45556c] text-[14px] leading-relaxed">
+                Nenhuma competência disponível. Cadastre competências para selecionar indicadores deste cargo.
+              </p>
+            )}
+
             <div className="space-y-16">
               {categories.map((category, catIdx) => {
                 const categoryCompetencies = competencies.filter(c => c.categoryId === category.id);
+                // Sem competências não há nada para selecionar: evita cabeçalho vazio "0 / 0"
+                if (categoryCompetencies.length === 0) return null;
                 const selectedInCat = categoryCompetencies.filter(c => c.questions.some(q => selectedQuestionIds.includes(q.id))).length;
 
                 return (
@@ -315,14 +361,17 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
                         const isExpanded = expandedCompetencies.has(competency.id);
                         const compQuestions = competency.questions;
                         const selectedCount = compQuestions.filter(q => selectedQuestionIds.includes(q.id)).length;
-                        const isFullySelected = selectedCount === compQuestions.length;
+                        const isFullySelected = compQuestions.length > 0 && selectedCount === compQuestions.length;
                         const isPartiallySelected = selectedCount > 0 && !isFullySelected;
 
                         return (
                           <div key={competency.id} className="border border-slate-50 rounded-[20px] overflow-hidden transition-all hover:border-slate-200">
                             <div className="flex items-center gap-6 p-6">
-                              <button 
+                              <button
                                 onClick={() => toggleCompetency(competency.id)}
+                                role="checkbox"
+                                aria-checked={isPartiallySelected ? 'mixed' : isFullySelected}
+                                aria-label={`Selecionar todos os indicadores de ${competency.name}`}
                                 className={`size-6 rounded-[8px] border-2 transition-all flex items-center justify-center shrink-0 ${
                                   isFullySelected ? 'bg-[#1d293d] border-[#1d293d] text-white' : isPartiallySelected ? 'bg-slate-200 border-slate-400' : 'bg-white border-slate-200 hover:border-slate-400'
                                 }`}
@@ -331,7 +380,12 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
                                 {isPartiallySelected && <div className="size-2 bg-slate-600 rounded-full" />}
                               </button>
                               
-                              <button className="flex-1 text-left" onClick={() => toggleExpanded(competency.id)}>
+                              <button
+                                className="flex-1 text-left"
+                                onClick={() => toggleExpanded(competency.id)}
+                                aria-expanded={isExpanded}
+                                aria-controls={`competency-panel-${competency.id}`}
+                              >
                                 <p className={`text-[15px] font-bold transition-colors ${selectedCount > 0 ? 'text-[#1d293d]' : 'text-slate-400'}`}>
                                   {competency.name}
                                 </p>
@@ -341,7 +395,13 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
                                 <span className="text-[#90a1b9] text-[12px] font-bold tabular-nums">
                                   {selectedCount}/{compQuestions.length}
                                 </span>
-                                <button onClick={() => toggleExpanded(competency.id)} className={`p-2 rounded-lg hover:bg-slate-50 transition-all ${isExpanded ? "rotate-180" : ""}`}>
+                                <button
+                                  onClick={() => toggleExpanded(competency.id)}
+                                  aria-label={isExpanded ? `Recolher ${competency.name}` : `Expandir ${competency.name}`}
+                                  aria-expanded={isExpanded}
+                                  aria-controls={`competency-panel-${competency.id}`}
+                                  className={`p-2 rounded-lg hover:bg-slate-50 transition-all ${isExpanded ? "rotate-180" : ""}`}
+                                >
                                   <ChevronDown className="w-4 h-4 text-slate-400" />
                                 </button>
                               </div>
@@ -349,10 +409,10 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
 
                             <AnimatePresence>
                               {isExpanded && (
-                                <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="bg-[#f8fafc] border-t border-slate-50 p-8 space-y-12">
+                                <motion.div id={`competency-panel-${competency.id}`} initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="bg-[#f8fafc] border-t border-slate-50 p-8 space-y-12">
                                   {/* Pergunta Dialógica */}
                                   {compQuestions.filter(q => q.type === 'dialogic' && !q.parentQuestionId).map(q => {
-                                    const isEdited = q.text !== (originalQuestionTexts[q.id] || '');
+                                    const isEdited = (q.text || '') !== (originalQuestionTexts[q.id] || '');
                                     return (
                                       <div key={q.id} className="space-y-4">
                                         <div className="flex items-center justify-between">
@@ -363,9 +423,10 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
                                             </button>
                                           )}
                                         </div>
-                                        <textarea 
-                                          value={q.text}
+                                        <textarea
+                                          value={q.text || ''}
                                           onChange={(e) => handleUpdateQuestionText(q.id, e.target.value)}
+                                          aria-label={`Base de diálogo de ${competency.name}`}
                                           className={`w-full bg-white border border-slate-200 rounded-2xl p-6 outline-none focus:border-[#6155f5] transition-all text-[16px] font-bold leading-relaxed ${isEdited ? 'border-[#6155f5]' : 'italic text-slate-600'}`}
                                           rows={3}
                                         />
@@ -377,12 +438,17 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
                                   <div className="space-y-4">
                                     <span className="text-[#64748b] text-[12px] font-bold tracking-widest">Afirmações técnicas</span>
                                     <div className="grid gap-2">
+                                      {compQuestions.filter(q => q.type === 'statement').length === 0 && (
+                                        <p className="text-[14px] text-slate-400">Nenhuma afirmação cadastrada nesta competência.</p>
+                                      )}
                                       {compQuestions.filter(q => q.type === 'statement').map(q => {
                                         const isSelected = selectedQuestionIds.includes(q.id);
                                         return (
-                                          <button 
+                                          <button
                                             key={q.id}
                                             onClick={() => toggleQuestion(q.id)}
+                                            role="checkbox"
+                                            aria-checked={isSelected}
                                             className={`flex items-center gap-4 p-5 rounded-2xl border transition-all text-left ${
                                               isSelected ? 'bg-white border-[#1d293d] shadow-sm' : 'bg-transparent border-transparent text-slate-600 hover:bg-white hover:border-slate-200'
                                             }`}

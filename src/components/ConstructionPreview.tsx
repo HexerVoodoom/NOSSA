@@ -2,6 +2,18 @@ import { SavedWork, AssembledElement } from '../types';
 import { storage } from '../lib/storage';
 import { newBlocks } from '../lib/newBlocks';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
+import { getShapeForIndex } from '../lib/categoryShapes';
+
+// View-model desta tela. Não é um AssembledElement: quando a avaliação ainda
+// não foi montada, os elementos são derivados das respostas e carregam `level`
+// (a nota) em vez de shapeCode/color. Avaliações já salvas não têm `level` nem
+// `name`, por isso ambos são opcionais e a UI trata a ausência.
+type PreviewElement = Partial<AssembledElement> & {
+  elementId: string;
+  categoryId: string;
+  level?: number;
+  name?: string;
+};
 
 interface ConstructionPreviewProps {
   evaluation: SavedWork;
@@ -9,47 +21,37 @@ interface ConstructionPreviewProps {
   onCreateBuilding: () => void;
 }
 
-// Competency shapes mapping for each category (same as CategoryQuestionFlow)
-const categoryShapes: Record<string, string[]> = {
-  'cat1': ['foundation-1', 'foundation-2', 'foundation-3', 'foundation-4', 'foundation-5', 'foundation-6', 'foundation-7', 'foundation-8', 'foundation-9', 'foundation-10'],
-  'cat2': ['structure-1', 'structure-2', 'structure-3', 'structure-4', 'structure-5', 'structure-6', 'structure-7', 'structure-8', 'structure-9', 'structure-10'],
-  'cat3': ['wall-1', 'wall-2', 'wall-3', 'wall-4', 'wall-5', 'wall-6', 'wall-7', 'wall-8', 'wall-9', 'wall-10'],
-  'cat4': ['window-1', 'window-2', 'window-3', 'window-4', 'window-5', 'window-6', 'window-7', 'window-8', 'window-9', 'window-10'],
-  'cat5': ['detail-1', 'detail-2', 'detail-3', 'detail-4', 'detail-5', 'detail-6', 'detail-7', 'detail-8', 'detail-9', 'detail-10'],
-  'cat6': ['roof-1', 'roof-2', 'roof-3', 'roof-4', 'roof-5', 'roof-6', 'roof-7', 'roof-8', 'roof-9', 'roof-10'],
-};
 
 export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: ConstructionPreviewProps) {
   const roles = storage.getRoles();
   const role = roles.find(r => r.id === evaluation.roleId);
   const allQuestions = getAllQuestionsFromCompetencies();
   
-  // Helper to calculate elementId from imageIndex (fallback for old data)
-  const getElementIdFromImageIndex = (categoryId: string, imageIndex: number | null | undefined, fallbackElementId: string): string => {
-    // If we already have an elementId and it's not empty, use it
-    if (fallbackElementId && fallbackElementId !== '') return fallbackElementId;
-    
-    // Otherwise, try to calculate from imageIndex
-    if (imageIndex === null || imageIndex === undefined) return '';
-    const rowIndex = Math.floor(imageIndex / 5);
-    const shapes = categoryShapes[categoryId] || [];
-    return shapes[rowIndex] || '';
+  // A forma vem da NOTA, sempre. O `selectedElementId` gravado é tratado como
+  // não confiável: registros antigos (defaultLibrary.json) trazem nota >= 2 com
+  // id terminado em '-1', a forma da nota 1. Preferir o valor salvo — como era
+  // feito aqui — mantinha essas avaliações desenhando o elemento errado.
+  // `selectedImageIndex` é índice direto (0..9), derivado de (nota - 1); o
+  // Math.floor(idx / 5) que já existiu aqui devolvia sempre o primeiro elemento.
+  const getElementIdFromRating = (categoryId: string, rating: number | null | undefined): string => {
+    const level = Number.isFinite(rating) ? Math.min(Math.max(Math.round(rating as number), 1), 5) : 1;
+    return getShapeForIndex(categoryId, level - 1);
   };
-  
+
   // Ensure assembledElements exists or create from responses
-  const assembledElements: AssembledElement[] = evaluation.assembledElements && evaluation.assembledElements.length > 0
+  const assembledElements: PreviewElement[] = evaluation.assembledElements && evaluation.assembledElements.length > 0
     ? evaluation.assembledElements
-    : evaluation.responses.map((response) => {
+    : (Array.isArray(evaluation.responses) ? evaluation.responses : []).map((response) => {
         // Find the question to get its categoryId
         const question = allQuestions.find(q => q.id === response.questionId) ||
-                        role?.customQuestions?.find(q => q.id === response.questionId);
-        
-        const categoryId = question?.categoryId || 'cat1';
-        const elementId = getElementIdFromImageIndex(
-          categoryId,
-          response.selectedImageIndex,
-          response.selectedElementId
-        );
+                        (Array.isArray(role?.customQuestions)
+                          ? role!.customQuestions!.find(q => q.id === response.questionId)
+                          : undefined);
+
+        const rawCategoryId = question?.categoryId;
+        const legacy = rawCategoryId ? /^cat(\d+)$/.exec(rawCategoryId) : null;
+        const categoryId = legacy ? `bloco${legacy[1]}` : (rawCategoryId || 'bloco1');
+        const elementId = getElementIdFromRating(categoryId, response.rating);
         
         return {
           elementId: elementId,
@@ -63,21 +65,28 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
   
   // Group elements by category
   const elementsByCategory = assembledElements.reduce((acc, element) => {
-    if (!acc[element.categoryId]) {
-      acc[element.categoryId] = [];
+    const key = element.categoryId || 'bloco1';
+    if (!acc[key]) {
+      acc[key] = [];
     }
-    acc[element.categoryId].push(element);
+    acc[key].push(element);
     return acc;
   }, {} as Record<string, typeof assembledElements>);
 
   // Calculate stats
   const totalElements = assembledElements.length;
-  const completedQuadrants = Object.keys(elementsByCategory).length;
   const totalQuadrants = newBlocks.length;
+  // Só contam quadrantes que realmente existem, senão o placar passava do total
+  const completedQuadrants = newBlocks.filter(b => (elementsByCategory[b.id]?.length ?? 0) > 0).length;
   
   // Calculate average level
-  const avgLevel = assembledElements.length > 0
-    ? assembledElements.reduce((sum, el) => sum + el.level, 0) / assembledElements.length
+  // Só entram na média os elementos que realmente têm nota. Avaliações salvas
+  // não guardam `level`, e somar undefined produzia NaN na tela.
+  // Number.isFinite e não `typeof === 'number'`: NaN é number e voltaria a
+  // contaminar a média (a tela mostrava "NaN").
+  const leveledElements = assembledElements.filter(el => Number.isFinite(el.level));
+  const avgLevel = leveledElements.length > 0
+    ? leveledElements.reduce((sum, el) => sum + (el.level as number), 0) / leveledElements.length
     : 0;
 
   const getPerformanceLabel = (avg: number) => {
@@ -170,7 +179,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
                   <div className="h-[203px] relative rounded-[10px] w-full border-2 border-slate-200 p-[26px] flex items-center justify-around gap-[20px]">
                     {elements.length > 0 ? (
                       elements.map((element, idx) => (
-                        <div key={idx} className="flex flex-col items-center gap-[8px] flex-1 max-w-[200px]">
+                        <div key={`${element.elementId || 'el'}-${idx}`} className="flex flex-col items-center gap-[8px] flex-1 max-w-[200px]">
                           {/* Element Icon/Shape Preview */}
                           <div className="h-[90px] flex items-center justify-center">
                             <div 
@@ -186,7 +195,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
                           
                           {/* Element Name */}
                           <p className="font-['Arial:Regular',sans-serif] text-[12px] text-[#45556c] text-center line-clamp-2">
-                            {element.name}
+                            {element.name || element.elementId || 'Elemento sem nome'}
                           </p>
                           
                           {/* Level Badge */}
@@ -195,7 +204,7 @@ export function ConstructionPreview({ evaluation, onBack, onCreateBuilding }: Co
                             style={{ backgroundColor: category.color }}
                           >
                             <p className="font-['Arial:Regular',sans-serif] text-[12px] text-white">
-                              Nível {element.level}
+                              Nível {element.level ?? '—'}
                             </p>
                           </div>
                         </div>

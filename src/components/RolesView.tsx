@@ -3,6 +3,7 @@ import { Role } from '../types';
 import { storage } from '../lib/storage';
 import { Trash2, Edit, Edit2, UserCheck, Users, User, ArrowLeft, FileText, Building2, Plus, Filter, ListChecks, FileDown } from 'lucide-react';
 import { exportRoleToPDF } from '../lib/pdfExport';
+import { toast } from 'sonner';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { DS, Card } from './DesignSystem';
 import svgPaths from "../imports/svg-dp9vj8g4zf";
@@ -40,6 +41,16 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
     }
   };
 
+  // Exportação pode falhar (PDF/geração): avisa o usuário em vez de quebrar a tela
+  const handleExportPDF = (role: Role) => {
+    try {
+      exportRoleToPDF(role);
+    } catch (error) {
+      console.error(error);
+      toast.error('Não foi possível gerar o PDF deste cargo.');
+    }
+  };
+
   const handleAddNewRole = () => {
     onEditRole({ 
       id: '', 
@@ -64,8 +75,9 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
         </div>
         <nav className="relative flex items-center justify-between px-6 lg:px-[158.5px] py-[16px] h-[81px] border-b border-white/10 backdrop-blur-sm bg-black/10">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={onBack} 
+            <button
+              onClick={onBack}
+              aria-label="Voltar"
               className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/10 transition-all text-white"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -86,9 +98,10 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
       {/* MAIN CONTENT */}
       <main className="relative z-10 max-w-[1417px] mx-auto px-6 lg:px-[182.5px] pt-[48px] pb-24 space-y-12">
         {/* FILTERS / TABS */}
-        <div className="flex bg-white p-1 rounded-2xl border border-[#e2e8f0] w-fit shadow-sm">
+        <div role="group" aria-label="Filtrar cargos por tipo" className="flex bg-white p-1 rounded-2xl border border-[#e2e8f0] w-fit shadow-sm">
           <button
             onClick={() => setFilterType('all')}
+            aria-pressed={filterType === 'all'}
             className={`h-10 px-6 rounded-xl text-sm font-bold transition-all ${
               filterType === 'all' 
                 ? 'bg-[#f1f5f9] text-[#6155f5]' 
@@ -99,6 +112,7 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
           </button>
           <button
             onClick={() => setFilterType('leadership')}
+            aria-pressed={filterType === 'leadership'}
             className={`h-10 px-6 rounded-xl text-sm font-bold transition-all ${
               filterType === 'leadership' 
                 ? 'bg-[#f1f5f9] text-[#6155f5]' 
@@ -109,6 +123,7 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
           </button>
           <button
             onClick={() => setFilterType('collaborator')}
+            aria-pressed={filterType === 'collaborator'}
             className={`h-10 px-6 rounded-xl text-sm font-bold transition-all ${
               filterType === 'collaborator' 
                 ? 'bg-[#f1f5f9] text-[#6155f5]' 
@@ -125,26 +140,41 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
             <div className="bg-[#f8fafc] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8">
               <User className="w-10 h-10 text-slate-200" />
             </div>
-            <h3 className="text-[24px] font-bold text-[#1d293d] tracking-[-0.6px] mb-4">Nenhum cargo configurado</h3>
+            <h3 className="text-[24px] font-bold text-[#1d293d] tracking-[-0.6px] mb-4">
+              {roles.length === 0 ? 'Nenhum cargo configurado' : 'Nenhum cargo neste filtro'}
+            </h3>
             <p className="text-[#45556c] text-[14px] leading-[22.75px] max-w-[320px] mx-auto mb-10">
-              Defina as responsabilidades e indicadores para os cargos da sua organização.
+              {roles.length === 0
+                ? 'Defina as responsabilidades e indicadores para os cargos da sua organização.'
+                : 'Nenhum cargo corresponde ao filtro selecionado. Escolha outro tipo ou crie um novo cargo.'}
             </p>
-            <button 
-              onClick={handleAddNewRole}
+            <button
+              onClick={roles.length === 0 ? handleAddNewRole : () => setFilterType('all')}
               className="mx-auto bg-[#0f172b] h-[44px] px-8 rounded-[16px] text-white text-[14px] font-bold shadow-md hover:bg-[#1a2642] transition-all flex items-center justify-center gap-2 active:scale-95"
             >
-              Criar primeiro cargo
+              {roles.length === 0 ? 'Criar primeiro cargo' : 'Ver todos os cargos'}
             </button>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRoles.map(role => {
+            {filteredRoles.map((role, roleIdx) => {
               const isLeadership = role.type === 'leadership';
-              
+
               return (
                 <div
-                  key={role.id}
+                  // Cargos importados podem vir sem id: garante chave única mesmo assim
+                  key={role.id || `role-idx-${roleIdx}`}
                   onClick={() => onViewRole?.(role.id)}
+                  // Card clicável precisa ser alcançável pelo teclado
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Abrir cargo ${role.name || 'sem nome'}`}
+                  onKeyDown={(e) => {
+                    if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault();
+                      onViewRole?.(role.id);
+                    }
+                  }}
                   className="group relative bg-white border border-[#f1f5f9] rounded-[24px] shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer overflow-hidden flex flex-col"
                 >
                   <div 
@@ -157,7 +187,7 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
                     <div className="flex justify-between items-start mb-8">
                       <div className="space-y-2">
                         <h2 className="text-[20px] font-black text-[#0f172b] group-hover:text-[#6155f5] transition-colors leading-tight line-clamp-2 pr-2">
-                          {role.name}
+                          {role.name || 'Cargo sem nome'}
                         </h2>
                         <div className="inline-flex items-center px-3 py-1 rounded-[10px] bg-[#f1f5f9] border border-[#e2e8f0] text-[#45556c] text-[14px] font-bold tracking-tight">
                           {isLeadership ? 'Liderança' : 'Associado'}
@@ -176,7 +206,7 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
                           <span className="text-[14px] font-bold">Indicadores</span>
                         </div>
                         <div className="bg-[#f1f5f9] px-2 py-0.5 rounded-[4px] text-[14px] font-bold text-[#0f172b]">
-                          {role.questionIds.length}
+                          {role.questionIds?.length || 0}
                         </div>
                       </div>
                       
@@ -191,7 +221,7 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
                       </div>
                     </div>
 
-                    <div className="mt-auto pt-6 border-t border-slate-50 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="mt-auto pt-6 border-t border-slate-50 flex items-center gap-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-all duration-300">
                       <button
                         onClick={(e) => { e.stopPropagation(); onEditRole(role); }}
                         className="flex-1 h-9 rounded-xl bg-[#f1f5f9] text-[#6155f5] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#6155f5] hover:text-white transition-all"
@@ -200,9 +230,10 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
                         Configurar
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); exportRoleToPDF(role); }}
+                        onClick={(e) => { e.stopPropagation(); handleExportPDF(role); }}
                         className="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-green-50 hover:text-green-600 transition-all"
                         title="Exportar PDF"
+                        aria-label={`Exportar PDF do cargo ${role.name || 'sem nome'}`}
                       >
                         <FileDown className="w-4 h-4" />
                       </button>
@@ -210,6 +241,7 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
                         onClick={(e) => { e.stopPropagation(); handleDelete(role); }}
                         className="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all"
                         title="Excluir cargo"
+                        aria-label={`Excluir cargo ${role.name || 'sem nome'}`}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
