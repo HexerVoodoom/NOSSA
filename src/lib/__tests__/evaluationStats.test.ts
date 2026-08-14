@@ -135,3 +135,38 @@ describe('evaluationStats — média única para galeria, detalhe e PDF', () => 
     expect(computeFlatAverage([])).toBeNull();
   });
 });
+
+// O PDF é o documento que chega ao colaborador. Ele mantinha a QUARTA cópia do
+// cálculo — enquanto galeria e detalhe divergiam, o PDF podia divergir de ambos.
+// Agora consome computeEvaluationStats; este teste trava a equivalência com a
+// fórmula que o PDF usava, para que apontar ao módulo não tenha mudado o número.
+describe('paridade com a fórmula que o PDF usava', () => {
+  it('média das médias por bloco confere com o cálculo manual antigo', () => {
+    const questions = [
+      { id: 'q1', categoryId: 'bloco1', text: '', order: 0, type: 'statement' as const },
+      { id: 'q2', categoryId: 'bloco1', text: '', order: 1, type: 'statement' as const },
+      { id: 'q3', categoryId: 'bloco2', text: '', order: 0, type: 'statement' as const },
+    ];
+    const responses = [
+      { questionId: 'q1', keywords: ['', '', ''] as [string, string, string], rating: 5, selectedElementId: '' },
+      { questionId: 'q2', keywords: ['', '', ''] as [string, string, string], rating: 3, selectedElementId: '' },
+      { questionId: 'q3', keywords: ['', '', ''] as [string, string, string], rating: 2, selectedElementId: '' },
+    ];
+
+    const { categoryStats, overallAverage } = computeEvaluationStats({
+      responses,
+      evaluationType: 'tradicional',
+      questions,
+    });
+
+    // Réplica literal do que pdfExport fazia antes.
+    const antigo = parseFloat(
+      (categoryStats.reduce((acc, s) => acc + s.averageRating, 0) / categoryStats.length).toFixed(2)
+    );
+
+    expect(overallAverage).toBe(antigo);
+    // bloco1 = (5+3)/2 = 4 ; bloco2 = 2 ; média das médias = 3
+    // (a média simples das notas seria 3.33 — a diferença é o trade-off documentado)
+    expect(overallAverage).toBe(3);
+  });
+});

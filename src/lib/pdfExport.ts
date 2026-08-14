@@ -2,6 +2,7 @@ import { SavedWork, Member, Role } from '../types';
 import { storage } from './storage';
 import { newBlocks } from './newBlocks';
 import { getAllQuestionsFromCompetencies } from './competencyHelpers';
+import { computeEvaluationStats } from './evaluationStats';
 
 // Imagens para o PDF
 import imgLogoTortola from "figma:asset/0049d96aabf7ea4e2a663d5f83ebd360cb225dfd.png";
@@ -83,44 +84,14 @@ export async function exportToPDF(work: SavedWork, collaborator: Member | null) 
   `;
 
   // Calcular estatísticas por categoria
-  const categoryStats = (work.evaluationType === 'atividades'
-    ? [{ id: 'activities-block', name: 'Avaliação de Atividades', order: 1, color: '#34d399' }]
-    : categories
-  ).map(category => {
-    const responsesInCategory = work.responses.filter(r => {
-      // Para atividades
-      if (work.evaluationType === 'atividades') {
-        const activity = role?.activities?.find(a => a.id === r.questionId);
-        return activity !== undefined && category.id === 'activities-block';
-      }
-
-      const question = allQuestions.find(q => q.id === r.questionId) ||
-                      role?.customQuestions?.find(q => q.id === r.questionId);
-      
-      if (!question || question.categoryId !== category.id) return false;
-
-      // Filtrar baseado no tipo de avaliação
-      if (work.evaluationType === 'tradicional' && question.type === 'dialogic') return false;
-      if (work.evaluationType === 'dialogica' && question.type === 'statement') return false;
-
-      return true;
-    });
-    
-    const totalRating = responsesInCategory.reduce((sum, r) => sum + (r.rating || 0), 0);
-    const averageRating = responsesInCategory.length > 0 ? totalRating / responsesInCategory.length : 0;
-    
-    return {
-      category,
-      totalQuestions: responsesInCategory.length,
-      averageRating: parseFloat(averageRating.toFixed(2)),
-      responses: responsesInCategory,
-    };
-  }).filter(stat => stat.totalQuestions > 0);
-
-  // Média Geral em destaque
-  const overallAverage = categoryStats.length > 0 
-    ? parseFloat((categoryStats.reduce((sum, stat) => sum + stat.averageRating, 0) / categoryStats.length).toFixed(2))
-    : 0;
+  // Usa a MESMA fonte da tela (lib/evaluationStats). Este arquivo tinha a quarta
+  // cópia do cálculo: enquanto a galeria divergia do detalhe, o PDF — que é o
+  // documento que chega às mãos do colaborador — podia divergir de ambos.
+  const { categoryStats, overallAverage } = computeEvaluationStats({
+    responses: work.responses,
+    evaluationType: work.evaluationType,
+    questions: [...allQuestions, ...(role?.customQuestions || [])],
+  });
 
   const getEvaluationTypeLabel = (type?: string) => {
     switch (type) {
