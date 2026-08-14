@@ -15,6 +15,7 @@ import { EvaluationSummary } from './components/EvaluationSummary';
 import { AssemblyViewReadOnly } from './components/AssemblyViewReadOnly';
 import { WorkDetail } from './components/WorkDetail';
 import { CompetenciesView } from './components/CompetenciesView';
+import { AccessManagement } from './components/AccessManagement';
 import { ElementsLibrary } from './components/ElementsLibrary';
 import { TutorialView } from './components/TutorialView';
 import { Role, Member, Evaluation, SavedWork, EvaluationType } from './types';
@@ -29,6 +30,7 @@ type AppView =
   | { type: 'element-upload' }
   | { type: 'competencies' }
   | { type: 'tutorial' }
+  | { type: 'access-management' }
   | { type: 'role-editor'; role: Role }
   | { type: 'members' }
   | { type: 'member-form'; member: Member | null }
@@ -51,6 +53,7 @@ const VIEW_LABELS: Record<AppView['type'], string> = {
   'element-upload': 'Upload de elementos',
   'competencies': 'Competências',
   'tutorial': 'Manual',
+  'access-management': 'Quem pode acessar',
   'role-editor': 'Editor de cargo',
   'members': 'Equipe',
   'member-form': 'Cadastro de membro',
@@ -188,7 +191,12 @@ export default function App() {
           onViewCompetencies={() => setView({ type: 'competencies' })}
           onViewElementUpload={() => setView({ type: 'element-upload' })}
           onViewTutorial={() => setView({ type: 'tutorial' })}
+          onViewAccessManagement={() => setView({ type: 'access-management' })}
         />
+      )}
+
+      {view.type === 'access-management' && (
+        <AccessManagement onBack={handleBackToHome} />
       )}
       
       {view.type === 'team-gallery' && (

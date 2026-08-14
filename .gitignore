@@ -4,6 +4,11 @@ dist/
 .DS_Store
 *.local
 
+# Variáveis de ambiente (credenciais do Supabase). .env.example é versionado.
+.env
+.env.*
+!.env.example
+
 # Saída do Playwright
 test-results/
 playwright-report/

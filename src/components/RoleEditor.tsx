@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Role, Activity, Competency, SavedWork } from '../types';
-import { storage } from '../lib/storage';
+import { storage, STORAGE_KEYS } from '../lib/storage';
+import { useStorageSync } from '../lib/useStorageSync';
 import { newBlocks as categories } from '../lib/newBlocks';
 import { DS, Card } from './DesignSystem';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
@@ -46,7 +47,7 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isActivitiesExpanded, setIsActivitiesExpanded] = useState(true);
 
-  useEffect(() => {
+  const loadCompetencies = () => {
     storage.initializeCompetencies();
     // Competências importadas podem vir sem `questions`: normaliza uma vez para o resto da tela
     const loadedCompetencies = storage.getCompetencies().map(comp => ({
@@ -62,7 +63,16 @@ export function RoleEditor({ role, onBack, onDelete }: RoleEditorProps) {
       });
     });
     setOriginalQuestionTexts(texts);
+  };
+
+  useEffect(() => {
+    loadCompetencies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role.id, isNew]);
+
+  // Competência editada em outra aba (ex: texto de uma pergunta) enquanto este
+  // cargo está aberto ficava desatualizada até um F5 manual.
+  useStorageSync([STORAGE_KEYS.COMPETENCIES], loadCompetencies);
 
   const totalSelectedItems = selectedQuestionIds.length;
 

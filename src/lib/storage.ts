@@ -3,7 +3,7 @@ import { traditionalCompetencies } from './newCompetencies';
 import { defaultRoles, getMissingDefaultRoles } from './defaultRoles';
 import { defaultLibrary } from './defaultLibrary';
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   ROLES: 'obra-viva-roles',
   EVALUATIONS: 'obra-viva-evaluations',
   CURRENT_EVALUATION: 'obra-viva-current-evaluation',
