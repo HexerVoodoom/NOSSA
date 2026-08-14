@@ -60,7 +60,7 @@ export function TutorialView({ onBack }: TutorialViewProps) {
                 <ul className="space-y-2 text-slate-700">
                   <li className="flex items-start gap-2">
                     <span className="text-[#6155f5] font-bold mt-0.5">•</span>
-                    <span><strong>Nova Avaliaç��o:</strong> Inicia o processo de avaliação de desempenho de um associado(a)</span>
+                    <span><strong>Nova Avaliação:</strong> Inicia o processo de avaliação de desempenho de um associado(a)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[#6155f5] font-bold mt-0.5">•</span>
