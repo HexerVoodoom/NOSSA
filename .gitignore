@@ -3,3 +3,12 @@ build/
 dist/
 .DS_Store
 *.local
+
+# Saída do Playwright
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# Rascunhos de exploração
+scratch-e2e/
