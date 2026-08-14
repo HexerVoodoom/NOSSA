@@ -489,6 +489,17 @@ export async function stopSync(): Promise<void> {
   // ruins: expõe dados da pessoa anterior e, no login seguinte, `applyPending`
   // reinjetaria essas linhas no cache de quem entrou — e `flushPending` as
   // gravaria no banco sob a identidade errada.
+  //
+  // Consequência assumida: sair com alterações ainda não enviadas descarta
+  // essas alterações. Segurança na máquina compartilhada vale mais do que
+  // preservá-las, mas o caso fica registrado para quem for investigar um
+  // relato de "salvei e sumiu".
+  const descartadas = pendingCount();
+  if (descartadas > 0) {
+    console.warn(
+      `${descartadas} alteração(ões) ainda não sincronizada(s) foram descartadas ao sair.`
+    );
+  }
   localStorage.removeItem(PENDING_KEY);
 
   // O backup guarda uma cópia completa de membros, avaliações e competências.
@@ -501,6 +512,9 @@ export async function stopSync(): Promise<void> {
   // Elementos enviados pelo próprio usuário. Não são dados de RH, mas são
   // conteúdo de quem estava logado e não têm por que sobrar para o próximo.
   localStorage.removeItem(CUSTOM_ELEMENTS_KEY);
+  // A migração para a chave canônica desiste sem apagar a antiga se o
+  // localStorage estiver cheio — aí ela sobreviveria ao logout.
+  localStorage.removeItem('custom-elements');
 
   // Sem zerar, um estouro de cota na sessão de alguém deixaria o aviso de
   // "sincronização pode estar quebrada" ligado para quem entrasse depois.

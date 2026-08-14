@@ -3,7 +3,7 @@ import type { Session } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured, AUTO_ALLOWED_DOMAIN } from '../lib/supabase/client';
 import { startSync, stopSync } from '../lib/supabase/sync';
 import { DS, Button, Card } from './DesignSystem';
-import { LogIn, ShieldAlert } from 'lucide-react';
+import { LogIn, ShieldAlert, CloudOff } from 'lucide-react';
 
 type SyncState = 'idle' | 'syncing' | 'ready' | 'denied' | 'unavailable';
 
@@ -228,10 +228,6 @@ function AccessDenied({ onRetry }: { onRetry: () => void }) {
             ferramenta. Peça a alguém que já usa a ferramenta para convidar seu
             e-mail — ou entre com um e-mail <strong>@{AUTO_ALLOWED_DOMAIN}</strong>.
           </p>
-          <p className="text-sm text-slate-600">
-            Se você já tem acesso, pode ser instabilidade na conexão com o
-            banco.
-          </p>
         </div>
         <div className="space-y-3">
           <Button onClick={onRetry} className="w-full">Tentar de novo</Button>
@@ -257,8 +253,10 @@ function Unavailable({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6 py-12">
       <Card className="w-full max-w-md space-y-6 text-center">
-        <div className="size-12 rounded-2xl bg-slate-900 flex items-center justify-center mx-auto">
-          <ShieldAlert className="size-6 text-white" aria-hidden="true" />
+        {/* Ícone e tom diferentes da tela de "sem acesso": aqui não é recusa,
+            é indisponibilidade — não há nada de errado com a conta. */}
+        <div className="size-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto">
+          <CloudOff className="size-6 text-slate-600" aria-hidden="true" />
         </div>
         <div className="space-y-2">
           <h1 className={DS.typography.section}>Sem conexão com o banco</h1>
@@ -271,7 +269,18 @@ function Unavailable({ onRetry }: { onRetry: () => void }) {
             guardado e é enviado quando a conexão voltar.
           </p>
         </div>
-        <Button onClick={onRetry} className="w-full">Tentar de novo</Button>
+        <div className="space-y-3">
+          <Button onClick={onRetry} className="w-full">Tentar de novo</Button>
+          {/* Sem esta saída, quem ficasse offline num computador compartilhado
+              não teria como encerrar a própria sessão pela interface. */}
+          <Button
+            variant="secondary"
+            onClick={() => { void supabase?.auth.signOut(); }}
+            className="w-full"
+          >
+            Sair
+          </Button>
+        </div>
       </Card>
     </div>
   );
