@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { SavedWork, Member } from '../types';
 import { storage } from '../lib/storage';
-import { DS, Button, Card } from './DesignSystem';
-import { ArrowLeft, FileText, Filter, X, Trash2, Calendar, User, ShieldCheck, ChevronRight, Download } from 'lucide-react';
+import { DS, Card } from './DesignSystem';
+import { ArrowLeft, FileText, Filter, Trash2, Calendar, User, Download } from 'lucide-react';
 import { exportToPDF } from '../lib/pdfExport';
 import { toast } from 'sonner@2.0.3';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
@@ -29,11 +29,41 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
     applyFilters();
   }, [evaluations, selectedRole, startDate, endDate]);
 
+  // createdAt é string ISO em runtime e pode estar ausente/corrompida em registros
+  // antigos: devolvemos NaN de forma controlada em vez de comparar Invalid Date.
+  const getTime = (value: Date | string | undefined): number => {
+    if (!value) return NaN;
+    return new Date(value).getTime();
+  };
+
+  const formatDate = (value: Date | string | undefined): string => {
+    const time = getTime(value);
+    return isNaN(time) ? '---' : new Date(time).toLocaleDateString('pt-BR');
+  };
+
+  // Um input type="date" devolve "AAAA-MM-DD", que new Date() interpreta como UTC.
+  // Em fusos negativos (BRT) isso jogava o filtro para o dia anterior.
+  const parseInputDate = (value: string, endOfDay: boolean): number => {
+    const [year, month, day] = value.split('-').map(Number);
+    if (!year || !month || !day) return NaN;
+    return endOfDay
+      ? new Date(year, month - 1, day, 23, 59, 59, 999).getTime()
+      : new Date(year, month - 1, day, 0, 0, 0, 0).getTime();
+  };
+
   const loadEvaluations = () => {
     const works = storage.getEvaluations();
     const sorted = works
       .filter(w => w.completed)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .sort((a, b) => {
+        // Datas inválidas vão para o fim em vez de gerar ordenação aleatória (NaN).
+        const timeA = getTime(a.createdAt);
+        const timeB = getTime(b.createdAt);
+        if (isNaN(timeA) && isNaN(timeB)) return 0;
+        if (isNaN(timeA)) return 1;
+        if (isNaN(timeB)) return -1;
+        return timeB - timeA;
+      });
     setEvaluations(sorted);
   };
 
@@ -41,14 +71,16 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
     let filtered = [...evaluations];
     if (selectedRole !== 'all') filtered = filtered.filter(work => work.roleId === selectedRole);
     if (startDate) {
-      const start = new Date(startDate);
-      start.setHours(0, 0, 0, 0);
-      filtered = filtered.filter(work => new Date(work.createdAt) >= start);
+      const start = parseInputDate(startDate, false);
+      if (!isNaN(start)) {
+        filtered = filtered.filter(work => getTime(work.createdAt) >= start);
+      }
     }
     if (endDate) {
-      const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
-      filtered = filtered.filter(work => new Date(work.createdAt) <= end);
+      const end = parseInputDate(endDate, true);
+      if (!isNaN(end)) {
+        filtered = filtered.filter(work => getTime(work.createdAt) <= end);
+      }
     }
     setFilteredEvaluations(filtered);
   };
@@ -59,32 +91,9 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
     return roles.filter(r => uniqueRoleIds.includes(r.id));
   };
 
-  const hasActiveFilters = selectedRole !== 'all' || startDate !== '' || endDate !== '';
-
   const getCollaboratorInfo = (work: SavedWork): Member | null => {
     const members = storage.getMembers();
     return members.find(m => m.id === work.collaboratorId) || null;
-  };
-
-  const getSectionScore = (work: SavedWork, categoryId: string): number => {
-    const roles = storage.getRoles();
-    const role = roles.find(ro => ro.id === work.roleId);
-    if (work.evaluationType === 'atividades') {
-      if (categoryId !== 'activities-block') return 0;
-      const activityResponses = work.responses.filter(r => role?.activities?.some(a => a.id === r.questionId));
-      if (activityResponses.length === 0) return 0;
-      return activityResponses.reduce((acc, r) => acc + r.rating, 0) / activityResponses.length;
-    }
-    const allQuestions = [...(storage.getCompetencies()?.flatMap(c => c.questions) || []), ...(role?.customQuestions || [])];
-    const sectionResponses = work.responses.filter(r => {
-      const question = allQuestions.find(q => q.id === r.questionId);
-      if (!question || question.categoryId !== categoryId) return false;
-      if (work.evaluationType === 'tradicional' && question.type === 'dialogic') return false;
-      if (work.evaluationType === 'dialogica' && question.type === 'statement') return false;
-      return true;
-    });
-    if (sectionResponses.length === 0) return 0;
-    return sectionResponses.reduce((acc, r) => acc + r.rating, 0) / sectionResponses.length;
   };
 
   const handleExportPDF = (work: SavedWork, e: React.MouseEvent) => {
@@ -168,21 +177,26 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEvaluations.map((work) => {
-              const score = work.responses.reduce((s, r) => s + r.rating, 0) / work.responses.length;
+              // Sem essa guarda, uma avaliação sem respostas gera 0/0 = NaN e o card
+              // mostra "NaN" como média.
+              const workResponses = Array.isArray(work.responses) ? work.responses : [];
+              const score = workResponses.length > 0
+                ? workResponses.reduce((s, r) => s + (r.rating || 0), 0) / workResponses.length
+                : null;
               const badge = getEvaluationTypeBadge(work.evaluationType);
               return (
                 <Card key={work.id} interactive onClick={() => onViewWork(work)} className="group p-0 overflow-hidden flex flex-col h-full border border-slate-100">
                   <div className="bg-slate-900 p-6 text-white relative">
                     <div className="absolute top-6 right-6 text-right">
-                      <p className="text-2xl font-black tracking-tighter leading-none">{score.toFixed(1)}</p>
+                      <p className="text-2xl font-black tracking-tighter leading-none">{score !== null ? score.toFixed(1) : '---'}</p>
                       <p className="text-[10px] font-bold opacity-40 uppercase">Média</p>
                     </div>
                     <div className="space-y-1">
                       <div className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold border ${badge.color} mb-2`}>
                         {badge.label}
                       </div>
-                      <h3 className="text-xl font-black tracking-tighter leading-tight truncate pr-16">{work.collaboratorName}</h3>
-                      <p className="text-white/40 text-[13px] font-bold">{work.roleName}</p>
+                      <h3 className="text-xl font-black tracking-tighter leading-tight truncate pr-16">{work.collaboratorName || '---'}</h3>
+                      <p className="text-white/40 text-[13px] font-bold">{work.roleName || '---'}</p>
                     </div>
                   </div>
 
@@ -190,11 +204,11 @@ export function TeamGallery({ onBack, onViewWork, onStartEvaluation }: TeamGalle
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-slate-500">
                         <User className="size-3.5" />
-                        <span className="text-[13px] font-bold truncate">Líder: {work.leaderName}</span>
+                        <span className="text-[13px] font-bold truncate">Líder: {work.leaderName || '---'}</span>
                       </div>
                       <div className="flex items-center gap-2 text-slate-500">
                         <Calendar className="size-3.5" />
-                        <span className="text-[13px] font-bold">{new Date(work.createdAt).toLocaleDateString('pt-BR')}</span>
+                        <span className="text-[13px] font-bold">{formatDate(work.createdAt)}</span>
                       </div>
                     </div>
 

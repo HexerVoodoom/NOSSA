@@ -4,17 +4,15 @@ import { storage } from '../lib/storage';
 import { newBlocks as categories } from '../lib/newBlocks';
 import { getAllQuestionsFromCompetencies } from '../lib/competencyHelpers';
 import { exportToPDF } from '../lib/pdfExport';
-import { DS, Button } from './DesignSystem';
-import { 
-  ArrowLeft, 
-  Download, 
-  User, 
-  Award, 
-  BarChart3, 
-  ChevronUp, 
-  ChevronDown, 
-  FileText,
-  Calendar 
+import {
+  ArrowLeft,
+  Download,
+  User,
+  Award,
+  BarChart3,
+  ChevronUp,
+  ChevronDown,
+  FileText
 } from 'lucide-react';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
 
@@ -29,12 +27,28 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
   const role = roles.find(r => r.id === work.roleId);
   const allQuestions = getAllQuestionsFromCompetencies();
 
+  // Avaliações antigas/importadas podem não ter respostas gravadas: normalizamos
+  // para não estourar em .filter/.flatMap de um valor undefined.
+  const responses = Array.isArray(work.responses) ? work.responses : [];
+
+  // As palavras-chave também podem faltar em registros legados.
+  const safeKeywords = (r: { keywords?: string[] }): string[] =>
+    Array.isArray(r.keywords) ? r.keywords.filter(k => k && k.trim() !== '') : [];
+
+  // createdAt é string ISO em runtime; se vier inválida, evita "Invalid Date" na tela.
+  const formatDate = (value: Date | string | undefined, options?: Intl.DateTimeFormatOptions): string => {
+    if (!value) return '---';
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return '---';
+    return d.toLocaleDateString('pt-BR', options);
+  };
+
   // Calcular estatísticas por categoria
   const categoryStats = (work.evaluationType === 'atividades'
     ? [{ id: 'activities-block', name: 'Avaliação de Atividades', order: 1, color: '#34d399' }]
     : categories
   ).map(category => {
-    const responsesInCategory = work.responses.filter(r => {
+    const responsesInCategory = responses.filter(r => {
       // Para atividades
       if (work.evaluationType === 'atividades') {
         const activity = role?.activities?.find(a => a.id === r.questionId);
@@ -78,7 +92,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
   const totalQuestions = categoryStats.reduce((sum, stat) => sum + stat.totalQuestions, 0);
 
   // Palavras-chave mais mencionadas (filtradas pelo tipo)
-  const allKeywords = work.responses.flatMap(r => {
+  const allKeywords = responses.flatMap(r => {
     // Buscar tipo da pergunta
     const allQs = [...(role?.customQuestions || []), ...allQuestions];
     const question = allQs.find(q => q.id === r.questionId);
@@ -90,7 +104,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
     if (work.evaluationType === 'atividades') {
       const activity = role?.activities?.find(a => a.id === r.questionId);
       if (!activity) return [];
-      return r.keywords.filter(k => k && k.trim() !== '');
+      return safeKeywords(r);
     }
 
     if (!question) return [];
@@ -103,7 +117,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
       return [];
     }
 
-    return r.keywords.filter(k => k && k.trim() !== '');
+    return safeKeywords(r);
   });
   const keywordCount: Record<string, number> = {};
   allKeywords.forEach(keyword => {
@@ -245,7 +259,7 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                 <div>
                   <p className="text-slate-500">Data da Avaliação</p>
                   <p className="font-semibold text-slate-900">
-                    {new Date(work.createdAt).toLocaleDateString('pt-BR', {
+                    {formatDate(work.createdAt, {
                       day: '2-digit',
                       month: 'long',
                       year: 'numeric'
@@ -271,19 +285,19 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-slate-500">Associado(a)</p>
-                  <p className="font-semibold text-slate-900">{work.collaboratorName}</p>
+                  <p className="font-semibold text-slate-900">{work.collaboratorName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Líder</p>
-                  <p className="font-semibold text-slate-900">{work.leaderName}</p>
+                  <p className="font-semibold text-slate-900">{work.leaderName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Cargo</p>
-                  <p className="font-semibold text-slate-900">{work.roleName}</p>
+                  <p className="font-semibold text-slate-900">{work.roleName || '---'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Data</p>
-                  <p className="font-semibold text-slate-900">{new Date(work.createdAt).toLocaleDateString('pt-BR')}</p>
+                  <p className="font-semibold text-slate-900">{formatDate(work.createdAt)}</p>
                 </div>
                 <div>
                   <p className="text-slate-500">Total de Perguntas</p>
@@ -431,13 +445,13 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
                             : (allQuestions.find(q => q.id === response.questionId) ||
                                role?.customQuestions?.find(q => q.id === response.questionId))?.text;
                           
-                          const keywords = response.keywords.filter(k => k && k.trim() !== '');
-                          
+                          const keywords = safeKeywords(response);
+
                           if (!questionText) return null;
                           
                           return (
                             <div 
-                              key={response.questionId}
+                              key={`${response.questionId}-${idx}`}
                               className="p-3 bg-white rounded-lg border border-slate-200"
                             >
                               <div className="flex items-start justify-between gap-3 mb-2">
