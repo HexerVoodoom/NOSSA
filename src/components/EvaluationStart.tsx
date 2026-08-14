@@ -260,10 +260,19 @@ export function EvaluationStart({ onStart, onBack, onAddMember }: EvaluationStar
     startEval(type);
   };
 
-  // Tabindex rotativo: o grupo inteiro é UMA parada de Tab.
+  // Tabindex rotativo: o grupo inteiro é UMA parada de Tab, e o `tabIndex={0}`
+  // SEGUE O FOCO. Derivar isso de `selectedMethod` não funciona: aqui as setas
+  // movem o foco sem selecionar (selecionar inicia a avaliação), então o ponto
+  // de entrada ficava congelado na primeira opção enquanto o usuário estava na
+  // segunda — que tem tabIndex -1. Com o foco num elemento fora da ordem de
+  // tabulação, o Chrome perde a referência: Tab e Shift+Tab jogam o foco em
+  // document.body e o usuário de teclado fica preso no topo do documento.
+  // Reproduzido no browser; travado por e2e/keyboard.spec.ts.
+  const [focusedMethod, setFocusedMethod] = useState<EvaluationType | null>(null);
   const methodTabIndex = (type: EvaluationType) => {
-    const current = selectedMethod && enabledMethodologies.includes(selectedMethod)
-      ? selectedMethod
+    const candidate = focusedMethod ?? selectedMethod;
+    const current = candidate && enabledMethodologies.includes(candidate)
+      ? candidate
       : enabledMethodologies[0];
     return type === current ? 0 : -1;
   };
@@ -280,6 +289,7 @@ export function EvaluationStart({ onStart, onBack, onAddMember }: EvaluationStar
     else if (e.key === 'End') next = list[list.length - 1];
     if (!next) return;
     e.preventDefault();
+    setFocusedMethod(next);
     methodRefs.current[next]?.focus();
   };
 
@@ -289,6 +299,9 @@ export function EvaluationStart({ onStart, onBack, onAddMember }: EvaluationStar
     'aria-checked': selectedMethod === type,
     tabIndex: methodTabIndex(type),
     onKeyDown: handleMethodKeyDown(type),
+    // O ponto de entrada acompanha o foco venha ele de onde vier (Tab, seta,
+    // mouse) — nunca fica um `tabIndex={0}` apontando para outra opção.
+    onFocus: () => setFocusedMethod(type),
   });
 
   return (

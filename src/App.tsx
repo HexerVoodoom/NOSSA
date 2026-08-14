@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Toaster } from './components/ui/sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { HomePage } from './components/HomePage';
@@ -150,7 +150,23 @@ export default function App() {
   const handleEditRole = (role: Role) => {
     setView({ type: 'role-editor', role });
   };
-  
+
+  // Foco após troca de tela. Sem isto, o elemento acionado desaparece junto com
+  // a tela antiga e o foco cai em document.body: verificado no browser em TODAS
+  // as navegações (home -> nova avaliação, metodologia -> questionário,
+  // questionário -> resumo, resumo -> galeria, galeria -> avaliação salva).
+  // Quem usa teclado é largado no topo do documento e só volta ao conteúdo
+  // tabulando por tudo de novo. Movemos o foco para a região da tela nova, que
+  // é o começo natural dela. Não movemos na primeira carga — aí o foco já está
+  // no lugar certo e roubá-lo atrapalharia o leitor de tela.
+  const viewRef = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return; }
+    viewRef.current?.focus();
+  }, [view.type]);
+
+
   return (
     <div className="relative min-h-screen">
       <Toaster position="top-center" />
@@ -158,6 +174,7 @@ export default function App() {
       <div aria-live="polite" role="status" className="sr-only">
         {VIEW_LABELS[view.type]}
       </div>
+      <div ref={viewRef} tabIndex={-1} className="outline-none">
       <ErrorBoundary>
       {view.type === 'home' && (
         <HomePage
@@ -312,6 +329,7 @@ export default function App() {
         />
       )}
       </ErrorBoundary>
+      </div>
     </div>
   );
 }

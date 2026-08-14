@@ -240,13 +240,16 @@ test.describe('Metodologias dialógica e atividades', () => {
     await page.locator('button', { hasText: 'Ver Obra Montada' }).click();
     await expect(page.getByText('Visualização da Obra')).toBeVisible();
 
+    // Uma avaliação de ATIVIDADES não tem bloco correspondente, então não gera
+    // obra. Antes isso desenhava 25 lajes idênticas achatadas numa linha de 1px;
+    // agora a tela diz que não há obra e o canvas fica oculto. Este teste
+    // verifica exatamente essa honestidade — o canvas NÃO deve estar visível.
+    await expect(page.getByText(/não gera obra montada/i)).toBeVisible();
+    await expect(page.locator('.diamond-mesh-container').first()).toBeHidden();
+
     const art = await readArtwork(page);
-    await page.locator('.diamond-mesh-container').first()
-      .screenshot({ path: path.join(OUT, 'artwork-atividades.png') });
-    // Sem asserção de "tem elementos": o ponto é registrar o que aparece.
-    console.log('[atividades] elementos na obra:', art ? art.items.length : 'sem canvas');
-    console.log('[atividades] códigos:', JSON.stringify([...new Set((art?.items || []).map(i => i.code))]));
-    console.log('[atividades] tamanhos:', JSON.stringify([...new Set((art?.items || []).map(i => `${Math.round(i.w)}x${Math.round(i.h)}`))]));
+    expect(art?.items.length ?? 0, 'atividades não deve desenhar elemento algum').toBe(0);
+    await page.screenshot({ path: path.join(OUT, 'artwork-atividades.png') });
 
     expect(failures.pageErrors).toEqual([]);
     expect(failures.consoleErrors).toEqual([]);
