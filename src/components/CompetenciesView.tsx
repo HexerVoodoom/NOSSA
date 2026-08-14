@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Competency } from '../types';
 import { newBlocks as categories } from '../lib/newBlocks';
-import { storage } from '../lib/storage';
+import { storage, STORAGE_KEYS } from '../lib/storage';
+import { useStorageSync } from '../lib/useStorageSync';
 import { DS, Button, Card } from './DesignSystem';
 import { 
   ArrowLeft, 
@@ -72,6 +73,8 @@ export function CompetenciesView({ onBack }: CompetenciesViewProps) {
   useEffect(() => {
     setAllCompetencies(storage.getCompetencies());
   }, []);
+
+  useStorageSync([STORAGE_KEYS.COMPETENCIES], () => setAllCompetencies(storage.getCompetencies()));
 
   // Esc fecha o modal — sem isso ele só podia ser dispensado com o mouse.
   useEffect(() => {

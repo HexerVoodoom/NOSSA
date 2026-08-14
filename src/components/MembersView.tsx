@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useId } from 'react';
 import { Member } from '../types';
-import { storage } from '../lib/storage';
+import { storage, STORAGE_KEYS } from '../lib/storage';
+import { useStorageSync } from '../lib/useStorageSync';
 import { activationProps, focusRing } from './DesignSystem';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { 
@@ -34,6 +35,10 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
     setMembers(storage.getMembers());
   };
 
+  // Cargos editados em outra aba (ex: nome/tipo do cargo) mudam o rótulo de
+  // liderança exibido aqui; membros criados/editados noutra aba também.
+  useStorageSync([STORAGE_KEYS.MEMBERS, STORAGE_KEYS.ROLES], loadMembers);
+
   // Mapa cargo -> é liderança, calculado uma única vez por render de lista
   const leadershipByPosition = useMemo(() => {
     const map = new Map<string, boolean>();
@@ -43,11 +48,12 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
     return map;
   }, [members]);
 
-  const formatStartDate = (date: Date | string): string => {
+  const formatStartDate = (date: Date | string, precision?: 'day' | 'month' | 'year'): string => {
     const d = new Date(date);
     // Datas vindas do localStorage/import podem ser inválidas: sem a guarda o
     // card exibia "undefined. NaN".
     if (Number.isNaN(d.getTime())) return '---';
+    if (precision === 'year') return String(d.getFullYear());
     const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
     return `${months[d.getMonth()]}. ${d.getFullYear()}`;
   };
@@ -211,7 +217,7 @@ export function MembersView({ onBack, onViewMember, onEditMember }: MembersViewP
                         <span className="text-sm text-slate-400 font-medium italic">Admissão</span>
                       </div>
                       <span className="text-sm font-bold text-slate-900">
-                        {member.startDate ? formatStartDate(member.startDate) : '---'}
+                        {member.startDate ? formatStartDate(member.startDate, member.startDatePrecision) : '---'}
                       </span>
                     </div>
                   </div>

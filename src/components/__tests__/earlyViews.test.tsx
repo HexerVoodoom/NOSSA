@@ -156,6 +156,72 @@ describe('MemberForm — criação vs edição', () => {
     expect(d.getMonth()).toBe(2);
     expect(d.getDate()).toBe(10);
   });
+
+  it('[regressão] "Início na Empresa" aceita só o ano quando o dia não é conhecido', () => {
+    seed([]);
+    const { container } = render(
+      <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
+    );
+    const textInputs = container.querySelectorAll('input[type="text"]');
+    fireEvent.change(textInputs[0], { target: { value: 'Ana' } });
+
+    const precisionSelect = screen.getByLabelText('Precisão da data de início na empresa');
+    fireEvent.change(precisionSelect, { target: { value: 'year' } });
+    const yearInput = container.querySelector('input[type="number"]') as HTMLInputElement;
+    fireEvent.change(yearInput, { target: { value: '2019' } });
+
+    fireEvent.click(screen.getByText('Escolha um cargo configurado...'));
+    fireEvent.click(screen.getByText('Analista'));
+    fireEvent.click(screen.getByText('Adicionar Membro'));
+
+    const saved = storage.getMembers()[0];
+    expect(saved.startDatePrecision).toBe('year');
+    const d = new Date(saved.startDate as unknown as string);
+    expect(d.getFullYear()).toBe(2019);
+  });
+
+  it('[regressão] "Início na Empresa" aceita só mês e ano', () => {
+    seed([]);
+    const { container } = render(
+      <MemberForm member={null} onBack={() => {}} onSave={() => {}} />
+    );
+    const textInputs = container.querySelectorAll('input[type="text"]');
+    fireEvent.change(textInputs[0], { target: { value: 'Ana' } });
+
+    const precisionSelect = screen.getByLabelText('Precisão da data de início na empresa');
+    fireEvent.change(precisionSelect, { target: { value: 'month' } });
+    const monthInput = container.querySelector('input[type="month"]') as HTMLInputElement;
+    fireEvent.change(monthInput, { target: { value: '2020-05' } });
+
+    fireEvent.click(screen.getByText('Escolha um cargo configurado...'));
+    fireEvent.click(screen.getByText('Analista'));
+    fireEvent.click(screen.getByText('Adicionar Membro'));
+
+    const saved = storage.getMembers()[0];
+    expect(saved.startDatePrecision).toBe('month');
+    const d = new Date(saved.startDate as unknown as string);
+    expect(d.getFullYear()).toBe(2020);
+    expect(d.getMonth()).toBe(4);
+  });
+});
+
+describe('MembersView/RolesView — sincronização entre abas', () => {
+  it('[regressão] competência/cargo/membro editado em outra aba atualiza a lista sem F5', () => {
+    seed([{ id: 'm1', firstName: 'Ana', position: 'Analista', createdAt: '2024-01-01' }]);
+    render(<MembersView onBack={() => {}} onEditMember={() => {}} />);
+    expect(screen.getByText('Ana')).toBeTruthy();
+    expect(screen.queryByText('Bia')).toBeNull();
+
+    // Simula uma escrita em outra aba: o evento `storage` nativo só dispara
+    // nas OUTRAS abas, então disparamos manualmente como o browser faria.
+    seed([
+      { id: 'm1', firstName: 'Ana', position: 'Analista', createdAt: '2024-01-01' },
+      { id: 'm2', firstName: 'Bia', position: 'Analista', createdAt: '2024-01-01' },
+    ]);
+    fireEvent(window, new StorageEvent('storage', { key: 'obra-viva-members' }));
+
+    expect(screen.getByText('Bia')).toBeTruthy();
+  });
 });
 
 describe('EvaluationStart — dados malformados', () => {

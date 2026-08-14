@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Member, SavedWork } from '../types';
-import { storage } from '../lib/storage';
+import { storage, STORAGE_KEYS } from '../lib/storage';
+import { useStorageSync } from '../lib/useStorageSync';
 import { DS, Card } from './DesignSystem';
 import { 
   ArrowLeft, 
@@ -41,10 +42,10 @@ export function MemberDetail({ memberId, onBack, onEditMember, onViewWork }: Mem
   const [member, setMember] = useState<Member | null>(null);
   const [evaluations, setEvaluations] = useState<SavedWork[]>([]);
   
-  useEffect(() => {
+  const load = () => {
     const foundMember = storage.getMembers().find(m => m.id === memberId);
     setMember(foundMember || null);
-    
+
     if (foundMember) {
       const allEvaluations = storage.getEvaluations();
       const memberEvaluations = allEvaluations.filter(
@@ -52,7 +53,13 @@ export function MemberDetail({ memberId, onBack, onEditMember, onViewWork }: Mem
       );
       setEvaluations(memberEvaluations);
     }
-  }, [memberId]);
+  };
+
+  useEffect(load, [memberId]);
+
+  // Membro editado ou avaliação concluída em outra aba ficava desatualizada
+  // nesta tela até um F5 manual.
+  useStorageSync([STORAGE_KEYS.MEMBERS, STORAGE_KEYS.EVALUATIONS], load);
   
   if (!member) {
     return (
@@ -69,12 +76,14 @@ export function MemberDetail({ memberId, onBack, onEditMember, onViewWork }: Mem
     return !isNaN(new Date(date).getTime());
   };
 
-  const formatDateLocal = (date: Date | string): string => {
+  const formatDateLocal = (date: Date | string, precision?: 'day' | 'month' | 'year'): string => {
     if (!isValidDate(date)) return '---';
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
+    if (precision === 'year') return String(year);
+    if (precision === 'month') return `${month}/${year}`;
     return `${day}/${month}/${year}`;
   };
 
@@ -197,7 +206,7 @@ export function MemberDetail({ memberId, onBack, onEditMember, onViewWork }: Mem
                 </div>
                 <div className="flex justify-between items-end border-b border-slate-50 pb-4">
                   <span className={DS.typography.body}>Data de Início</span>
-                  <span className={DS.typography.bodyEmphasis}>{isValidDate(member.startDate) ? formatDateLocal(member.startDate) : '---'}</span>
+                  <span className={DS.typography.bodyEmphasis}>{isValidDate(member.startDate) ? formatDateLocal(member.startDate, member.startDatePrecision) : '---'}</span>
                 </div>
                 {isValidDate(member.birthDate) && (
                   <div className="flex justify-between items-end border-b border-slate-50 pb-4">

@@ -38,12 +38,32 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
     const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-  
+
+  const formatYearMonthForInput = (date: Date | string | undefined): string => {
+    if (!date) return '';
+    const d = new Date(date);
+    if (Number.isNaN(d.getTime())) return '';
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  };
+
+  const formatYearForInput = (date: Date | string | undefined): string => {
+    if (!date) return '';
+    const d = new Date(date);
+    if (Number.isNaN(d.getTime())) return '';
+    return String(d.getFullYear());
+  };
+
+  const [startDatePrecision, setStartDatePrecision] = useState<'day' | 'month' | 'year'>(
+    member?.startDatePrecision || 'day'
+  );
+
   const [formData, setFormData] = useState({
     firstName: member?.firstName || '',
     lastName: member?.lastName || '',
     birthDate: formatDateForInput(member?.birthDate),
     startDate: formatDateForInput(member?.startDate),
+    startDateYearMonth: formatYearMonthForInput(member?.startDate),
+    startDateYear: formatYearForInput(member?.startDate),
     position: member?.position || '',
   });
   
@@ -143,6 +163,24 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
       return Number.isNaN(d.getTime()) ? undefined : d;
     };
 
+    // Quando só ano (ou ano+mês) é conhecido, dia/mês são fixados em 1 —
+    // `startDate` continua sendo uma Date completa e válida para quem já
+    // calcula tempo de casa/ordena por ela; `startDatePrecision` diz o que
+    // realmente mostrar de volta na tela.
+    const buildStartDate = (): Date | undefined => {
+      if (startDatePrecision === 'year') {
+        const year = Number(formData.startDateYear);
+        if (!Number.isFinite(year) || formData.startDateYear.length !== 4) return undefined;
+        return new Date(year, 0, 1);
+      }
+      if (startDatePrecision === 'month') {
+        const [year, month] = formData.startDateYearMonth.split('-').map(Number);
+        if (!Number.isFinite(year) || !Number.isFinite(month)) return undefined;
+        return new Date(year, month - 1, 1);
+      }
+      return formData.startDate ? createDateWithoutTimezone(formData.startDate) : undefined;
+    };
+
     const newMember: Member = {
       // Date.now() sozinho colide em dois cadastros no mesmo milissegundo
       // (ids duplicados, key do React repetida e edição no membro errado)
@@ -150,7 +188,8 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim() || undefined,
       birthDate: formData.birthDate ? createDateWithoutTimezone(formData.birthDate) : undefined,
-      startDate: formData.startDate ? createDateWithoutTimezone(formData.startDate) : undefined,
+      startDate: buildStartDate(),
+      startDatePrecision,
       position: formData.position.trim(),
       createdAt: member?.createdAt || new Date(),
     };
@@ -237,14 +276,50 @@ export function MemberForm({ member, onBack, onSave }: MemberFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor={startDateId} className={DS.inputs.label}>Início na Empresa</label>
-                <input
-                  id={startDateId}
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                  className={DS.inputs.base}
-                />
+                <div className="flex items-center justify-between gap-2">
+                  <label htmlFor={startDateId} className={DS.inputs.label}>Início na Empresa</label>
+                  <select
+                    aria-label="Precisão da data de início na empresa"
+                    value={startDatePrecision}
+                    onChange={(e) => setStartDatePrecision(e.target.value as 'day' | 'month' | 'year')}
+                    className="text-[11px] font-bold text-slate-500 bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-slate-300 rounded"
+                  >
+                    <option value="day">Dia, mês e ano</option>
+                    <option value="month">Só mês e ano</option>
+                    <option value="year">Só o ano</option>
+                  </select>
+                </div>
+                {startDatePrecision === 'day' && (
+                  <input
+                    id={startDateId}
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                    className={DS.inputs.base}
+                  />
+                )}
+                {startDatePrecision === 'month' && (
+                  <input
+                    id={startDateId}
+                    type="month"
+                    value={formData.startDateYearMonth}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startDateYearMonth: e.target.value }))}
+                    className={DS.inputs.base}
+                  />
+                )}
+                {startDatePrecision === 'year' && (
+                  <input
+                    id={startDateId}
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="Ex: 2019"
+                    min={1900}
+                    max={2100}
+                    value={formData.startDateYear}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startDateYear: e.target.value }))}
+                    className={DS.inputs.base}
+                  />
+                )}
               </div>
             </div>
           </Card>

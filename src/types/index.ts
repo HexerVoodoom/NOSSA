@@ -67,6 +67,10 @@ export interface Member {
   lastName?: string;
   birthDate?: Date;
   startDate?: Date;
+  // Nem todo mundo sabe o dia (ou o mês) exato de admissão. `startDate` sempre
+  // guarda uma data completa (dia/mês são 1 quando não informados) para não
+  // quebrar quem já assume `Date`; esta flag diz o que exibir/perguntar de volta.
+  startDatePrecision?: 'day' | 'month' | 'year';
   position: string;
   createdAt: Date | string; // string ISO quando vem do localStorage/JSON
 }

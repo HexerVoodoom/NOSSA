@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Role } from '../types';
-import { storage } from '../lib/storage';
+import { storage, STORAGE_KEYS } from '../lib/storage';
+import { useStorageSync } from '../lib/useStorageSync';
 import { Trash2, Edit, Edit2, UserCheck, Users, User, ArrowLeft, FileText, Building2, Plus, Filter, ListChecks, FileDown } from 'lucide-react';
 import { exportRoleToPDF } from '../lib/pdfExport';
 import { toast } from 'sonner';
@@ -26,6 +27,8 @@ export function RolesView({ onBack, onViewRole, onEditRole }: RolesViewProps) {
   const loadRoles = () => {
     setRoles(storage.getRoles());
   };
+
+  useStorageSync([STORAGE_KEYS.ROLES], loadRoles);
 
   const filteredRoles = roles.filter(role => 
     filterType === 'all' || role.type === filterType
