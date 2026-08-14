@@ -10,9 +10,15 @@ export function sanitizeSVG(svgString: string): string {
     USE_PROFILES: { svg: true, svgFilters: true },
     // Defesa em profundidade: bloqueia script/handlers e conteúdo HTML aninhado
     FORBID_TAGS: ['script', 'foreignObject', 'iframe', 'embed', 'object', 'a', 'set', 'animate'],
-    // Referências só podem apontar para fragmentos internos (#id):
-    // impede <use>/<image> buscando recursos externos
-    ALLOWED_URI_REGEXP: /^#/,
+    // NÃO usar ALLOWED_URI_REGEXP aqui. O DOMPurify aplica esse regex a TODO
+    // atributo que não é reconhecido como URI-safe: com /^#/ ele descartava
+    // width, height, viewBox, x, y, d, transform, stroke... e só sobrava
+    // fill="#rrggbb" (que por acaso começa com '#'). O SVG continuava não-vazio,
+    // então nada estourava — jsdom não pinta e o teste passava — mas no navegador
+    // TODO elemento da obra virava um <svg> vazio: a "Obra Montada" saía em branco.
+    // O objetivo (impedir <use>/<image> apontando para fora) é atingido barrando
+    // os atributos de referência externa, sem mutilar a geometria.
+    FORBID_ATTR: ['href', 'xlink:href', 'src', 'action', 'formaction'],
   });
 }
 

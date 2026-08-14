@@ -12,7 +12,8 @@ import {
   BarChart3,
   ChevronUp,
   ChevronDown,
-  FileText
+  FileText,
+  Building2
 } from 'lucide-react';
 import imgBackground from "figma:asset/41992400f7ce7c6df57ddb041fe5f801c2e327d9.png";
 
@@ -22,7 +23,7 @@ interface WorkDetailProps {
   onViewAssembly?: (work: SavedWork) => void;
 }
 
-export function WorkDetail({ work, onBack }: WorkDetailProps) {
+export function WorkDetail({ work, onBack, onViewAssembly }: WorkDetailProps) {
   const roles = storage.getRoles();
   const role = roles.find(r => r.id === work.roleId);
   const allQuestions = getAllQuestionsFromCompetencies();
@@ -233,13 +234,27 @@ export function WorkDetail({ work, onBack }: WorkDetailProps) {
               <p className="text-sm text-white/80">Análise completa de desempenho</p>
             </div>
             
-            <button
-              onClick={handleExportPDF}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all duration-200"
-            >
-              <Download className="w-5 h-5" />
-              Exportar PDF
-            </button>
+            <div className="flex items-center gap-2">
+              {/* A obra montada (AssemblyViewReadOnly) existia mas era inalcançável:
+                  `onViewAssembly` era declarado na interface, ligado em App.tsx e
+                  nunca renderizado. Todo o motor de desenho ficava morto na UI. */}
+              {onViewAssembly && (
+                <button
+                  onClick={() => onViewAssembly(work)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all duration-200"
+                >
+                  <Building2 className="w-5 h-5" />
+                  Ver Obra Montada
+                </button>
+              )}
+              <button
+                onClick={handleExportPDF}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition-all duration-200"
+              >
+                <Download className="w-5 h-5" />
+                Exportar PDF
+              </button>
+            </div>
           </div>
         </div>
       </header>

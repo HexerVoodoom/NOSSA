@@ -93,7 +93,7 @@ describe('DiamondMesh', () => {
     const { container } = render(
       <DiamondMesh elements={[element]} assembledElements={assembled} onUpdateElements={() => {}} readOnly />
     );
-    const node = container.querySelector('.absolute') as HTMLElement;
+    const node = container.querySelector('[data-obra-element]') as HTMLElement;
     expect(node).toBeTruthy();
     expect(node.style.left).not.toContain('NaN');
     expect(node.style.top).not.toContain('NaN');
@@ -107,7 +107,7 @@ describe('DiamondMesh', () => {
     const { container } = render(
       <DiamondMesh elements={[element]} assembledElements={assembled} onUpdateElements={() => {}} readOnly />
     );
-    const node = container.querySelector('.absolute') as HTMLElement;
+    const node = container.querySelector('[data-obra-element]') as HTMLElement;
     expect(node.style.transform).toContain('rotate(45deg)');
     expect(node.style.transform).not.toContain('NaN');
   });

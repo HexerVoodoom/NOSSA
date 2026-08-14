@@ -27,6 +27,11 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [hoveredElement, setHoveredElement] = useState<number | null>(null);
   const [centeredElements, setCenteredElements] = useState<AssembledElement[]>(assembledElements);
+  // Em modo leitura a obra é gerada por layout automático numa "canvas" de
+  // 1000px, mas o container real tem ~720px. Com `overflow-hidden`, as fileiras
+  // mais largas (14 fundações × 100px = 1300px) ficavam cortadas: 20 dos 51
+  // elementos não apareciam. Escalamos a obra inteira para caber.
+  const [fitScale, setFitScale] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
   
   const BASE_SIZE = 80;
@@ -218,6 +223,7 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
   useEffect(() => {
     if (!readOnly || assembledElements.length === 0) {
       setCenteredElements(assembledElements);
+      setFitScale(1);
       return;
     }
     
@@ -278,6 +284,14 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
         }
       }));
       setCenteredElements(newElements);
+
+      // Escala para caber (nunca amplia, só reduz), com uma margem de 16px.
+      const bboxW = maxX - minX;
+      const bboxH = maxY - minY;
+      const scaleX = bboxW > 0 ? (containerWidth - 16) / bboxW : 1;
+      const scaleY = bboxH > 0 ? (containerHeight - 16) / bboxH : 1;
+      const fit = Math.min(1, scaleX, scaleY);
+      setFitScale(Number.isFinite(fit) && fit > 0 ? fit : 1);
     }, 150);
     
     return () => clearTimeout(timer);
@@ -302,6 +316,10 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
       >
         
         {/* Render elements */}
+        <div
+          className="absolute inset-0"
+          style={fitScale === 1 ? undefined : { transform: `scale(${fitScale})`, transformOrigin: 'center center' }}
+        >
         {centeredElements.map((assembled, index) => {
           const element = elements.find(e => e.elementId === assembled.elementId);
           if (!element) {
@@ -334,6 +352,7 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
           return (
             <div
               key={`${assembled.elementId}-${index}`}
+              data-obra-element={element.shapeCode}
               className={`absolute transition-all duration-150 ${
                 readOnly 
                   ? 'cursor-default' 
@@ -363,6 +382,7 @@ export function DiamondMesh({ elements, assembledElements, onUpdateElements, rea
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );
